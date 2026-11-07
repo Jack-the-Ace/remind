@@ -103,7 +103,6 @@ with mp.tasks.vision.FaceDetector.create_from_options(options) as detector:
         )
 
 
-
         cv2.imshow('face detection', frame)
         # q키를 누르면 종료
         if cv2.waitKey(1) == ord('q'):
@@ -113,6 +112,3 @@ with mp.tasks.vision.FaceDetector.create_from_options(options) as detector:
 #모든 작업이 종료되면
 cap.release()
 cv2.destroyAllWindows()
-
-
-

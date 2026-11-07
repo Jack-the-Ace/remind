@@ -6,7 +6,6 @@ left_eye_img= cv2.imread('images/character_mask/left_eye.png', cv2.IMREAD_UNCHAN
 right_eye_img= cv2.imread('images/character_mask/right_eye.png', cv2.IMREAD_UNCHANGED)
 nose_img= cv2.imread('images/character_mask/nose.png', cv2.IMREAD_UNCHANGED)
 #-------------------------------------------------
-
 model_path='model/face_detection.tflite'
 options= mp.tasks.vision.FaceDetectorOptions(
     base_options= mp.tasks.BaseOptions(model_asset_path=model_path),

@@ -88,7 +88,3 @@ with mp.tasks.vision.FaceDetector.create_from_options(options) as detector:
 cap.release()
 out.release()
 cv2.destroyAllWindows()
-
-
-
-

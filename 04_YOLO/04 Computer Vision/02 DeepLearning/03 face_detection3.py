@@ -78,7 +78,7 @@ with mp.tasks.vision.FaceDetector.create_from_options(options) as detector:
                 mask= left_eye_img[:,:,3],  #알파값을 마스크로 사용. 눈 있는 부분은 흰색, 나머지는 검정색
                 dst= frame[le_y-110:le_y-10, le_x-50:le_x+50]
             )
-            #코
+            #코 (100x300) 높이 너비
             cv2.copyTo(
                 src= nose_img[:,:,:3],  #복사할 원본 이미지의 BGR만.. 투명도 차원은 제거 [height,width,channel].. png이므로 [높이,너비,4]  #BGRA
                 mask= nose_img[:,:,3],  #알파값을 마스크로 사용. 눈 있는 부분은 흰색, 나머지는 검정색
