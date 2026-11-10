@@ -1,2 +1,6 @@
 .env
 videos/
+runs/
+weights/
+bolt-nut-washer-test-images/
+yolo-person-vehicle-dataset/
