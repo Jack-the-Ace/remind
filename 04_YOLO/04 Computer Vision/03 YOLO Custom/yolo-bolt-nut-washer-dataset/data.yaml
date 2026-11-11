@@ -1,6 +1,8 @@
-train: ../train/images
-val: ../valid/images
-test: ../test/images
+path: yolo-bolt-nut-washer-dataset
+
+train: train/images
+val: valid/images
+test: test/images
 
 nc: 3
 names: ['Bolt', 'Nut', 'Washer']
