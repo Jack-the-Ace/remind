@@ -1,0 +1,17 @@
+{
+  "ai": "https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&dataSetSn=197&topMenu=100",
+  "aip": "https://aihub.or.kr/intrcn/guid/usagepolicy.do",
+  "bdd": "https://raw.githubusercontent.com/bdd100k/bdd100k/master/doc/source/download.rst",
+  "bddlic": "https://raw.githubusercontent.com/bdd100k/bdd100k/master/doc/source/license.rst",
+  "kitti": "https://www.cvlibs.net/datasets/kitti/eval_tracking.php",
+  "kittip": "https://www.cvlibs.net/datasets/kitti/",
+  "culane": "https://xingangpan.github.io/projects/CULane.html",
+  "track": "https://docs.ultralytics.com/modes/track",
+  "dl": "https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.segmentation.deeplabv3_mobilenet_v3_large.html",
+  "android": "https://developer.android.com/develop/background-work/services/fgs/service-types",
+  "androidbg": "https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start",
+  "ios": "https://developer.apple.com/documentation/avfoundation/avcapturesession/interruptionreason/videodevicenotavailableinbackground",
+  "call": "https://developer.android.com/reference/android/content/Intent#ACTION_CALL",
+  "license": "https://www.ultralytics.com/license",
+  "privacy": "https://www.law.go.kr/법령/개인정보보호법"
+}
