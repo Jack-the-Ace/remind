@@ -1,0 +1,13 @@
+import fs from 'node:fs/promises';
+import {constants} from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+const B=path.dirname(fileURLToPath(import.meta.url));const BASE=path.resolve(B,'../..');
+const RT='C:/Users/windows10/.cache/codex-runtimes/codex-primary-runtime/dependencies';
+const SKILL='C:/Users/windows10/.codex/plugins/cache/openai-primary-runtime/presentations/26.1110.11613/skills/presentations';
+process.env.RUNTIME_NODE_MODULES=RT+'/node/node_modules';
+const {finalizePresentation}=await import(pathToFileURL(SKILL+'/container_tools/artifact_tool_utils.mjs').href);
+const link=fs.link;fs.link=async(s,d)=>{try{return await link(s,d)}catch(e){if(process.platform==='win32'&&e.code==='EPERM')return fs.copyFile(s,d,constants.COPYFILE_EXCL);throw e}};
+const final=path.join(BASE,'산출물/AI_위험주행_차량추적_11월_기획서_초안_v3.pptx');
+const r=await finalizePresentation({workspaceDir:BASE,candidatePath:path.join(B,'v3_candidate.pptx'),finalPath:final,pythonExecutable:RT+'/python/python.exe',integrityValidatorPath:SKILL+'/container_tools/inspect_presentation_package_integrity.py',layoutValidatorPath:SKILL+'/container_tools/inspect_presentation_layout_geometry.py',layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-bullet-geometry','--validate-heading-fit'],explicitTotalSlideCount:14,requiredNativeTableOwnerSlides:[],requiredNativeChartOwnerSlides:[],fontPolicy:{basis:'design',families:['Malgun Gothic']},verifyArtifactToolImport:true,receiptPath:path.join(B,'v3.validation.json')});
+console.log(JSON.stringify({path:final,sha256:r.finalSha256,package:r.packageIntegrity.status,layout:r.presentationLayout,import:r.firstPartyImport},null,2));
