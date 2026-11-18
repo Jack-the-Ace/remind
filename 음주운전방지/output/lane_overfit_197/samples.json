@@ -1,0 +1,30 @@
+[
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2219212.jpg",
+    "mask": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\lane_masks_197_final\\masks\\2219212_mask.png",
+    "original_white": 18538,
+    "resized_white": 1331,
+    "source_white_centers_covered": 18538
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215125.jpg",
+    "mask": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\lane_masks_197_final\\masks\\2215125_mask.png",
+    "original_white": 18743,
+    "resized_white": 1305,
+    "source_white_centers_covered": 18743
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215358.jpg",
+    "mask": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\lane_masks_197_final\\masks\\2215358_mask.png",
+    "original_white": 18319,
+    "resized_white": 1296,
+    "source_white_centers_covered": 18319
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215390.jpg",
+    "mask": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\lane_masks_197_final\\masks\\2215390_mask.png",
+    "original_white": 18168,
+    "resized_white": 1297,
+    "source_white_centers_covered": 18168
+  }
+]

@@ -1,0 +1,4 @@
+{"event": "preprocessing_verified", "purpose": "smoke_test", "split_status": "provisional", "seed": 197, "val_seed": 198, "device": "cuda", "gpu": "NVIDIA GeForce RTX 3060 Ti", "torch": "2.11.0+cu130", "torchvision": "0.26.0+cu130", "epochs": 2, "image_size": [384, 240], "batch_size": 4, "learning_rate": 0.001, "positive_weight": 5.0, "pretrained": false, "threshold": 0.5, "retained_pairs": 24}
+{"event": "epoch", "epoch": 1, "train_loss": 1.6750684082508087, "val_loss": 1.5951287746429443, "lane_iou": 0.0, "lane_dice": 0.0, "predicted_positive_pixels": 0, "target_positive_pixels": 15986.0}
+{"event": "epoch", "epoch": 2, "train_loss": 1.405487209558487, "val_loss": 1.3810570240020752, "lane_iou": 0.0, "lane_dice": 0.0, "predicted_positive_pixels": 0, "target_positive_pixels": 15986.0}
+{"event": "completed", "optimizer_steps": 8, "checkpoint_reloaded": true, "comparisons": 4}

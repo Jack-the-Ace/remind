@@ -1,0 +1,94 @@
+[
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215110.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\2215110.json",
+    "image": {
+      "file_name": "2215110.jpg",
+      "image_size": [
+        1200,
+        1920
+      ]
+    },
+    "classes": {
+      "traffic_lane": 2
+    },
+    "result": "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\output\\lane_label_check_197\\2215110_preview.jpg",
+    "scene": "고가도로 옆 진입로",
+    "visual_check": "좌우 흰 경계선 2개가 도색을 따라 표시됨. 뚜렷한 좌우 경계 누락은 발견하지 못함.",
+    "uncertain": "먼 합류 지점은 선이 모여 세밀한 구분이 어려움. 가로 감속 표시는 차선 누락으로 세지 않음."
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215332.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\2215332.json",
+    "image": {
+      "file_name": "2215332.jpg",
+      "image_size": [
+        1200,
+        1920
+      ]
+    },
+    "classes": {
+      "traffic_lane": 8
+    },
+    "result": "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\output\\lane_label_check_197\\2215332_preview.jpg",
+    "scene": "방음벽 옆 다차로·차량 밀집",
+    "visual_check": "가까운 왼쪽 차로 구분선과 오른쪽 선들, 주변 차로 선이 표시됨. 뚜렷한 근거리 선의 큰 누락은 발견하지 못함.",
+    "uncertain": "검은 차 등 차량 위로 선이 이어지는 구간은 실제 가려진 도색 정합을 확인하기 어려움."
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\6677338.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\6677338.json",
+    "image": {
+      "file_name": "6677338.jpg",
+      "image_size": [
+        1200,
+        1920
+      ]
+    },
+    "classes": {
+      "stop_line": 1,
+      "traffic_lane": 5,
+      "crosswalk": 1
+    },
+    "result": "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\output\\lane_label_check_197\\6677338_preview.jpg",
+    "scene": "도심 교차로",
+    "visual_check": "양옆에 보이는 선들을 표시. 정지선 1개는 빨강, 오른쪽 횡단보도 영역 1개는 파랑 테두리로 구분됨.",
+    "uncertain": "앞 SUV·트럭에 가린 내 차로의 연속 경계와 먼 점선은 확인 어려움. 교차로의 무도색 부분을 누락으로 세지 않음."
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\6722342.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\6722342.json",
+    "image": {
+      "file_name": "6722342.jpg",
+      "image_size": [
+        1200,
+        1920
+      ]
+    },
+    "classes": {
+      "traffic_lane": 12
+    },
+    "result": "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\output\\lane_label_check_197\\6722342_preview.jpg",
+    "scene": "공사 가시설 사이 차로",
+    "visual_check": "좌우 노란 가장자리와 가운데 흰 점선 경로, 가시설 밖 주변 선들을 표시. 근거리 뚜렷한 좌우 선의 큰 누락은 발견하지 못함.",
+    "uncertain": "점선의 빈 간격에도 선이 이어지고 공사 구조물에 가려진 구간이 있어 그 부분의 실제 도색은 확인 어려움."
+  },
+  {
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\6750398.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\6750398.json",
+    "image": {
+      "file_name": "6750398.jpg",
+      "image_size": [
+        1200,
+        1920
+      ]
+    },
+    "classes": {
+      "traffic_lane": 3
+    },
+    "result": "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\output\\lane_label_check_197\\6750398_preview.jpg",
+    "scene": "수목·대형차가 있는 굽은 도로",
+    "visual_check": "중앙 노란 선과 좌우 흰 가장자리 선 3개가 곡선을 따라 표시됨. 뚜렷하게 보이는 주요 선의 큰 누락은 발견하지 못함.",
+    "uncertain": "대형차 뒤로 가려진 중앙선·왼쪽 가장자리 및 먼 곡선 끝은 확인 어려움."
+  }
+]

@@ -1,0 +1,83 @@
+{
+  "jpg_count": 1200,
+  "json_count": 1200,
+  "unique_pairs": 1200,
+  "errors": [],
+  "classes": {
+    "traffic_lane": 7014,
+    "crosswalk": 104,
+    "stop_line": 98
+  },
+  "categories": {
+    "polyline": 7112,
+    "polygon": 104
+  },
+  "examples": {
+    "traffic_lane": {
+      "class": "traffic_lane",
+      "attributes": [
+        {
+          "code": "lane_color",
+          "value": "white"
+        },
+        {
+          "code": "lane_type",
+          "value": "solid"
+        }
+      ],
+      "category": "polyline",
+      "data": [
+        {
+          "x": 439,
+          "y": 1198
+        },
+        {
+          "x": 962,
+          "y": 635
+        },
+        {
+          "x": 1020,
+          "y": 623
+        }
+      ]
+    },
+    "crosswalk": {
+      "class": "crosswalk",
+      "attributes": [],
+      "category": "polygon",
+      "data": [
+        {
+          "x": 1653,
+          "y": 609
+        },
+        {
+          "x": 1658,
+          "y": 615
+        },
+        {
+          "x": 1768,
+          "y": 618
+        },
+        {
+          "x": 1815,
+          "y": 614
+        }
+      ]
+    },
+    "stop_line": {
+      "class": "stop_line",
+      "attributes": [],
+      "category": "polyline",
+      "data": [
+        {
+          "x": 1657,
+          "y": 618
+        },
+        {
+          "x": 1716,
+          "y": 620
+        }
+      ]
+    }
+  }
+}
