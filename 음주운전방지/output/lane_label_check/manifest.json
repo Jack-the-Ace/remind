@@ -1,0 +1,557 @@
+[
+  {
+    "category": "BLUE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS1\\BLUE\\[00001]A_BLUE\\[BLUE]00001A_130227_004.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\BLUE\\[00001]A_BLUE\\[BLUE]00001A_130227_004.json",
+    "sourceValue": "IMAGE/A/BLUE/[00001]A_BLUE/[BLUE]00001A_130227_004.jpg",
+    "output": "output\\lane_label_check\\BLUE_1_[BLUE]00001A_130227_004.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_blue": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_blue",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_blue",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "차량 아래 오른쪽 파란 선 구간",
+    "unmarked_visible": "왼쪽 파란 선, 가운데 노란 이중선, 다른 흰 차선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "차량에 가린 파란 선 연속 구간",
+    "code_missing_count": 0
+  },
+  {
+    "category": "BLUE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS1\\BLUE\\[24546]A_BLUE\\[BLUE]24546A_180122_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\BLUE\\[24546]A_BLUE\\[BLUE]24546A_180122_001.json",
+    "sourceValue": "IMAGE/A/BLUE/[24546]A_BLUE/[BLUE]24546A_180122_001.jpg",
+    "output": "output\\lane_label_check\\BLUE_2_[BLUE]24546A_180122_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 2,
+    "all_lane_count": 2,
+    "lane_labels": {
+      "lane_white": 1,
+      "lane_blue": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_white",
+        "lane_attribute": "single_dashed"
+      },
+      {
+        "lane_type": "lane_blue",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_white",
+          "lane_attribute": "single_dashed"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_blue",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "오른쪽 파란 선과 그 앞쪽 흰 점선 구간",
+    "unmarked_visible": "왼쪽 파란 선, 가운데 노란 이중선, 오른쪽의 다른 흰 선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "검은 차량에 가린 도색",
+    "code_missing_count": 0
+  },
+  {
+    "category": "BLUE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS1\\BLUE\\[41009]A_BLUE\\[BLUE]41009A_141601_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\BLUE\\[41009]A_BLUE\\[BLUE]41009A_141601_001.json",
+    "sourceValue": "IMAGE/A/BLUE/[41009]A_BLUE/[BLUE]41009A_141601_001.jpg",
+    "output": "output\\lane_label_check\\BLUE_3_[BLUE]41009A_141601_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 2,
+    "all_lane_count": 2,
+    "lane_labels": {
+      "lane_shoulder": 1,
+      "lane_blue": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_shoulder",
+        "lane_attribute": "single_dashed"
+      },
+      {
+        "lane_type": "lane_blue",
+        "lane_attribute": "double_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_shoulder",
+          "lane_attribute": "single_dashed"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_blue",
+          "lane_attribute": "double_solid"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "normal",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "normal",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "normal",
+          "vehicle_shown": "hidden"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "오른쪽 가장자리 선과 택시 왼쪽 파란 선",
+    "unmarked_visible": "화면 왼쪽의 다른 흰 차선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "택시·앞차에 가린 파란 선 부분",
+    "code_missing_count": 0
+  },
+  {
+    "category": "WHITE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\WHITE\\[00008]A_WHITE\\[WHITE]00008A_145942_006.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\WHITE\\[00008]A_WHITE\\[WHITE]00008A_145942_006.json",
+    "sourceValue": "IMAGE/A/WHITE/[00008]A_WHITE/[WHITE]00008A_145942_006.jpg",
+    "output": "output\\lane_label_check\\WHITE_1_[WHITE]00008A_145942_006.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_white": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_white",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_bike",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_white",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "오토바이 아래로 이어지는 가운데 흰 선",
+    "unmarked_visible": "오른쪽 흰 경계선, 왼쪽 노란 가장자리 선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "오토바이에 가린 선의 끝부분",
+    "code_missing_count": 0
+  },
+  {
+    "category": "WHITE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\WHITE\\[40496]A_WHITE\\[WHITE]40496A_150600_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\WHITE\\[40496]A_WHITE\\[WHITE]40496A_150600_001.json",
+    "sourceValue": "IMAGE/A/WHITE/[40496]A_WHITE/[WHITE]40496A_150600_001.jpg",
+    "output": "output\\lane_label_check\\WHITE_2_[WHITE]40496A_150600_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_white": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_white",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_bus",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_white",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "내 차로 왼쪽 흰 선",
+    "unmarked_visible": "오른쪽 흰 차선, 왼쪽 다른 흰 차선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "앞차 모자이크 아래 선",
+    "code_missing_count": 0
+  },
+  {
+    "category": "WHITE",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\WHITE\\[69246]A_WHITE\\[WHITE]69246A_141633_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\WHITE\\[69246]A_WHITE\\[WHITE]69246A_141633_001.json",
+    "sourceValue": "IMAGE/A/WHITE/[69246]A_WHITE/[WHITE]69246A_141633_001.jpg",
+    "output": "output\\lane_label_check\\WHITE_3_[WHITE]69246A_141633_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_white": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_white",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_white",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "검은 승용차 오른쪽 흰 선",
+    "unmarked_visible": "왼쪽 흰 점선, 오른쪽 노란 가장자리 선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "검은 차 아래 도색",
+    "code_missing_count": 0
+  },
+  {
+    "category": "YELLOW",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\YELLOW\\[00076]A_YELLOW\\[YELLOW]00076A_181257_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\YELLOW\\[00076]A_YELLOW\\[YELLOW]00076A_181257_001.json",
+    "sourceValue": "IMAGE/A/YELLOW/[00076]A_YELLOW/[YELLOW]00076A_181257_001.jpg",
+    "output": "output\\lane_label_check\\YELLOW_1_[YELLOW]00076A_181257_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_yellow": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_yellow",
+        "lane_attribute": "double_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_yellow",
+          "lane_attribute": "double_solid"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "왼쪽 노란 이중 중앙선 영역",
+    "unmarked_visible": "가운데 흰 점선, 오른쪽 노란 가장자리 선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "중앙선을 밟은 차 아래 부분",
+    "code_missing_count": 0
+  },
+  {
+    "category": "YELLOW",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\YELLOW\\[38599]A_YELLOW\\[YELLOW]38599A_133517_001.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\YELLOW\\[38599]A_YELLOW\\[YELLOW]38599A_133517_001.json",
+    "sourceValue": "IMAGE/A/YELLOW/[38599]A_YELLOW/[YELLOW]38599A_133517_001.jpg",
+    "output": "output\\lane_label_check\\YELLOW_2_[YELLOW]38599A_133517_001.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_shoulder": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_shoulder",
+        "lane_attribute": "single_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_shoulder",
+          "lane_attribute": "single_solid"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "normal",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "오른쪽 노란 가장자리 선(lane_shoulder)",
+    "unmarked_visible": "왼쪽 노란 이중선, 반대편 흰 차선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "앞 흰 SUV 아래 선",
+    "code_missing_count": 0
+  },
+  {
+    "category": "YELLOW",
+    "jpg": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\원천\\TS3\\YELLOW\\[71370]A_YELLOW\\[YELLOW]71370A_105512_002.jpg",
+    "json": "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\라벨\\TL2\\A\\YELLOW\\[71370]A_YELLOW\\[YELLOW]71370A_105512_002.json",
+    "sourceValue": "IMAGE/A/YELLOW/[71370]A_YELLOW/[YELLOW]71370A_105512_002.jpg",
+    "output": "output\\lane_label_check\\YELLOW_3_[YELLOW]71370A_105512_002.jpg",
+    "shape": [
+      1080,
+      1920,
+      3
+    ],
+    "lane_count": 1,
+    "all_lane_count": 1,
+    "lane_labels": {
+      "lane_yellow": 1
+    },
+    "attributes": [
+      {
+        "lane_type": "lane_yellow",
+        "lane_attribute": "double_solid"
+      }
+    ],
+    "all_objects": [
+      {
+        "extra": {
+          "value": "lane",
+          "label": "차선",
+          "color": "#e0182d"
+        },
+        "label": {
+          "lane_type": "lane_yellow",
+          "lane_attribute": "double_solid"
+        },
+        "annotation": "POLYGONS"
+      },
+      {
+        "extra": {
+          "value": "vehicle",
+          "label": "차량",
+          "color": "#096ecd"
+        },
+        "label": {
+          "vehicle_type": "vehicle_car",
+          "vehicle_attribute": "violation",
+          "vehicle_shown": "shown"
+        },
+        "annotation": "POLYGONS"
+      }
+    ],
+    "marked_visible": "왼쪽 노란 이중 중앙선 영역",
+    "unmarked_visible": "가운데 흰 점선",
+    "missing_reason": "JSON에 라벨 없음",
+    "uncertain": "맞은편 차량에 가린 중앙선",
+    "code_missing_count": 0
+  }
+]
