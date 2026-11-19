@@ -1,3 +1,9 @@
 .env
 /yolov8s-world.pt
 /output/file_organization/
+/output/lane_smoke_197*/
+/output/lane_overfit_197*/
+/output/lane_batchnorm_197*/
+/output/lane_train_197*/
+/output/lane_transfer_197*/
+/output/lane_video_197*/

@@ -31,9 +31,9 @@ def sample_rows(split_dir, split, count, seed):
     return random.Random(seed).sample(rows, count)
 
 
-def load_samples(rows):
+def load_samples(rows, size=IMAGE_SIZE):
     images, targets, checks = [], [], []
-    width, height = IMAGE_SIZE
+    width, height = size
     for row in rows:
         jpg, mask_path = Path(row["jpg"]), Path(row["mask"])
         photo = read_image(jpg, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
@@ -43,9 +43,9 @@ def load_samples(rows):
         if source_height < height or source_width < width:
             raise ValueError(f"축소할 원본이 입력 크기보다 작습니다: {jpg}")
 
-        photo_small = cv2.resize(photo, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
+        photo_small = cv2.resize(photo, size, interpolation=cv2.INTER_AREA)
         # 면적 안에 흰 차선이 조금이라도 있으면 대상 픽셀을 차선으로 남깁니다.
-        coverage = cv2.resize(mask.astype(np.float32) / 255, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
+        coverage = cv2.resize(mask.astype(np.float32) / 255, size, interpolation=cv2.INTER_AREA)
         target = coverage > 0
         y, x = np.nonzero(mask)
         target_y = ((2 * y + 1) * height) // (2 * source_height)

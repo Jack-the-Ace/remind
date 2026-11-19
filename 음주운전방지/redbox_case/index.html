@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>사건 상세 및 신고 초안 · RedBox</title>
+  <link rel="stylesheet" href="/case.css">
+  <script src="/case.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>RedBox</div>
+      <span class="site-section">사건 상세</span>
+    </div>
+  </header>
+  <main>
+    <div class="case-heading">
+      <p id="case-label" class="case-label">차선 경계 통과 후보</p>
+      <h1>사건 상세 및 신고 초안</h1>
+      <dl class="case-facts">
+        <div><dt>원본 영상</dt><dd id="source-video">—</dd></div>
+        <div><dt>원본 내 후보 시각</dt><dd id="original-time">—</dd></div>
+        <div><dt>내부 추적 번호</dt><dd id="track-id">—</dd></div>
+      </dl>
+    </div>
+
+    <section class="preview" aria-labelledby="clip-title">
+      <div class="preview-top">
+        <h2 id="clip-title">저장된 원본 클립</h2>
+        <button type="button" id="jump" class="button jump" disabled>
+          <span class="play-icon" aria-hidden="true"></span>
+          후보 시점으로 이동 <span id="clip-time" class="time-stamp">—</span>
+        </button>
+      </div>
+      <video id="clip" controls playsinline preload="metadata" aria-label="사건 원본 클립"></video>
+    </section>
+
+    <section class="draft" aria-labelledby="draft-title">
+      <div class="draft-heading">
+        <h2 id="draft-title">신고 초안</h2>
+        <p>추천값을 검토·수정한 뒤 안전신문고 앱에 직접 입력하고 제출하세요.</p>
+      </div>
+      <fieldset id="draft-fields" disabled>
+        <legend class="visually-hidden">신고 항목</legend>
+        <div class="field">
+          <label for="report-type">신고 유형</label>
+          <div class="field-controls">
+            <input id="report-type" type="text">
+            <button type="button" class="button" data-copy="report-type" aria-label="신고 유형 복사">복사</button>
+          </div>
+        </div>
+        <div class="field">
+          <h3>사진·동영상</h3>
+          <div class="attachment">
+            <div><strong id="clip-name">원본 클립</strong><small id="clip-details">MP4</small></div>
+            <a id="save" class="button" href="/download" download hidden>영상 저장</a>
+          </div>
+        </div>
+        <div class="field">
+          <label for="location">발생지역</label>
+          <div class="field-controls">
+            <input id="location" type="text">
+            <button type="button" class="button" data-copy="location" aria-label="발생지역 복사">복사</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="description">내용</label>
+          <div class="field-controls text-controls">
+            <textarea id="description" rows="3"></textarea>
+            <button type="button" class="button" data-copy="description">내용 복사</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="plate">차량번호</label>
+          <div class="field-controls">
+            <input id="plate" type="text">
+            <button type="button" class="button" data-copy="plate" aria-label="차량번호 복사">복사</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="incident-date">발생일자</label>
+          <div class="field-controls">
+            <input id="incident-date" type="text">
+            <button type="button" class="button" data-copy="incident-date" aria-label="발생일자 복사">복사</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="incident-time">발생시각</label>
+          <div class="field-controls">
+            <input id="incident-time" type="text">
+            <button type="button" class="button" data-copy="incident-time" aria-label="발생시각 복사">복사</button>
+          </div>
+        </div>
+      </fieldset>
+      <div class="draft-actions">
+        <a id="open-report" class="button primary" href="https://www.safetyreport.go.kr/html/portal/safereportn/safeReportn3.html"
+           target="_blank" rel="noopener noreferrer">안전신문고 열기 <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+    <p id="feedback" role="status" aria-live="polite" hidden></p>
+  </main>
+</body>
+</html>
