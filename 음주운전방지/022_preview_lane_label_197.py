@@ -1,3 +1,8 @@
+# 022  197번 사진에서 차선 좌표 잇기
+# 차선과 정지선은 열린 선으로, 횡단보도는 닫힌 테두리로 구분합니다.
+# 197번 daylight의 같은 JPG·JSON을 차례로 넣고 실제 크기를 대조합니다.
+# output/lane_label_check_197의 미리보기 JPG로 마스크 제작 전 좌표를 검사합니다.
+
 # 수업 흐름: OpenCV로 읽기 → JSON 좌표 읽기 → 선 그리기 → JPG 저장
 import argparse
 import json

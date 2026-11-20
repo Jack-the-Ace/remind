@@ -1,10 +1,18 @@
+# 006  차량 한 대를 골라 계속 따라가기
+# 옆 차로 넘어가지 않게 위치·크기·외형을 함께 확인합니다.
+# 기본은 주간 영상과 yolo26n.pt입니다. 상자를 클릭하고 Space로 재생합니다.
+# 추적 보류와 확정 상자를 --selected-track에 기록해 034의 집계에 씁니다.
+
 # 수업 흐름: VideoCapture → 프레임 읽기 → model.track → OpenCV 표시
 from pathlib import Path
 import argparse
+from collections import deque
+import hashlib
 import json
 
 import cv2
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from ultralytics import YOLO
 
 ROOT = Path(__file__).resolve().parent
@@ -31,6 +39,7 @@ class Target:
         self.track_id = None
         self.last_frame = 0
         self.look = None
+        self.recent_looks = deque(maxlen=12)
         self.velocity = np.zeros(2)
         self.pending = None
         self.streak = 0
@@ -39,6 +48,9 @@ class Target:
         self.box = np.array(detection['box'], dtype=float)
         self.track_id = detection['id']
         self.look = appearance(frame, self.box)
+        self.recent_looks.clear()
+        if self.look is not None:
+            self.recent_looks.append(self.look)
         self.last_frame = number
         self.velocity = np.zeros(2)
         self.pending = None
@@ -66,13 +78,18 @@ class Target:
             look = appearance(frame, b)
             if look is None or self.look is None:
                 continue
-            shape = float(cv2.matchTemplate(look[0], self.look[0], cv2.TM_CCOEFF_NORMED)[0, 0])
-            color = 1 - cv2.compareHist(look[1], self.look[1], cv2.HISTCMP_BHATTACHARYYA)
             same_id = d['id'] == self.track_id
             # 같은 ID여도 위치와 외형을 검사합니다. 번호만으로 성공 처리하지 않습니다.
-            if shape < (.15 if same_id else .20) or color < (.45 if same_id else .70):
-                continue
-            candidates.append((.6 * shape + .4 * color - .15 * distance, d))
+            # 번호를 잃기 직전에는 가린 차량이 섞일 수 있어 최근에 확인한 모습도 비교합니다.
+            references = self.recent_looks if not same_id and gap > 1 else (self.look,)
+            scores = []
+            for gray, histogram in references:
+                shape = float(cv2.matchTemplate(look[0], gray, cv2.TM_CCOEFF_NORMED)[0, 0])
+                color = 1 - cv2.compareHist(look[1], histogram, cv2.HISTCMP_BHATTACHARYYA)
+                if shape >= (.15 if same_id else .20) and color >= (.45 if same_id else .70):
+                    scores.append(.6 * shape + .4 * color - .15 * distance)
+            if scores:
+                candidates.append((max(scores), d))
         candidates.sort(key=lambda item: item[0], reverse=True)
         # 비슷한 후보가 둘이면 보류합니다. 다른 차에 상자를 붙이지 않는 쪽을 택합니다.
         if not candidates or (len(candidates) > 1 and candidates[0][0] - candidates[1][0] < .12):
@@ -90,24 +107,35 @@ class Target:
         self.velocity = .6 * self.velocity + .4 * movement
         self.box, self.track_id, self.last_frame = b, d['id'], number
         self.look = appearance(frame, b)
+        self.recent_looks.append(self.look)
         self.pending, self.streak = None, 0
         return d
+
+
+def video_digest(path):
+    with path.open('rb') as source:
+        return hashlib.file_digest(source, 'sha256').hexdigest()
 
 
 def main():
     parser = argparse.ArgumentParser()
     # 아래 옵션은 창 없이도 같은 영상과 첫 선택 위치로 검증하기 위한 것입니다.
+    parser.add_argument('--video', type=Path, default=ROOT / 'videos/비접촉_사고유발_영상_낮.mp4')
     parser.add_argument('--headless', action='store_true')
     parser.add_argument('--select', nargs=2, type=int, metavar=('X', 'Y'))
     parser.add_argument('--select-frame', type=int, default=1)
     parser.add_argument('--log', type=Path)
+    parser.add_argument('--selected-track', type=Path, help='034가 읽을 수동 선택·추적 기록 (새 JSON 파일)')
     args = parser.parse_args()
     if args.headless and args.select is None:
         parser.error('--headless 검증에는 --select X Y가 필요합니다.')
-    video = ROOT / 'videos' / '비접촉_사고유발_영상_낮.mp4'
+    video = args.video
     weights = ROOT / 'yolo26n.pt'
     if not video.is_file() or not weights.is_file():
         raise FileNotFoundError('프로젝트의 영상과 yolo26n.pt를 확인해주세요.')
+    if args.selected_track and (args.selected_track.exists()
+                                or (args.log and args.selected_track.resolve() == args.log.resolve())):
+        parser.error('--selected-track에는 다른 새 파일 경로가 필요합니다.')
     cap = cv2.VideoCapture(str(video))
     window = 'RedBox target tracking'
     target = Target()
@@ -115,8 +143,22 @@ def main():
     paused = not args.headless
     delay = 1  # 기존의 빠른 재생을 유지합니다. +/-로 대기 시간을 바꿀 수 있습니다.
     logs = []
+    selection = 0
+    selected_rows = []
+
+    def record():
+        number, d = state['number'], state['selected']
+        row = {'frame': number, 'id': d['id'] if d else None, 'box': d['box'] if d else None}
+        logs[number - 1:] = [row]
+        if args.selected_track:
+            # 클릭은 일시정지한 프레임에도 적용합니다. 다시 고르면 이전 차량과 별개로 기록합니다.
+            status = 'confirmed' if d else ('tracking_hold' if target.box is not None else 'unselected')
+            selected_rows[number - 1:] = [
+                dict(row, selection=selection, status=status, vehicles=state['detections'])
+            ]
 
     def click(event, x, y, flags, param):
+        nonlocal selection
         if event != cv2.EVENT_LBUTTONDOWN:
             return
         hits = [d for d in state['detections'] if d['box'][0] <= x <= d['box'][2]
@@ -126,6 +168,8 @@ def main():
             d = min(hits, key=lambda d: (d['box'][2]-d['box'][0])*(d['box'][3]-d['box'][1]))
             target.select(d, state['frame'], state['number'])
             state['selected'] = d
+            selection += 1
+            record()
 
     try:
         if not cap.isOpened():
@@ -134,6 +178,7 @@ def main():
         vehicle_ids = [i for i, name in model.names.items() if name in VEHICLES]
         fps = cap.get(cv2.CAP_PROP_FPS) or 30
         if not args.headless:
+            hold_font = ImageFont.truetype(str(Path('C:/Windows/Fonts/malgunbd.ttf')), 24)
             cv2.namedWindow(window)
             cv2.setMouseCallback(window, click)
         print('차량 상자 클릭 → Space 재생/일시정지 | r 재선택 | +/- 속도 | q 종료')
@@ -147,15 +192,13 @@ def main():
                 result = model.track(source=frame, tracker='bytetrack.yaml', persist=True,
                                      conf=.1, classes=vehicle_ids, device='cpu', verbose=False)[0]
                 ds = [{'id': int(b.id[0]) if b.id is not None else None,
-                       'box': b.xyxy[0].tolist()} for b in result.boxes]
+                       'box': b.xyxy[0].tolist(), 'class': result.names[int(b.cls[0])]} for b in result.boxes]
                 state['frame'], state['detections'] = frame, ds
                 if args.select and state['number'] == args.select_frame:
                     click(cv2.EVENT_LBUTTONDOWN, *args.select, 0, None)
                 else:
                     state['selected'] = target.update(ds, frame, state['number'])
-                d = state['selected']
-                logs.append({'frame': state['number'], 'id': d['id'] if d else None,
-                             'box': d['box'] if d else None})
+                record()
             canvas = state['frame'].copy()
             # 선택 전에는 클릭할 차량들을 보여주고, 선택 후에는 확인된 타깃만 강조합니다.
             shown = state['detections'] if target.box is None else ([state['selected']] if state['selected'] else [])
@@ -169,6 +212,13 @@ def main():
             cv2.putText(canvas, f"Space: pause | r: reselect | +/-: speed | q: quit | delay {delay}ms", (20, 70), 0, .65, (255, 255, 255), 2)
             if args.headless:
                 continue
+            if target.box is not None and state['selected'] is None:
+                panel = Image.new('RGB', (canvas.shape[1], 32))
+                ImageDraw.Draw(panel).text(
+                    (20, 1), f"추적 보류  |  F{state['number']}  |  r: 재선택", font=hold_font,
+                    fill=(255, 235, 110)
+                )
+                canvas[8:40] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
             cv2.imshow(window, canvas)
             key = cv2.waitKey(30 if paused else delay) & 0xFF
             if key == ord('q'):
@@ -178,6 +228,7 @@ def main():
             elif key == ord('r'):
                 target = Target()
                 state['selected'] = None
+                record()
                 paused = True
             elif key in (ord('+'), ord('=')):
                 delay = max(1, delay - 10)
@@ -188,6 +239,10 @@ def main():
         cv2.destroyAllWindows()
         if args.log:
             args.log.write_text(json.dumps(logs), encoding='utf-8')
+    if args.selected_track:
+        # 영상 내용과 프레임 번호가 일치할 때만 034에서 이 기록을 사용합니다.
+        with args.selected_track.open('x', encoding='utf-8') as stream:
+            json.dump({'video_sha256': video_digest(video), 'fps': fps, 'frames': selected_rows}, stream)
 
 
 if __name__ == '__main__':

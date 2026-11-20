@@ -1,3 +1,8 @@
+# 016  628번에서 표시되지 않은 선 정리하기
+# 추출한 라벨 수와 직접 본 장면을 함께 두어 누락 이유를 확인합니다.
+# 아홉 장의 manifest.json과 당시 같은 장면에서 남긴 판독 내용을 씁니다.
+# 점검결과.md와 summary.csv를 저장해 197번 자료와 비교합니다.
+
 from pathlib import Path
 import json,csv
 out=Path('output/lane_label_check');rows=json.loads((out/'manifest.json').read_text())
@@ -17,9 +22,9 @@ BLUE/WHITE/YELLOW에서 각 3개, 서로 다른 video_id의 사진 9개를 점�
 
 ## 방법과 코드 누락 확인
 
-기존 preview_lane_label.py는 data_set_info.data[*].value.extra.value == lane을 고른다. 그 필터와 별도로 object_Label의 lane 관련 키가 있는 객체도 찾아 비교했다. 모든 JSON을 재귀적으로 훑어 points가 있는 다른 위치도 확인했다. 좌표 객체는 모두 data 목록 안에 있었고, 차선 후보 수와 기존 필터 수가 9장 모두 같았다. 모든 차선 좌표는 POLYGONS이며 원본 크기 범위 내였다. 총 11개 영역을 반투명 fillPoly와 닫힌 polylines로 전부 그렸다. 이 9장 안에서 JSON에는 있지만 코드가 그리지 않은 차선 라벨은 0개다.
+기존 014_preview_lane_label.py는 data_set_info.data[*].value.extra.value == lane을 고른다. 그 필터와 별도로 object_Label의 lane 관련 키가 있는 객체도 찾아 비교했다. 모든 JSON을 재귀적으로 훑어 points가 있는 다른 위치도 확인했다. 좌표 객체는 모두 data 목록 안에 있었고, 차선 후보 수와 기존 필터 수가 9장 모두 같았다. 모든 차선 좌표는 POLYGONS이며 원본 크기 범위 내였다. 총 11개 영역을 반투명 fillPoly와 닫힌 polylines로 전부 그렸다. 이 9장 안에서 JSON에는 있지만 코드가 그리지 않은 차선 라벨은 0개다.
 
-check_samples.py가 기존 코드의 그리기 방식을 사용해 각각 별도 파일로 저장한다. compare_*.jpg는 왼쪽 원본/오른쪽 결과의 나란히 보기다. 9장의 비교 이미지를 직접 열어 확인했다. 표시색은 구분용이며 실제 도색색과 같지 않다. 정지선·횡단보도·화살표는 차선 누락 집계에 넣지 않았다. 이 결과는 사람이 그리지 않은 모든 선의 정확한 개수를 새로 세거나 새 정답을 만든 것이 아니다.
+015_check_samples.py가 기존 코드의 그리기 방식을 사용해 각각 별도 파일로 저장한다. compare_*.jpg는 왼쪽 원본/오른쪽 결과의 나란히 보기다. 9장의 비교 이미지를 직접 열어 확인했다. 표시색은 구분용이며 실제 도색색과 같지 않다. 정지선·횡단보도·화살표는 차선 누락 집계에 넣지 않았다. 이 결과는 사람이 그리지 않은 모든 선의 정확한 개수를 새로 세거나 새 정답을 만든 것이 아니다.
 
 ## 사진별 점검
 
@@ -48,7 +53,7 @@ AI Hub 197번 샘플도 비교한 뒤 학습 데이터를 선택하는 것이 �
 - 각 JPG·JSON 전체 경로와 라벨 속성: manifest.json
 - 요약 표: summary.csv
 
-프로젝트 폴더에서 python output/lane_label_check/check_samples.py
+프로젝트 폴더에서 python output/lane_label_check/015_check_samples.py
 '''
 (out/'점검결과.md').write_text(report,encoding='utf-8');(out/'manifest.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
 with (out/'summary.csv').open('w',encoding='utf-8-sig',newline='') as f:

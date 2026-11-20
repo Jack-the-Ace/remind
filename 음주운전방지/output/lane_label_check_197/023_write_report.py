@@ -1,3 +1,8 @@
+# 023  197번과 628번의 라벨 범위 비교하기
+# 사진에 보이는 좌우 차선과 실제 라벨을 대조해 학습 후보를 고릅니다.
+# selected_pairs.json과 같은 다섯 장의 육안 판독 메모를 사용합니다.
+# sample_check.csv와 점검결과_197.md를 저장해 마스크 설계에 참고합니다.
+
 import json,csv
 from pathlib import Path
 out=Path('output/lane_label_check_197');rows=json.loads((out/'selected_pairs.json').read_text())
@@ -46,7 +51,7 @@ report+='''
 
 ## 코드와 결과
 
-프로젝트 preview_lane_label_197.py: JPG와 JSON 경로를 인수로 받아 data의 좌표를 OpenCV 선으로 그린다. 좌표 읽기·polyline과 polygon의 차이·크기 기준을 쉬운 한국어 주석으로 설명했다.
+프로젝트 022_preview_lane_label_197.py: JPG와 JSON 경로를 인수로 받아 data의 좌표를 OpenCV 선으로 그린다. 좌표 읽기·polyline과 polygon의 차이·크기 기준을 쉬운 한국어 주석으로 설명했다.
 
 결과: 2215110_preview.jpg, 2215332_preview.jpg, 6677338_preview.jpg, 6722342_preview.jpg, 6750398_preview.jpg.
 원본/결과 비교: 같은 번호의 _compare.jpg.
@@ -54,7 +59,7 @@ report+='''
 
 실행 예:
 ```powershell
-python preview_lane_label_197.py "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215110.jpg" "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\2215110.json"
+python 022_preview_lane_label_197.py "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\원천데이터\\1900_1200\\daylight\\2215110.jpg" "C:\\Users\\mbc\\Desktop\\RedBox데이터셋\\dataSetSn_197 (차선_횡단보도인지(수도권))\\라벨링데이터\\1900_1200\\daylight\\2215110.json"
 ```
 '''
 (out/'점검결과_197.md').write_text(report,encoding='utf-8');print('보고서·샘플 판정 CSV 저장 완료')

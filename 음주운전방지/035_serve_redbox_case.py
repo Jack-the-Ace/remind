@@ -1,3 +1,8 @@
+# 035  저장된 사건을 로컬 웹으로 열기
+# 후보 시각을 클립 기준으로 환산하고 원본 저장과 브라우저 재생을 지원합니다.
+# 불법유턴 사례의 candidates.json과 original_clips가 필요합니다. 기본 포트는 8765입니다.
+# 사건 정보·영상·화면 파일을 제공하므로 브라우저에서 초안을 확인할 수 있습니다.
+
 """RedBox 사건 화면을 현재 PC에서 실행합니다."""
 
 import argparse
@@ -175,9 +180,9 @@ def main():
     with ThreadingHTTPServer(("127.0.0.1", args.port), CaseHandler) as server:
         server.case_data = json.dumps(data, ensure_ascii=False).encode("utf-8")
         server.files = {
-            "/": (APP / "index.html", "text/html; charset=utf-8"),
-            "/case.css": (APP / "case.css", "text/css; charset=utf-8"),
-            "/case.js": (APP / "case.js", "text/javascript; charset=utf-8"),
+            "/": (APP / "036_index.html", "text/html; charset=utf-8"),
+            "/case.css": (APP / "037_case.css", "text/css; charset=utf-8"),
+            "/case.js": (APP / "038_case.js", "text/javascript; charset=utf-8"),
             "/clip.webm": (preview, "video/webm"),
             "/poster.jpg": (poster, "image/jpeg"),
             "/download": (source, "video/mp4"),

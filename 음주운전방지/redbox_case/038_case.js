@@ -1,3 +1,10 @@
+/*
+ * 038  사건 정보와 신고 초안 버튼 연결하기
+ * 사용자가 고친 값을 그대로 복사하고 후보가 기록된 장면을 바로 찾게 합니다.
+ * 로컬 서버의 /case-data.json과 HTML의 입력칸·재생기를 사용합니다.
+ * 클립 탐색, 원본 저장, 항목 복사와 안전신문고 페이지 열기를 화면에 연결합니다.
+ */
+
 const video = document.querySelector("#clip");
 const seekButton = document.querySelector("#jump");
 const feedback = document.querySelector("#feedback");

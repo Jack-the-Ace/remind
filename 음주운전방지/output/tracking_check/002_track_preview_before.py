@@ -1,4 +1,9 @@
-# 참고: detect_preview.py의 차량 필터, 수업의 10 object_detection_video.py
+# 002  영상에서 차량마다 번호 붙이기
+# 같은 차를 프레임 사이에서 연결하려고 ByteTrack을 사용합니다.
+# videos의 야간 사고유발 영상과 프로젝트의 yolo26n.pt를 읽습니다.
+# 차량 상자와 ID를 화면에 표시합니다. q로 닫고 다음 실습에서 번호 변화를 기록합니다.
+
+# 참고: 001_detect_preview.py의 차량 필터, 수업의 10 object_detection_video.py
 from pathlib import Path
 
 import cv2
@@ -7,8 +12,8 @@ from ultralytics import YOLO
 
 def main():
     # 실행한 폴더가 달라도 이 파일 위치를 기준으로 영상과 가중치를 찾습니다.
-    project_dir = Path(__file__).resolve().parent
-    video_path = project_dir / "videos" / "비접촉_사고유발_영상.mp4"
+    project_dir = Path(__file__).resolve().parents[2]
+    video_path = project_dir / "videos" / "비접촉_사고유발_영상_밤.mp4"
     weights_path = project_dir / "yolo26n.pt"
     if not video_path.is_file():
         raise FileNotFoundError(f"영상이 없습니다: {video_path}")

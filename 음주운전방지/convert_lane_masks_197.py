@@ -1,3 +1,8 @@
+# 024  차선 좌표를 흑백 마스크로 바꾸기
+# 선을 한 줄씩 연결해 서로 다른 경계가 한 영역으로 채워지지 않게 합니다.
+# --data-root와 --output을 지정합니다. --samples 2215110으로 한 장부터 봅니다.
+# 기본 굵기 5픽셀의 PNG와 manifest.csv를 만들어 데이터 분할에 씁니다.
+
 """AI Hub 197 daylight JPG와 JSON에서 차선 경로 마스크를 만듭니다."""
 
 import argparse

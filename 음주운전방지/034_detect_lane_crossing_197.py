@@ -1,3 +1,8 @@
+# 034  차량의 차선 경계 통과 후보 기록하기
+# 한 경계의 반대쪽에 6프레임 머물 때만 세어 짧은 깜빡임을 걸러냅니다.
+# 006의 --selected-track 기록, 같은 영상, 640 모델, --seed-line과 새 --output이 필요합니다.
+# 후보 시각을 candidates.json에 쓰고 전후 원본 클립을 잘라 사건 화면에 넘깁니다.
+
 """선택한 차량과 차선 경계를 따라 차선 경계 통과 후보를 기록합니다."""
 
 import argparse
@@ -13,6 +18,7 @@ from PIL import Image, ImageDraw, ImageFont
 from preview_lane_track_197 import (
     DEFAULT_VIDEO, ROOT, draw_overlay, load_lane_model, predict_lane, read_track_replay, verify_video,
 )
+from track_preview import video_digest
 
 
 SIZE = (640, 400)
@@ -93,14 +99,21 @@ class Crossing:
         self.stable_frame = None
         self.pending = None
         self.pending_frame = None
+        self.side_before_loss = None
+        self.recovery_hold = False
 
     def update(self, frame, side, lost_id):
+        self.recovery_hold = False
+        if lost_id and self.stable is not None:
+            # 끊기기 전 위치는 보류 이유를 남길 때만 씁니다.
+            self.side_before_loss = self.stable
         if lost_id or (self.stable is not None and frame - self.stable_frame > self.gap_limit):
             self.stable = self.stable_frame = None
             self.pending = self.pending_frame = None
         if side is None:
             self.pending = self.pending_frame = None
             return None
+        self.recovery_hold = self.side_before_loss is not None and side != self.side_before_loss
         if side == self.stable:
             self.stable_frame = frame
             self.pending = self.pending_frame = None
@@ -111,6 +124,8 @@ class Crossing:
             return None
         previous, previous_frame = self.stable, self.stable_frame
         self.stable, self.stable_frame = side, frame
+        # 복귀 후 처음 확인한 쪽은 다음 통과를 판단할 새 기준 위치입니다.
+        self.side_before_loss = None
         event = dict(from_side=previous, to_side=side, last_origin_frame=previous_frame,
                      first_confirmable_opposite_frame=self.pending_frame) if previous is not None else None
         self.pending = self.pending_frame = None
@@ -118,12 +133,13 @@ class Crossing:
 
 
 def draw_hud(canvas, font, number, fps, count, track_id, status):
-    panel = Image.new("RGB", (560, 68), (18, 24, 28))
+    detail = f"ID {track_id}   F{number:04d}  {(number-1)/fps:.2f}초   {status}"
+    width = min(canvas.shape[1] - 8, max(560, math.ceil(font.getlength(detail)) + 24))
+    panel = Image.new("RGB", (width, 68), (18, 24, 28))
     draw = ImageDraw.Draw(panel)
     draw.text((12, 4), f"{EVENT_LABEL}  {count}건", font=font, fill=(218, 255, 228))
-    draw.text((12, 34), f"ID {track_id}   F{number:04d}  {(number-1)/fps:.2f}초   {status}",
-              font=font, fill=(245, 224, 140))
-    canvas[8:76, 8:568] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
+    draw.text((12, 34), detail, font=font, fill=(245, 224, 140))
+    canvas[8:76, 8:8 + width] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
 
 
 def save_original_clips(video, output, events, fps, shape, count):
@@ -184,14 +200,30 @@ def render(args):
     width, height, count = (int(cap.get(k)) for k in (
         cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FRAME_COUNT
     ))
-    track = read_track_replay(args.tracks, args.video, count, fps, width, height)
-    end_frame = args.end_frame if args.end_frame is not None else count
-    if not args.start_frame <= end_frame <= count:
+    selected = None
+    if args.selected_track:
+        data = json.loads(args.selected_track.read_text(encoding="utf-8"))
+        selected = data["frames"]
+        if (data["video_sha256"] != video_digest(args.video) or abs(data["fps"] - fps) > .01
+                or not 0 < len(selected) <= count
+                or any(row["frame"] != i for i, row in enumerate(selected, 1))):
+            raise ValueError("수동 선택·추적 기록과 원본 영상이 일치하지 않습니다.")
+        track = [row["vehicles"] for row in selected]
+    else:
+        track = read_track_replay(args.tracks, args.video, count, fps, width, height)
+    start_frame = args.start_frame if args.start_frame is not None else (1 if selected else 170)
+    end_frame = args.end_frame if args.end_frame is not None else len(track)
+    if not start_frame <= end_frame <= len(track):
         raise ValueError("검증 프레임 범위가 원본 영상 밖입니다.")
-    selected_categories = {car["class"] for detections in track[args.start_frame - 1:end_frame]
-                           for car in detections if car["id"] == args.track_id}
-    if args.target_class not in selected_categories:
-        raise ValueError(f"선택 구간에서 ID {args.track_id}의 {args.target_class} 추적 기록을 찾지 못했습니다.")
+    if selected:
+        if not any(row["selection"] == args.selection and row["status"] == "confirmed"
+                   for row in selected[start_frame - 1:end_frame]):
+            raise ValueError(f"지정한 구간에 수동 선택 #{args.selection}의 확정 상자가 없습니다.")
+    else:
+        selected_categories = {car["class"] for detections in track[start_frame - 1:end_frame]
+                               for car in detections if car["id"] == args.track_id}
+        if args.target_class not in selected_categories:
+            raise ValueError(f"선택 구간에서 ID {args.track_id}의 {args.target_class} 추적 기록을 찾지 못했습니다.")
     scale = np.array([SIZE[0] / width, SIZE[1] / height])
     seed = (np.array(args.seed_line).reshape(2, 2) * scale).flatten()
     boundary = Boundary(seed)
@@ -201,6 +233,8 @@ def render(args):
     actual_count = 0
     hold_labels = {
         "before_selection": "선택 대기", "after_selection": "검증 구간 종료",
+        "tracking_hold": "추적 보류",
+        "crossing_unobserved_during_tracking_gap": "판정 보류 · 추적 공백 중 통과 불명",
         "track_id_missing": "판정 보류 · ID 없음",
         "track_class_changed": "판정 보류 · 차량 상자 불확실",
         "boundary_missing": "판정 보류 · 경계 미검출",
@@ -220,9 +254,19 @@ def render(args):
                 mask, _ = predict_lane(model, frame, device, SIZE, timing)
                 seconds = (number - 1) / fps
                 canvas = draw_overlay(frame, mask, detections, number, seconds, SIZE)
-                vehicle = next((car for car in detections if car["id"] == args.track_id), None)
+                selection_active = True
+                if selected:
+                    row = selected[number - 1]
+                    selection_active = row["selection"] == args.selection
+                    # ID가 바뀌더라도 006이 같은 차량으로 채택한 상자만 판정합니다.
+                    # 주변 차량의 상자는 경계 가림을 검사할 때만 사용합니다.
+                    vehicle = row if selection_active and row["status"] == "confirmed" else None
+                    target_id = vehicle["id"] if vehicle else None
+                else:
+                    vehicle = next((car for car in detections if car["id"] == args.track_id), None)
+                    target_id = args.track_id
                 boxes = [np.asarray(car["box"]) * np.tile(scale, 2) for car in detections]
-                active = args.start_frame <= number <= end_frame
+                active = start_frame <= number <= end_frame and selection_active
                 rows = boundary.detect(mask, boxes) if active else None
                 boundary_source = "model" if rows is not None else None
                 if active and rows is None and args.yellow_support:
@@ -236,11 +280,12 @@ def render(args):
                         boundary_source = "yellow_paint"
                 point = None
                 side = distance = None
-                reason = "before_selection" if number < args.start_frame else "after_selection"
+                reason = ("before_selection" if number < start_frame or
+                          (selected and row["selection"] < args.selection) else "after_selection")
                 if active:
                     if vehicle is None:
-                        reason = "track_id_missing"
-                    elif vehicle["class"] != args.target_class:
+                        reason = "tracking_hold" if selected else "track_id_missing"
+                    elif not selected and vehicle["class"] != args.target_class:
                         reason = "track_class_changed"
                     else:
                         x1, y1, x2, y2 = map(round, vehicle["box"])
@@ -257,16 +302,20 @@ def render(args):
                     endpoints = [tuple(np.rint(np.array([np.polyval(boundary.line, y), y]) / scale).astype(int))
                                  for y in (rows.min(), rows.max())]
                     cv2.line(canvas, *endpoints, (250, 215, 55), 3, cv2.LINE_AA)
-                event = crossing.update(number, side, reason in {"track_id_missing", "track_class_changed"})
+                # 추적을 놓치면 반대쪽 확인을 처음부터 다시 시작합니다.
+                # 보이지 않는 동안 경계를 넘었는지는 계산에 넣지 않습니다.
+                event = crossing.update(number, side, reason in {"track_id_missing", "track_class_changed", "tracking_hold"})
+                if crossing.recovery_hold:
+                    reason = "crossing_unobserved_during_tracking_gap"
                 if event is not None:
                     events.append(dict(label=EVENT_LABEL, source_video=args.video.name, candidate=len(events)+1,
-                                       frame=number, time_s=seconds, track_id=args.track_id,
+                                       frame=number, time_s=seconds, track_id=target_id,
                                        direction=f"{event['from_side']}_to_{event['to_side']}",
                                        confirmation_boundary_source=boundary_source, **event))
-                status = ("경계 왼쪽" if side == "left" else "경계 오른쪽") if side else hold_labels[reason]
-                draw_hud(canvas, font, number, fps, len(events), args.track_id, status)
+                status = ("경계 왼쪽" if side == "left" else "경계 오른쪽") if reason == "observed" else hold_labels[reason]
+                draw_hud(canvas, font, number, fps, len(events), target_id if target_id is not None else "—", status)
                 writer.write(canvas)
-                stream.write(json.dumps(dict(frame=number, time_s=seconds, target_id=args.track_id,
+                stream.write(json.dumps(dict(frame=number, time_s=seconds, target_id=target_id,
                                              target_point=point, side=side, distance_px=distance, status=reason,
                                              boundary_source=boundary_source,
                                              boundary_fit=boundary.line.tolist() if rows is not None else None,
@@ -285,17 +334,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--video", type=Path, default=DEFAULT_VIDEO)
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
-    parser.add_argument("--tracks", type=Path, default=DEFAULT_TRACK)
+    inputs = parser.add_mutually_exclusive_group()
+    inputs.add_argument("--tracks", type=Path, default=DEFAULT_TRACK)
+    inputs.add_argument("--selected-track", type=Path, help="006의 수동 선택·추적 JSON")
+    parser.add_argument("--selection", type=int, default=1, help="집계할 수동 선택 순번")
     parser.add_argument("--track-id", type=int, default=72)
     parser.add_argument("--target-class", default="car")
-    parser.add_argument("--start-frame", type=int, default=170)
+    parser.add_argument("--start-frame", type=int, help="기본값은 수동 선택 모드 1, 기존 ID 지정 모드 170")
     parser.add_argument("--end-frame", type=int, help="마지막으로 판정할 프레임")
     parser.add_argument("--yellow-support", action="store_true", help="노란 경계에서 보이는 도색을 보조 근거로 사용합니다.")
     parser.add_argument("--seed-line", nargs=4, type=float, default=(770, 340, 1140, 637))
     parser.add_argument("--font", type=Path, default=Path("C:/Windows/Fonts/malgunbd.ttf"))
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    if args.start_frame < 1 or args.seed_line[1] == args.seed_line[3] or args.seed_line[0] == args.seed_line[2]:
+    if (args.start_frame is not None and args.start_frame < 1 or args.selection < 1
+            or args.seed_line[1] == args.seed_line[3] or args.seed_line[0] == args.seed_line[2]):
         parser.error("시작 프레임과 차선의 시작 좌표를 확인하세요.")
     render(args)
 

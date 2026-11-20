@@ -1,3 +1,8 @@
+# 003  수정 전 추적 결과 기록하기
+# 차량 선택 기능을 넣기 전 상태를 다시 비교할 수 있게 남깁니다.
+# 프로젝트에서 실행하면 002가 같은 야간 영상과 가중치로 추적합니다.
+# 프레임별 상자와 ID를 baseline.json에 쓰고 구간별 비교 사진을 만듭니다.
+
 import json, runpy
 from pathlib import Path
 import cv2
@@ -13,9 +18,9 @@ def track(self,*a,**kw):
 YOLO.track=track
 cv2.imshow=lambda *a:None
 cv2.waitKey=lambda *a:-1
-runpy.run_path(str(root/'track_preview.py'),run_name='__main__')
+runpy.run_path(str(out/'002_track_preview_before.py'),run_name='__main__')
 (out/'baseline.json').write_text(json.dumps(rows))
-cap=cv2.VideoCapture(str(root/'videos/비접촉_사고유발_영상.mp4'))
+cap=cv2.VideoCapture(str(root/'videos/비접촉_사고유발_영상_밤.mp4'))
 for page,start in enumerate(range(0,len(rows),180)):
     sheet=Image.new('RGB',(1440,6*280))
     for j,n in enumerate(range(start,min(start+180,len(rows)),10)):

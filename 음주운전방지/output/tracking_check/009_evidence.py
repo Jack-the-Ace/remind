@@ -1,7 +1,12 @@
+# 009  추적 전후를 한 장에서 비교하기
+# 번호가 유지돼도 실제 차가 맞는지 원본 장면을 나란히 봅니다.
+# 야간 영상과 baseline.json, final.json, reference_boxes.json을 읽습니다.
+# 선택 전후의 상자를 comparison_0.jpg와 comparison_1.jpg에 그려 보고서에 씁니다.
+
 import json,cv2
 from pathlib import Path
 from PIL import Image,ImageDraw
-p=Path('output/tracking_check'); final=json.loads((p/'final.json').read_text());ref=json.loads((p/'reference_boxes.json').read_text());base=json.loads((p/'baseline.json').read_text());c=cv2.VideoCapture('videos/비접촉_사고유발_영상.mp4')
+p=Path('output/tracking_check'); final=json.loads((p/'final.json').read_text());ref=json.loads((p/'reference_boxes.json').read_text());base=json.loads((p/'baseline.json').read_text());c=cv2.VideoCapture('videos/비접촉_사고유발_영상_밤.mp4')
 for page,ns in enumerate([[1,205,240,421,439,528],[531,542,567,571,580,606]]):
  s=Image.new('RGB',(1440,6*245))
  for j,n in enumerate(ns):

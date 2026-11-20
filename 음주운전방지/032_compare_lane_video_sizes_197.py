@@ -1,3 +1,8 @@
+# 032  두 입력 크기의 같은 프레임 비교하기
+# 영상과 추적 조건을 맞춰야 선 굵기나 깜빡임의 차이를 비교할 수 있습니다.
+# --output 아래 384x240, 640x400 두 실행의 영상·summary.json·frames.jsonl이 필요합니다.
+# side_by_side.mp4와 comparison.json을 저장해 재학습 전후를 확인합니다.
+
 """두 입력 크기의 오버레이를 같은 프레임끼리 나란히 저장합니다."""
 
 import argparse

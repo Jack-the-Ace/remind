@@ -1,3 +1,8 @@
+# 011  은색 차를 놓친 단계 찾기
+# 검출·번호 부여·타깃 선택을 따로 기록해 어느 조건에서 끊겼는지 봅니다.
+# 야간 영상 첫 프레임에서 (690, 560)을 고르고 추적 이력을 쌓습니다.
+# diagnostic_*.json에 상자와 탈락 이유를 남겨 528~542프레임을 대조합니다.
+
 # 현재 스크립트를 그대로 실행하고 관찰용 기록만 덧붙입니다. 설정은 바꾸지 않습니다.
 import inspect, textwrap, json, runpy, sys, hashlib
 from pathlib import Path
@@ -32,7 +37,7 @@ def track(self,*a,**kw):
  tracked.append([dict(box=b.xyxy[0].tolist(),id=int(b.id[0]) if b.id is not None else None,conf=float(b.conf[0])) for b in r[0].boxes])
  return r
 YOLO.track=track
-sys.argv=['track_preview.py','--headless','--select','690','560','--log',str(out/'diagnostic_final.json')]
+sys.argv=['track_preview.py','--video','videos/비접촉_사고유발_영상_밤.mp4','--headless','--select','690','560','--log',str(out/'diagnostic_final.json')]
 app.main()
 for name,data in [('diagnostic_candidates',records),('diagnostic_raw',raw),('diagnostic_tracks',tracked)]:
  (out/f'{name}.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')

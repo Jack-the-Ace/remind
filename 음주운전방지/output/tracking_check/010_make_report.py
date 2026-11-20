@@ -1,3 +1,8 @@
+# 010  추적 누락과 복귀 구간 정리하기
+# 번호 변경과 상자 누락을 구분해 영상 시각으로 다시 찾게 합니다.
+# tracking_check의 final.json, baseline_target.json과 육안 판독 구간을 씁니다.
+# 프레임별 상태와 실험 메모를 검증결과.md에 모아 원인 진단으로 이어갑니다.
+
 import json
 from pathlib import Path
 p=Path('output/tracking_check');f=json.loads((p/'final.json').read_text());b=json.loads((p/'baseline_target.json').read_text())
@@ -5,7 +10,7 @@ events=[(199,203,'1 → 13','새 ID',3),(213,215,'13 → 14','새 ID',1),(220,22
 def stamp(n):return f'{n} / {(n-1)/30:.3f}초'
 text='''# RedBox 타깃 추적 검증
 
-영상: videos/비접촉_사고유발_영상.mp4, 1918×1008, 30fps, 676프레임.
+영상: videos/비접촉_사고유발_영상_밤.mp4, 1918×1008, 30fps, 676프레임.
 프레임은 1부터, 시각은 (프레임-1)/30초. 타깃은 첫 프레임 중심 약 (690,560)의 왼쪽 은색 승용차. 이후 오른쪽으로 급차선 변경하는 은색 차이며 왼쪽에 남은 검은 SUV와 다름.
 
 ## 변경 전 끊김
@@ -50,17 +55,17 @@ text+='''
 ## 실행과 조작
 
 ```powershell
-python "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\track_preview.py"
+python "C:\\Users\\mbc\\MBCA\\00_Remind\\음주운전방지\\track_preview.py" --video "videos/비접촉_사고유발_영상_밤.mp4"
 ```
 
 첫 화면은 일시정지. 왼쪽 차량 상자를 클릭하고 Space로 재생. Space 일시정지, r 재선택(모든 검출 상자를 다시 표시), +/- 빠르게/느리게, q 종료. 선택 후에는 확인된 타깃 상자만 노란색으로 표시. ID는 원래 추적기의 ID로 표시하며 고정 번호로 바꾸지 않음. 결과 영상 저장·위험 판정은 추가하지 않음.
 
 재현 명령(테스트용 첫 위치만 지정):
 ```powershell
-python track_preview.py --headless --select 690 560 --log output/tracking_check/final.json
+python track_preview.py --video videos/비접촉_사고유발_영상_밤.mp4 --headless --select 690 560 --log output/tracking_check/final.json
 ```
 
-자료: track_preview_before.py(수정 전), baseline.json, buffer90.json, final.json, comparison_0.jpg, comparison_1.jpg, baseline_sheet_0~3.jpg, boundaries.jpg, late.jpg. comparison은 왼쪽 원본/오른쪽 최종이며 도로 부분 확대본. baseline_sheet에는 전체 화면이 있음.
+자료: 002_track_preview_before.py(수정 전), baseline.json, buffer90.json, final.json, comparison_0.jpg, comparison_1.jpg, baseline_sheet_0~3.jpg, boundaries.jpg, late.jpg. comparison은 왼쪽 원본/오른쪽 최종이며 도로 부분 확대본. baseline_sheet에는 전체 화면이 있음.
 '''
 (p/'검증결과.md').write_text(text,encoding='utf-8')
 print('report saved')

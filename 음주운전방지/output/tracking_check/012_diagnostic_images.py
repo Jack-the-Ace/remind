@@ -1,7 +1,12 @@
+# 012  원본과 세 단계의 상자 비교하기
+# 겹쳐 보이는 은색 차와 검은 SUV를 같은 프레임에서 구별합니다.
+# 야간 영상과 diagnostic_raw, diagnostic_tracks, diagnostic_final JSON을 읽습니다.
+# 528~542프레임을 네 칸에 그려 diagnostic_compare_*.jpg로 남깁니다.
+
 import json,cv2
 from pathlib import Path
 from PIL import Image,ImageDraw
-p=Path('output/tracking_check');raw=json.loads((p/'diagnostic_raw.json').read_text());tr=json.loads((p/'diagnostic_tracks.json').read_text());fi=json.loads((p/'diagnostic_final.json').read_text());c=cv2.VideoCapture('videos/비접촉_사고유발_영상.mp4')
+p=Path('output/tracking_check');raw=json.loads((p/'diagnostic_raw.json').read_text());tr=json.loads((p/'diagnostic_tracks.json').read_text());fi=json.loads((p/'diagnostic_final.json').read_text());c=cv2.VideoCapture('videos/비접촉_사고유발_영상_밤.mp4')
 for page,start in enumerate(range(528,543,5)):
  s=Image.new('RGB',(1920,5*240))
  for row,n in enumerate(range(start,start+5)):

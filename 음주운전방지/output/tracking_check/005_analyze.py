@@ -1,3 +1,8 @@
+# 005  상자와 추적 번호가 빠진 구간 세기
+# 눈으로 확인한 번호의 상자 사이를 보간해 비교할 위치를 정합니다.
+# baseline.json과 buffer90.json에서 첫 606프레임을 비교합니다.
+# reference_boxes.json과 두 설정의 타깃 기록을 남겨 선택 결과와 대조합니다.
+
 import json
 from pathlib import Path
 p=Path('output/tracking_check');b=json.loads((p/'baseline.json').read_text());v=json.loads((p/'buffer90.json').read_text());ids={1,13,17,58,63,66}

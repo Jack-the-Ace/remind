@@ -1,9 +1,15 @@
 .env
 /yolov8s-world.pt
-/output/file_organization/
+!/output/file_organization/
+/output/file_organization/*
+!/output/file_organization/[0-9][0-9][0-9]_*.py
 /output/lane_smoke_197*/
 /output/lane_overfit_197*/
 /output/lane_batchnorm_197*/
 /output/lane_train_197*/
 /output/lane_transfer_197*/
 /output/lane_video_197*/
+
+!/output/lane_video_197_case_preview/
+/output/lane_video_197_case_preview/*
+!/output/lane_video_197_case_preview/[0-9][0-9][0-9]_*.py

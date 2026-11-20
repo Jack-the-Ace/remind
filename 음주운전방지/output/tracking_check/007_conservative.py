@@ -1,3 +1,8 @@
+# 007  야간 영상의 차량 재연결 실험
+# ID가 바뀌었을 때 비슷한 후보를 바로 채택하면 옆 차를 고를 수 있습니다.
+# 야간 영상과 yolo26n.pt를 읽습니다. --headless --select 690 560으로 처음 고릅니다.
+# --log에 선택 결과를 저장해 기본 추적과 비교합니다.
+
 # 수업 흐름: VideoCapture → 프레임 읽기 → model.track → OpenCV 표시
 from pathlib import Path
 import argparse
@@ -7,7 +12,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 VEHICLES = {"car", "bus", "truck", "motorcycle"}
 
 
@@ -104,7 +109,7 @@ def main():
     args = parser.parse_args()
     if args.headless and args.select is None:
         parser.error('--headless 검증에는 --select X Y가 필요합니다.')
-    video = ROOT / 'videos' / '비접촉_사고유발_영상.mp4'
+    video = ROOT / 'videos' / '비접촉_사고유발_영상_밤.mp4'
     weights = ROOT / 'yolo26n.pt'
     if not video.is_file() or not weights.is_file():
         raise FileNotFoundError('프로젝트의 영상과 yolo26n.pt를 확인해주세요.')

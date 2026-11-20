@@ -1,3 +1,8 @@
+# 001  사진 한 장에서 차량 찾기
+# 수업의 YOLO로 차종을 걸러 사진부터 결과를 확인합니다.
+# JPG 경로와 같은 폴더의 yolo26n.pt를 준비합니다.
+# 차량에 네모를 그려 output/<사진명>_detected.jpg에 저장하고 영상 추적으로 넘어갑니다.
+
 # 참고: 수업의 06 object_detection.py (이미지 → YOLO → 박스 그리기)
 from pathlib import Path
 import sys
@@ -30,7 +35,7 @@ def main():
         raise FileNotFoundError(f"수업용 YOLO 가중치가 없습니다: {weights_path}")
     model = YOLO(str(weights_path))
 
-    # 3. 수업과 같은 신뢰도 기준(0.3)과 CPU로 객체 검출
+    # 3. 이 실습의 신뢰도 기준(0.1)과 CPU로 객체 검출
     results = model.predict(source=img, conf=0.1, device="cpu", verbose=False)
     result = results[0]
 

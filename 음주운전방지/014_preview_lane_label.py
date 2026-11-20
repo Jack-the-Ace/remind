@@ -1,3 +1,8 @@
+# 014  628번 사진에서 차선 영역 확인하기
+# 628번은 차선의 폭을 다각형으로 기록하므로 내부와 테두리를 함께 그립니다.
+# 같은 장면의 JPG와 JSON을 차례로 입력합니다.
+# 원본에 겹친 output/lane_label_preview.jpg를 보고 여러 장의 라벨을 점검합니다.
+
 # JPG 읽기 → JSON의 차선 좌표 읽기 → OpenCV로 그리기 → JPG 저장
 import argparse
 import json
