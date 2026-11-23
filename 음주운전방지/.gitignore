@@ -9,6 +9,7 @@
 /output/lane_train_197*/
 /output/lane_transfer_197*/
 /output/lane_video_197*/
+/videos/BB_*.avi
 
 !/output/lane_video_197_case_preview/
 /output/lane_video_197_case_preview/*

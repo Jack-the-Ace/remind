@@ -142,14 +142,14 @@ def draw_hud(canvas, font, number, fps, count, track_id, status):
     canvas[8:76, 8:8 + width] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
 
 
-def save_original_clips(video, output, events, fps, shape, count):
+def save_original_clips(video, output, events, fps, shape, count, *, open_video=cv2.VideoCapture):
     if not events:
         return
     folder = output / "original_clips"
     folder.mkdir()
     height, width = shape
     radius = round(fps * 3)
-    capture = cv2.VideoCapture(str(video.resolve()))
+    capture = open_video(str(video.resolve()))
     try:
         if not capture.isOpened():
             raise RuntimeError("후보 클립을 만들 원본을 열 수 없습니다.")

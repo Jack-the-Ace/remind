@@ -1,0 +1,74 @@
+<!doctype html>
+<!-- 042 · 041이 제공하는 실제 영상에서 차량을 선택하는 화면입니다.
+     분석 결과의 HUD 재생, 차량번호 수정, MP4·JSON 저장으로 이어집니다. -->
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>RedBox · 차량 분석</title>
+  <link rel="stylesheet" href="/mvp.css">
+  <script src="/mvp.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><i aria-hidden="true"></i>Red<span>Box</span></div>
+    <div class="live"><b></b> 로컬 영상 분석</div>
+  </header>
+  <main>
+    <section class="heading">
+      <div>
+        <h1>차량 분석</h1>
+        <p>블랙박스 영상에서 차량 한 대를 지정하고 움직임을 검토하세요.</p>
+      </div>
+      <button id="demo" type="button">검증 사례 불러오기</button>
+    </section>
+    <div class="workspace">
+      <section class="viewer" aria-label="영상 미리보기 및 분석 재생">
+        <header class="stage-head"><strong id="filename">영상 선택</strong><span id="stage-status" aria-live="polite">준비 중</span></header>
+        <div class="stage">
+          <canvas id="preview" width="960" height="544" aria-label="차량과 차선 경계를 선택할 프레임"></canvas>
+          <video id="replay" controls playsinline preload="metadata" hidden aria-label="HUD 분석 결과 재생"></video>
+          <div id="preview-rec" class="preview-rec" data-recording="false" hidden>
+            <strong>● REC</strong><span id="preview-time">00:00.00</span>
+          </div>
+          <span id="event-float" class="event-float" aria-hidden="true" hidden></span>
+        </div>
+        <div class="transport">
+          <span id="time-label" class="mono">00:00.00</span>
+          <label class="scrub"><span class="sr-only">선택할 영상 시각</span><input id="timeline" type="range" min="0" max="60" step=".1" value="0"></label>
+          <button id="prev" type="button" aria-label="1초 전">−1초</button>
+          <button id="next" type="button" aria-label="1초 뒤">+1초</button>
+        </div>
+        <div id="instruction" class="instruction" aria-live="polite">영상 위의 차량 상자를 클릭하세요.</div>
+      </section>
+      <aside class="side" aria-label="분석 설정">
+        <section class="panel">
+          <h2>분석 설정</h2>
+          <label>영상<select id="source"></select></label>
+          <div class="inputs">
+            <label>카메라<select id="camera"><option value="front">전방</option><option value="rear">후방</option></select></label>
+            <label>길이 (초)<input id="duration" type="number" value="15" min="1" max="180"></label>
+          </div>
+          <label>자료 유형<select id="kind"><option value="recorded">실제 영상</option><option value="independent_test">독립 테스트</option><option value="synthetic">합성 영상</option></select></label>
+          <div class="selection"><span>선택 차량</span><strong id="vehicle-state">선택 대기</strong></div>
+          <button id="boundary" class="secondary" type="button" disabled aria-pressed="false">차선 경계 지정</button>
+          <label>차량번호 <span class="optional">선택 입력</span><input id="plate" maxlength="16" type="text" placeholder="OCR 또는 직접 입력" autocomplete="off"></label>
+          <button id="analyze" class="primary" type="button" disabled>선택 차량 분석</button>
+          <progress id="progress" hidden max="100" value="0"></progress>
+        </section>
+        <section class="panel results" id="results" hidden aria-label="분석 결과">
+          <div id="totals" hidden>
+            <h2>TOTAL <span id="total-count"></span></h2>
+            <ol id="events"></ol>
+          </div>
+          <div id="result-info"></div>
+          <button id="save-plate" type="button" class="secondary">수정한 번호판을 JSON에 저장</button>
+          <div class="downloads"><a id="mp4" download="redbox-hud.mp4">HUD MP4</a><a id="json" download="redbox-target.json">분석 JSON</a></div>
+          <button id="review-reset" type="button">다른 차량 선택</button>
+        </section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
