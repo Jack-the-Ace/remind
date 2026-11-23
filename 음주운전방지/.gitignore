@@ -14,3 +14,5 @@
 !/output/lane_video_197_case_preview/
 /output/lane_video_197_case_preview/*
 !/output/lane_video_197_case_preview/[0-9][0-9][0-9]_*.py
+
+*.avi
