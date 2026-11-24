@@ -49,7 +49,7 @@ async function loadCase() {
   const response = await fetch("/case-data.json");
   if (!response.ok) throw new Error("사건 데이터를 읽지 못했습니다.");
   const data = await response.json();
-  document.querySelector("#case-label").textContent = data.label;
+  document.querySelector("#case-label").textContent = ["차선변경", "차선침범", "정지선 위반"].includes(data.label) ? data.label : "주행 기록";
   document.querySelector("#source-video").textContent = data.sourceVideo;
   document.querySelector("#original-time").textContent = `${data.originalTime.toFixed(2)}초`;
   document.querySelector("#track-id").textContent = `ID ${data.trackId}`;

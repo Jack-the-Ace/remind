@@ -132,12 +132,71 @@ class Crossing:
         return event
 
 
+class LaneBehavior:
+    """선택한 차량과 같은 경계의 상대 위치로 한 번의 움직임을 분류합니다."""
+
+    def __init__(self, fps):
+        self.fps = fps
+        self.stability = math.ceil(HOLD_SECONDS * fps)
+        self.contact = math.ceil(.10 * fps)
+        self.reset()
+
+    def reset(self):
+        self.origin = self.side = self.side_frame = None
+        self.approach_frame = self.first_opposite = self.contact_frame = None
+
+    def update(self, frame, side, status, distance):
+        if status not in {"observed", "near_boundary"}:
+            self.reset()
+            return None
+        if status == "near_boundary":
+            side = None
+        if side != self.side or self.side_frame is None:
+            self.side, self.side_frame = side, frame
+        stable = frame - self.side_frame + 1
+        if self.origin is None:
+            if side is not None and stable >= self.stability:
+                self.origin = side
+            return None
+        if side is None:
+            # 경계 부근의 한 프레임 흔들림을 밟고 복귀한 사건으로 세지 않습니다.
+            if distance is None or abs(distance) > SIDE_MARGIN / 2:
+                self.contact_frame = None
+            elif self.contact_frame is None:
+                self.contact_frame = frame
+            if (self.contact_frame is not None and frame-self.contact_frame+1 >= self.contact
+                    and self.approach_frame is None):
+                self.approach_frame = self.contact_frame
+            self.first_opposite = None
+            return None
+        self.contact_frame = None
+        if side != self.origin:
+            if self.first_opposite is None:
+                self.first_opposite = self.side_frame
+            if self.approach_frame is None and stable >= self.stability:
+                self.approach_frame = self.first_opposite
+            if (frame - self.first_opposite) / self.fps < 1:
+                return None
+            label = "차선변경"
+        elif self.approach_frame is not None and stable >= self.stability:
+            label = "차선침범"
+        else:
+            self.first_opposite = None
+            return None
+        event = dict(label=label, from_side=self.origin, to_side=side,
+                     maneuver_start_frame=self.approach_frame,
+                     opposite_start_frame=self.first_opposite, confirmed_frame=frame)
+        self.origin = side
+        self.approach_frame = self.first_opposite = None
+        return event
+
+
 def draw_hud(canvas, font, number, fps, count, track_id, status):
     detail = f"ID {track_id}   F{number:04d}  {(number-1)/fps:.2f}초   {status}"
     width = min(canvas.shape[1] - 8, max(560, math.ceil(font.getlength(detail)) + 24))
     panel = Image.new("RGB", (width, 68), (18, 24, 28))
     draw = ImageDraw.Draw(panel)
-    draw.text((12, 4), f"{EVENT_LABEL}  {count}건", font=font, fill=(218, 255, 228))
+    draw.text((12, 4), f"경계 관찰  {count}건", font=font, fill=(218, 255, 228))
     draw.text((12, 34), detail, font=font, fill=(245, 224, 140))
     canvas[8:76, 8:8 + width] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
 

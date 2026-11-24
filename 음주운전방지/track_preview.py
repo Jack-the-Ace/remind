@@ -33,16 +33,41 @@ def appearance(frame, box):
     return gray, cv2.normalize(hist, None).flatten()
 
 
+def appearance_scores(look, reference):
+    gray, histogram = reference
+    shape = float(cv2.matchTemplate(look[0], gray, cv2.TM_CCOEFF_NORMED)[0, 0])
+    color = 1 - cv2.compareHist(look[1], histogram, cv2.HISTCMP_BHATTACHARYYA)
+    return shape, color
+
+
+def box_overlap(first, second):
+    common = np.maximum(0, np.minimum(first[2:], second[2:]) - np.maximum(first[:2], second[:2])).prod()
+    union = np.prod(first[2:] - first[:2]) + np.prod(second[2:] - second[:2]) - common
+    return common / max(union, 1)
+
+
 class Target:
-    def __init__(self):
+    def __init__(self, diagnostic=None):
         self.box = None
         self.track_id = None
         self.last_frame = 0
         self.look = None
         self.recent_looks = deque(maxlen=12)
         self.velocity = np.zeros(2)
+        self.diagnostic = diagnostic
+        self.clear_pending()
+
+    def clear_pending(self):
         self.pending = None
         self.streak = 0
+        self.used_transition = False
+        self.used_extension = False
+
+    def report(self, number, detection, reason, **scores):
+        if self.diagnostic is not None:
+            self.diagnostic(dict(frame=number, last_accepted=self.last_frame, gap=number-self.last_frame,
+                                 candidate_id=detection['id'] if detection else None,
+                                 reason=reason, **scores))
 
     def select(self, detection, frame, number):
         self.box = np.array(detection['box'], dtype=float)
@@ -53,8 +78,7 @@ class Target:
             self.recent_looks.append(self.look)
         self.last_frame = number
         self.velocity = np.zeros(2)
-        self.pending = None
-        self.streak = 0
+        self.clear_pending()
 
     def update(self, detections, frame, number):
         if self.box is None:
@@ -62,53 +86,92 @@ class Target:
         gap = number - self.last_frame
         # 1초 넘게 놓치면 자동 연결을 멈춥니다. 사용자가 다시 선택해야 합니다.
         if gap > 30:
+            self.report(number, None, 'reconnect_timeout')
             return None
         size = np.maximum(self.box[2:] - self.box[:2], 1)
         center = (self.box[:2] + self.box[2:]) / 2
         predicted = center + self.velocity * min(gap, 10)
+        limit = min(1.4, .65 + gap * .04)
         candidates = []
+        if not detections:
+            self.report(number, None, 'no_tracked_box')
         for d in detections:
             if d['id'] is None:
+                self.report(number, d, 'no_track_id')
                 continue
             b = np.array(d['box'])
             ratio = (b[2:] - b[:2]) / size
             distance = np.linalg.norm(((b[:2] + b[2:]) / 2 - predicted) / size)
-            if np.any(ratio < .5) or np.any(ratio > 2) or distance > min(1.4, .65 + gap * .04):
+            same_id = d['id'] == self.track_id
+            # 새 후보의 첫 상자는 기존 조건을 그대로 통과해야 합니다.
+            # 다음 프레임에 같은 후보 상자가 충분히 겹칠 때만 짧은 이동을 이어 봅니다.
+            same_pending = (
+                not same_id and self.pending is not None and self.pending[0] == number - 1
+                and self.pending[1]['id'] == d['id']
+            )
+            continuous = (same_pending and self.pending[1]['class'] == d['class']
+                          and box_overlap(np.asarray(self.pending[1]['box']), b) >= .50)
+            extended = distance > limit
+            # 원래 위치·외형 조건만 쓰는 후보는 기존 방식으로 연속 확인합니다.
+            # 한 번이라도 확장 조건을 쓰면 이후에도 상자가 겹쳐야 같은 흐름으로 봅니다.
+            continues_streak = continuous or (same_pending and not self.used_extension and not extended)
+            if np.any(ratio < .5) or np.any(ratio > 2) or distance > limit + (.45 if continuous else 0):
+                self.report(number, d, 'position_or_size', ratio=ratio.tolist(),
+                            distance=float(distance), limit=limit + (.45 if continuous else 0))
                 continue
             look = appearance(frame, b)
             if look is None or self.look is None:
+                self.report(number, d, 'appearance_unavailable')
                 continue
-            same_id = d['id'] == self.track_id
             # 같은 ID여도 위치와 외형을 검사합니다. 번호만으로 성공 처리하지 않습니다.
             # 번호를 잃기 직전에는 가린 차량이 섞일 수 있어 최근에 확인한 모습도 비교합니다.
             references = self.recent_looks if not same_id and gap > 1 else (self.look,)
+            comparisons = [appearance_scores(look, reference) for reference in references]
             scores = []
-            for gray, histogram in references:
-                shape = float(cv2.matchTemplate(look[0], gray, cv2.TM_CCOEFF_NORMED)[0, 0])
-                color = 1 - cv2.compareHist(look[1], histogram, cv2.HISTCMP_BHATTACHARYYA)
+            for shape, color in comparisons:
                 if shape >= (.15 if same_id else .20) and color >= (.45 if same_id else .70):
                     scores.append(.6 * shape + .4 * color - .15 * distance)
             if scores:
-                candidates.append((max(scores), d))
+                candidates.append((max(scores), d, look, continues_streak, True, extended))
+            elif continuous and not self.used_transition:
+                # 겹치는 임시 상자의 외형이 거의 같으면 한 프레임만 연결을 보류합니다.
+                # 이 프레임은 외형 확인 3회에 포함하지 않고 화면·집계에도 넘기지 않습니다.
+                shape, color = appearance_scores(look, self.pending[2])
+                if shape >= .35 and color >= .85:
+                    candidates.append((.6 * shape + .4 * color - .15 * distance, d, look, True, False, True))
+                    continue
+                self.report(number, d, 'appearance', comparisons=comparisons,
+                            pending_shape=shape, pending_color=color)
+            else:
+                self.report(number, d, 'appearance', comparisons=comparisons)
         candidates.sort(key=lambda item: item[0], reverse=True)
         # 비슷한 후보가 둘이면 보류합니다. 다른 차에 상자를 붙이지 않는 쪽을 택합니다.
         if not candidates or (len(candidates) > 1 and candidates[0][0] - candidates[1][0] < .12):
-            self.pending, self.streak = None, 0
+            for score, d, *_ in candidates:
+                self.report(number, d, 'ambiguous_candidates', score=float(score))
+            self.clear_pending()
             return None
-        d = candidates[0][1]
+        _, d, look, continues_streak, confirmed_look, extended = candidates[0]
         if d['id'] != self.track_id:
-            self.streak = self.streak + 1 if self.pending == d['id'] else 1
-            self.pending = d['id']
-            # 새 번호는 3개 연속 프레임에서 같은 후보가 확인되어야 연결합니다.
+            if not continues_streak:
+                self.clear_pending()
+            self.pending = number, d, look
+            self.streak += int(confirmed_look)
+            self.used_transition |= not confirmed_look
+            self.used_extension |= extended
+            # 끊김 없는 짧은 경로에서 기존 차량의 외형이 3회 확인되어야 새 ID를 채택합니다.
             if self.streak < 3:
+                self.report(number, d, 'awaiting_id_confirmation' if confirmed_look else 'appearance_transition',
+                            confirmations=self.streak)
                 return None
+        self.report(number, d, 'accepted')
         b = np.array(d['box'])
         movement = ((b[:2] + b[2:]) / 2 - center) / max(gap, 1)
         self.velocity = .6 * self.velocity + .4 * movement
         self.box, self.track_id, self.last_frame = b, d['id'], number
-        self.look = appearance(frame, b)
+        self.look = look
         self.recent_looks.append(self.look)
-        self.pending, self.streak = None, 0
+        self.clear_pending()
         return d
 
 

@@ -7,8 +7,9 @@
 
 import argparse
 from base64 import b64encode
-from collections import Counter
-from contextlib import contextmanager
+from collections import Counter, deque
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack, contextmanager
 from functools import lru_cache
 from http.server import ThreadingHTTPServer
 from importlib import import_module
@@ -23,11 +24,12 @@ from uuid import uuid4
 
 import cv2
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 import torch
 from ultralytics import YOLO
 
 from preview_lane_track_197 import load_lane_model, predict_lane, track_vehicles, verify_video
+from redbox_stop_line import StopLineMonitor
 from redbox_vehicle_info import VehicleInfo
 from track_preview import ROOT, VEHICLES, Target
 
@@ -36,7 +38,6 @@ crossing_module = import_module("034_detect_lane_crossing_197")
 media_handler = import_module("035_serve_redbox_case").CaseHandler
 OUTPUT = ROOT / "output/lane_video_197_mvp"
 INPUT = ROOT / "videos"
-LABEL = crossing_module.EVENT_LABEL
 SIZE = crossing_module.SIZE
 FONT = Path("C:/Windows/Fonts/malgunbd.ttf")
 STATUS = {
@@ -49,6 +50,13 @@ STATUS = {
     "near_boundary": "판정 보류 · 경계 근접",
     "crossing_unobserved_during_tracking_gap": "판정 보류 · 추적 공백 중 통과 불명",
     "observed": "추적 중 · 경계 확인",
+    "stop_observed": "추적 중 · 정지선 확인",
+    "stop_near_line": "판정 보류 · 정지선 근접",
+    "stop_motion_hold": "판정 보류 · 도로 움직임 불확실",
+    "stop_paint_hold": "판정 보류 · 정지선 도색 불확실",
+    "stop_line_lost": "판정 보류 · 지정 정지선 추적 상실",
+    "stop_contact_hold": "판정 보류 · 차량 접지점 불확실",
+    "stop_gap_hold": "판정 보류 · 공백 중 정지선 통과 불명",
 }
 
 
@@ -198,7 +206,8 @@ HUD_GREEN = "#46ff78"
 HUD_BLUE = "#50b7ff"
 HUD_WHITE = "#ffffff"
 REC_INACTIVE = "#b5b5b5"
-EVENT_FLOAT_SECONDS = 1.2
+EVENT_FLOAT_SECONDS = 2.0
+EVENT_COLORS = {"차선변경": HUD_GREEN, "차선침범": HUD_RED, "정지선 위반": HUD_RED}
 
 
 def hud_text(draw, x, y, parts, size, *, align="left"):
@@ -213,10 +222,13 @@ def hud_text(draw, x, y, parts, size, *, align="left"):
         x += length
 
 
-def draw_hud(frame, row, source_kind, *, recording=False):
+def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
     height, width = frame.shape[:2]
     size = (960, max(240, round(height*960/width)//2*2))
-    image = Image.fromarray(cv2.cvtColor(cv2.resize(frame, size, interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2RGB))
+    if overlay_only:
+        image = Image.new("RGBA", size)
+    else:
+        image = Image.fromarray(cv2.cvtColor(cv2.resize(frame, size, interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(image, "RGBA")
     scale = (size[0]/width, size[1]/height)
     info = row["vehicle_info"]
@@ -224,6 +236,9 @@ def draw_hud(frame, row, source_kind, *, recording=False):
     clock = f"{int(phase//60):02d}:{phase%60:05.2f}"
     if row["boundary"]:
         draw.line([tuple(round(v*s) for v,s in zip(p, scale)) for p in row["boundary"]],
+                  fill=HUD_BLUE, width=2)
+    if (stop_line := (row.get("stop_line") or {}).get("line")):
+        draw.line([tuple(round(v*s) for v,s in zip(p, scale)) for p in stop_line],
                   fill=HUD_BLUE, width=2)
     if row["box"]:
         x, y, a, b = (round(v*scale[i%2]) for i,v in enumerate(row["box"]))
@@ -235,9 +250,6 @@ def draw_hud(frame, row, source_kind, *, recording=False):
     hud_text(draw, 18, 17, [("컬러: ", HUD_GREEN), (info["color"] or "-", HUD_WHITE)], 17)
     hud_text(draw, 18, 40, [("차종: ", HUD_GREEN), (info["vehicle_type"] or "-", HUD_WHITE)], 17)
     hud_text(draw, 18, 65, [(info["plate"] or "차량번호: -", HUD_GREEN)], 26)
-    detail = {"manual": "직접 입력", "ocr_candidate": "OCR 후보"}.get(info["plate_source"])
-    if detail:
-        hud_text(draw, 19, 96, [(detail, HUD_WHITE)], 11)
     # 저장 영상은 기본적으로 회색 REC입니다. 실제 녹화 상태만 빨간 REC를 켭니다.
     hud_text(draw, size[0]//2, 16, [("● REC", HUD_RED if recording else REC_INACTIVE)], 25, align="center")
     hud_text(draw, size[0]//2, 47, [(clock, HUD_WHITE)], 16, align="center")
@@ -246,12 +258,14 @@ def draw_hud(frame, row, source_kind, *, recording=False):
     hud_text(draw, size[0]-18, 18, [(f"판정: {row.get('verdict') or '-'}", HUD_RED),
                                   ("  |  ", HUD_WHITE), (f"예측: {row.get('prediction') or '-'}", HUD_BLUE)],
              19, align="right")
-    if row["count"]:
-        hud_text(draw, size[0]-18, 49, [("TOTAL", HUD_GREEN), ("  |  ", HUD_WHITE),
-                                      (f"{LABEL}: ", HUD_BLUE), (f"{row['count']}회", HUD_RED)],
-                 17, align="right")
+    counts = row["event_counts"]
+    visible = [(label, count) for label, count in counts.items() if count]
+    for index, (label, count) in enumerate(visible):
+        heading = [("TOTAL", HUD_GREEN), ("  |  ", HUD_WHITE)] if index == 0 else []
+        hud_text(draw, size[0]-18, 49 + index*22,
+                 heading + [(f"{label}: ", EVENT_COLORS.get(label, HUD_BLUE)), (f"{count}회", HUD_RED)], 17, align="right")
     # 브라우저의 재생 버튼·타임라인과 겹치지 않도록 하단에서 조금 띄웁니다.
-    hud_text(draw, 18, size[1]-69, [(STATUS[row["status"]], HUD_WHITE)], 14)
+    hud_text(draw, 18, size[1]-69, [(row.get("status_text") or STATUS[row["status"]], HUD_WHITE)], 14)
     return image
 
 
@@ -264,26 +278,79 @@ def event_position(box, width, height):
     return dict(x=x, y=y, align=align)
 
 
-def draw_event_float(image, event, time_s):
+def draw_event_float(image, event, time_s, *, stack=0):
     if event is None:
-        return
-    phase = (time_s - event["time_s"]) / EVENT_FLOAT_SECONDS
-    if not 0 <= phase < 1:
-        return
+        return False
+    elapsed = time_s - event["time_s"]
+    if not 0 <= elapsed < EVENT_FLOAT_SECONDS:
+        return False
     anchor = event["hud_anchor"]
-    text = "+ " + event["label"] + " 1"
+    label = event.get("display_label", event["label"])
+    text = "+" + label + " 1"
     face = font(20)
     width = math.ceil(face.getlength(text)) + 6
-    fade = round(255 * (1 - phase**2))
+    fade = round(255 * min(1, EVENT_FLOAT_SECONDS - elapsed))
     sprite = Image.new("RGBA", (width, 29))
-    ImageDraw.Draw(sprite).text((3, 3), text, font=face, anchor="lt", fill=(255, 55, 77, fade),
+    ImageDraw.Draw(sprite).text((3, 3), text, font=face, anchor="lt", fill=(*ImageColor.getrgb(EVENT_COLORS.get(label, HUD_RED)), fade),
                                stroke_width=2, stroke_fill=(0, 0, 0, round(fade*.75)))
     x = round(image.width*anchor["x"]) - (width if anchor["align"] == "right" else 0)
-    y = round(image.height*anchor["y"] - 26*phase)
-    image.paste(sprite, (x, y), sprite)
+    y = round(image.height*anchor["y"] - 13*elapsed - stack*28)
+    if image.mode == "RGBA":
+        image.alpha_composite(sprite, (x, y))
+    else:
+        image.paste(sprite, (x, y), sprite)
+    return True
 
 
-def analyze(data, output, progress=lambda frame, total: None, *, web=False):
+def draw_event_floats(image, events, time_s):
+    for stack, event in enumerate(reversed(events)):
+        if time_s - event["time_s"] >= EVENT_FLOAT_SECONDS:
+            break
+        draw_event_float(image, event, time_s, stack=stack)
+
+
+@contextmanager
+def encode_hud(output, shape, fps, web):
+    writers = []
+    try:
+        formats = [("hud.mp4", "mp4v"), ("replay.webm", "VP80")] if web else [("hud.mp4", "mp4v")]
+        for name, codec in formats:
+            writer = cv2.VideoWriter(str(output/name), cv2.VideoWriter_fourcc(*codec), fps, shape[::-1])
+            writers.append(writer)
+            if not writer.isOpened():
+                raise RuntimeError(f"{name} 저장을 시작할 수 없습니다.")
+        pending = deque()
+        with ThreadPoolExecutor(max_workers=1) as encoder:
+            def write(mp4_frame, replay_frame):
+                if replay_frame is not None:
+                    writers[1].write(replay_frame)
+                writers[0].write(mp4_frame)
+
+            def enqueue(mp4_frame, replay_frame):
+                # 저장 중에도 다음 프레임을 분석합니다. 밀린 프레임은 6장까지만 보관합니다.
+                if len(pending) >= 6:
+                    pending.popleft().result()
+                pending.append(encoder.submit(write, mp4_frame, replay_frame))
+
+            yield enqueue
+            for task in pending:
+                task.result()
+    finally:
+        for writer in writers:
+            writer.release()
+
+
+def add_event(events, output, event, frame, seconds, vehicle, video, frame_size):
+    candidate = len(events)+1
+    entry = dict(event, candidate=candidate, frame=frame, time_s=seconds,
+                 track_id=vehicle["id"], source_video=video, hud_anchor=event_position(vehicle["box"], *frame_size),
+                 direction=f"{event['from_side']}_to_{event['to_side']}",
+                 event_source="automatic", incident_id=f"{output.name}-{candidate:03d}")
+    events.append(entry)
+
+
+def analyze(data, output, progress=lambda frame, total: None, *, web=False, stage=lambda name: None):
+    stage("preparing")
     path, camera, source_kind, at = spec(data)
     duration = float(data.get("duration", 15))
     if not 1 <= duration <= 180:
@@ -298,18 +365,23 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False):
     times = tuple(torch.cuda.Event(enable_timing=True) for _ in range(2)) if lane_model else None
     target = Target()
     events, statuses, ids = [], Counter(), Counter()
-    last_event = None
-    writers = []
+    event_counts = Counter()
+    stop_statuses = Counter()
+    stop_passages = []
     analyzed = 0
     try:
-        with capture(path, camera) as cap, (output/"frames.jsonl").open("x", encoding="utf-8") as log:
+        with (capture(path, camera) as cap, (output/"frames.jsonl").open("x", encoding="utf-8") as log,
+              ExitStack() as media):
             fps = cap.get(cv2.CAP_PROP_FPS)
             total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             start = round(at*fps)+1
             end = min(total, start+round(duration*fps)-1)
             if fps <= 0 or not 1 <= start <= end or not cap.set(cv2.CAP_PROP_POS_FRAMES, start-1):
                 raise ValueError("분석 시작 시각을 확인하세요.")
-            crossing = crossing_module.Crossing(fps)
+            progress(0, end-start+1)
+            stage("analyzing")
+            behavior = crossing_module.LaneBehavior(fps)
+            stop_monitor = None
             last_sample = -math.inf
             for number in range(start, end+1):
                 ok, frame = cap.read()
@@ -326,6 +398,9 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False):
                             raise ValueError("보이는 경사진 경계의 위와 아래에서 두 점을 선택하세요.")
                         if lane_model is not None:
                             boundary = crossing_module.Boundary((line*scale).flatten())
+                    if data.get("stop_line") is not None:
+                        stop_seed = coordinates(data["stop_line"], 4, w, h)
+                        stop_monitor = StopLineMonitor(stop_seed, frame.shape, camera, crossing_module.Crossing(fps))
                 vehicles = vehicle_boxes(track_vehicles(yolo, frame, category_ids, 0 if gpu else "cpu"))
                 if number == start:
                     vehicle = select_vehicle(vehicles, point)
@@ -335,7 +410,12 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False):
                 if vehicle:
                     ids[vehicle["id"]] += 1
                     if number - last_sample >= max(1, round(.32*fps)):
+                        reading_plate = reader is not None and len(info.ocr_frames) < 12
+                        if reading_plate:
+                            stage("ocr")
                         info.sample(frame, vehicle, number)
+                        if reading_plate:
+                            stage("analyzing")
                         last_sample = number
                 status = ("gpu_unavailable" if data.get("line") and not gpu else "boundary_unset") if vehicle else "tracking_hold"
                 side, distance, endpoints = None, None, None
@@ -352,48 +432,52 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False):
                             x1, _, x2, y2 = vehicle["box"]
                             side, distance, status = boundary.classify(
                                 np.array([(x1+x2)/2, y2])*scale, valid_rows, boxes)
-                event = crossing.update(number, side, vehicle is None)
-                if crossing.recovery_hold:
-                    status = "crossing_unobserved_during_tracking_gap"
+                lane_observation = status
+                event = behavior.update(number, side, lane_observation, distance)
+                stop_row = None
                 seconds = (number-1)/fps
+                if stop_monitor:
+                    stop_row, passage = stop_monitor.update(number, frame, vehicles, vehicle)
+                    stop_statuses[stop_row["status"]] += 1
+                    if passage:
+                        # 통과 관찰은 2초 정차가 확인된 사건과 별개로 보존합니다.
+                        stop_passages.append(dict(passage, frame=number, time_s=seconds,
+                                                  track_id=vehicle["id"], event_source="automatic"))
+                    if data.get("line") is None:
+                        status = stop_row["status"]
                 if event:
-                    events.append(dict(event, candidate=len(events)+1, frame=number, time_s=seconds,
-                                       label=LABEL, track_id=vehicle["id"], source_video=path.name,
-                                       hud_anchor=event_position(vehicle["box"], w, h),
-                                       direction=f"{event['from_side']}_to_{event['to_side']}"))
-                    last_event = events[-1]
+                    add_event(events, output, event, number, seconds, vehicle, path.name, (w, h))
+                    event_counts[event["label"]] += 1
                 row = dict(frame=number, seconds=seconds, status=status, side=side, distance_px=distance,
-                           boundary=endpoints, box=vehicle["box"] if vehicle else None,
-                           track_id=vehicle["id"] if vehicle else None, count=len(events), new_event=event is not None,
+                           lane_observation=lane_observation, boundary=endpoints,
+                           box=vehicle["box"] if vehicle else None, track_id=vehicle["id"] if vehicle else None,
+                           count=len(events), new_event=event is not None, event_counts=dict(event_counts),
                            vehicle_info=info.snapshot())
+                if stop_monitor:
+                    row["stop_line"] = stop_row
                 statuses[status] += 1
                 hud = draw_hud(frame, row, source_kind)
                 if number == start:
                     shape = (hud.height, hud.width)
-                    media = [("hud.mp4","mp4v"), ("replay.webm","VP80")] if web else [("hud.mp4","mp4v")]
-                    for name, codec in media:
-                        writer = cv2.VideoWriter(str(output/name), cv2.VideoWriter_fourcc(*codec), fps, shape[::-1])
-                        writers.append(writer)
-                        if not writer.isOpened():
-                            raise RuntimeError(f"{name} 저장을 시작할 수 없습니다.")
-                # 웹은 CSS로 움직이고, 저장 MP4는 같은 시점과 위치에 글자를 그립니다.
-                if web:
-                    writers[1].write(cv2.cvtColor(np.asarray(hud), cv2.COLOR_RGB2BGR))
-                draw_event_float(hud, last_event, seconds)
-                writers[0].write(cv2.cvtColor(np.asarray(hud), cv2.COLOR_RGB2BGR))
+                    enqueue = media.enter_context(encode_hud(output, shape, fps, web))
+                # 한 프레임에 그린 글자를 두 파일에 함께 저장해 재생·탐색 시 동작을 맞춥니다.
+                draw_event_floats(hud, events, seconds)
+                mp4_frame = cv2.cvtColor(np.asarray(hud), cv2.COLOR_RGB2BGR)
+                enqueue(mp4_frame, mp4_frame if web else None)
                 log.write(json.dumps(row, ensure_ascii=False)+"\n")
                 analyzed += 1
                 if analyzed == 1 or analyzed % 12 == 0 or number == end:
                     progress(analyzed, end-start+1)
+            stage("encoding")
     finally:
-        for writer in writers:
-            writer.release()
         if info.windows_ocr:
             info.windows_ocr.close()
+    stage("verifying")
     verify_video(output/"hud.mp4", shape, fps, analyzed)
     if web:
         verify_video(output/"replay.webm", shape, fps, analyzed)
     if events:
+        stage("clips")
         crossing_module.save_original_clips(path, output, events, fps, (h,w), total,
                                             open_video=lambda file: ClipCapture(file, camera))
     saved = dict(video=path.name, camera=camera, source_kind=source_kind, selection_frame=start,
@@ -403,8 +487,12 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False):
                  lane_status="active" if lane_model else "gpu_unavailable" if data.get("line") else "boundary_unset",
                  ocr_status=ocr_status, windows_ocr_available=bool(info.windows_ocr and info.windows_ocr.process
                                                                  and info.windows_ocr.available),
-                 vehicle_info=info.snapshot(), ocr_frames=info.ocr_frames,
+                 vehicle_info=info.snapshot(), ocr_frames=info.ocr_frames, event_counts=dict(event_counts),
                  event_total=len(events), events=events)
+    if stop_monitor:
+        saved.update(stop_seed=data["stop_line"], stop_statuses=dict(stop_statuses), stop_passages=stop_passages,
+                     signal_state="확인 불가")
+    stage("saving")
     save_result(output, saved)
     return saved
 
@@ -417,6 +505,13 @@ def save_result(output, data):
 
 def preview(data):
     path, camera, _, at = spec(data)
+    source = path.stat()
+    # 같은 시각의 미리보기를 다시 요청하면 영상 읽기와 YOLO 실행을 건너뜁니다.
+    return preview_frame(path, camera, at, source.st_mtime_ns, source.st_size)
+
+
+@lru_cache(maxsize=8)
+def preview_frame(path, camera, at, modified_ns, file_size):
     with capture(path, camera) as cap:
         fps = cap.get(cv2.CAP_PROP_FPS)
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -443,6 +538,22 @@ APP_FILES = {
     "/mvp.css": ("043_mvp.css", "text/css; charset=utf-8"),
     "/mvp.js": ("044_mvp.js", "text/javascript; charset=utf-8"),
 }
+DEMO_FILES = {"hud.mp4": "video/mp4", "target.json": "application/json; charset=utf-8",
+              "original.mp4": "video/mp4"}
+
+
+def load_demos(directory):
+    demos = {}
+    if directory.is_dir():
+        for path in sorted(directory.iterdir()):
+            if not re.fullmatch(r"[a-z0-9-]+", path.name) or not all((path/f).is_file() for f in DEMO_FILES):
+                continue
+            data = json.loads((path/"target.json").read_text(encoding="utf-8"))
+            if data.get("event_vocabulary") == 2:
+                demos[path.name] = (path, data)
+    return demos
+
+
 RUN_FILES = {"replay.webm": "video/webm", "hud.mp4": "video/mp4", "target.json": "application/json; charset=utf-8"}
 
 
@@ -466,6 +577,23 @@ class Handler(media_handler):
             self.send_error(403)
             return
         route = urlsplit(self.path).path
+        if route == "/api/demos":
+            self.reply([{"id": key, "title": data["demo_title"]}
+                        for key, (_, data) in self.server.demos.items()], head=head_only)
+            return
+        if match := re.fullmatch(r"/api/demos/([a-z0-9-]+)", route):
+            demo = self.server.demos.get(match[1])
+            self.reply(demo[1] if demo else {"error": "시연을 찾을 수 없습니다."},
+                       200 if demo else 404, head=head_only)
+            return
+        if match := re.fullmatch(r"/demo-media/([a-z0-9-]+)/([a-z.0-9]+)", route):
+            demo, kind = self.server.demos.get(match[1]), match[2]
+            if not demo or kind not in DEMO_FILES:
+                self.send_error(404)
+                return
+            self.server.files[route] = (demo[0]/kind, DEMO_FILES[kind])
+            super().serve(head_only)
+            return
         if route == "/api/videos":
             names = sorted(p.name for p in INPUT.iterdir() if p.suffix.lower() in {".avi", ".mp4"} and p.is_file())
             self.reply(sorted(names, key=lambda name: not name.startswith("BB_")), head=head_only)
@@ -517,7 +645,7 @@ class Handler(media_handler):
                     self.reply({"error":"현재 분석이 끝난 뒤 다시 실행하세요."}, 409)
                     return
                 uid = uuid4().hex[:12]
-                job = {"state":"running", "frame":0, "total":0}
+                job = {"state":"running", "frame":0, "total":0, "percent":0, "stage":"preparing"}
                 self.server.jobs[uid] = job
                 Thread(target=self.run_job, args=(data, uid, job), daemon=True).start()
                 self.reply({"job":uid}, 202)
@@ -545,11 +673,18 @@ class Handler(media_handler):
             self.reply({"error":str(error)}, 500)
 
     def run_job(self, data, uid, job):
+        milestones = {"preparing": 0, "analyzing": 5, "ocr": 5, "encoding": 90,
+                      "verifying": 93, "clips": 96, "saving": 99}
+
         def progress(frame, total):
-            job.update(frame=frame, total=total)
+            job.update(frame=frame, total=total, percent=5+int(84*frame/total))
+
+        def stage(name):
+            # 마지막 프레임 뒤에도 인코딩, 검증, 저장이 남으므로 100%는 완료 때만 보냅니다.
+            job.update(stage=name, percent=max(job["percent"], milestones[name]))
         try:
-            saved = analyze(data, OUTPUT/uid, progress, web=True)
-            job.update(result=saved, state="done")
+            saved = analyze(data, OUTPUT/uid, progress, web=True, stage=stage)
+            job.update(result=saved, state="done", stage="done", percent=100)
         except Exception as error:
             job.update(state="error", error=str(error))
         finally:
@@ -559,6 +694,7 @@ class Handler(media_handler):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8770)
+    parser.add_argument("--demo-dir", type=Path, default=OUTPUT/"demo_terms_20261130")
     parser.add_argument("--spec", type=Path, help="차량 선택 좌표가 있는 분석 JSON. 목록으로 여러 영상을 시험할 수 있습니다.")
     parser.add_argument("--output", type=Path, help="--spec의 결과를 담을 새 폴더")
     parser.add_argument("--web-media", action="store_true", help="일괄 검증에서도 브라우저 재생용 WebM 저장")
@@ -580,6 +716,7 @@ def main():
         return
     with ThreadingHTTPServer(("127.0.0.1", args.port), Handler) as server:
         server.files, server.jobs = {}, {}
+        server.demos = load_demos(args.demo_dir)
         server.model_lock, server.edit_lock = Lock(), Lock()
         print(f"RedBox MVP  http://127.0.0.1:{server.server_port}/", flush=True)
         try:

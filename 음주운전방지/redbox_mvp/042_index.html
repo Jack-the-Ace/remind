@@ -21,7 +21,10 @@
         <h1>차량 분석</h1>
         <p>블랙박스 영상에서 차량 한 대를 지정하고 움직임을 검토하세요.</p>
       </div>
-      <button id="demo" type="button">검증 사례 불러오기</button>
+      <div class="mode-actions">
+        <label id="demo-picker" hidden>빠른 시연<select id="fast-demo"><option value="">시연 선택</option></select></label>
+        <button id="demo" type="button">검증 사례 불러오기</button>
+      </div>
     </section>
     <div class="workspace">
       <section class="viewer" aria-label="영상 미리보기 및 분석 재생">
@@ -32,7 +35,6 @@
           <div id="preview-rec" class="preview-rec" data-recording="false" hidden>
             <strong>● REC</strong><span id="preview-time">00:00.00</span>
           </div>
-          <span id="event-float" class="event-float" aria-hidden="true" hidden></span>
         </div>
         <div class="transport">
           <span id="time-label" class="mono">00:00.00</span>
@@ -44,7 +46,7 @@
       </section>
       <aside class="side" aria-label="분석 설정">
         <section class="panel">
-          <h2>분석 설정</h2>
+          <h2>실제 분석</h2>
           <label>영상<select id="source"></select></label>
           <div class="inputs">
             <label>카메라<select id="camera"><option value="front">전방</option><option value="rear">후방</option></select></label>
@@ -53,18 +55,21 @@
           <label>자료 유형<select id="kind"><option value="recorded">실제 영상</option><option value="independent_test">독립 테스트</option><option value="synthetic">합성 영상</option></select></label>
           <div class="selection"><span>선택 차량</span><strong id="vehicle-state">선택 대기</strong></div>
           <button id="boundary" class="secondary" type="button" disabled aria-pressed="false">차선 경계 지정</button>
-          <label>차량번호 <span class="optional">선택 입력</span><input id="plate" maxlength="16" type="text" placeholder="OCR 또는 직접 입력" autocomplete="off"></label>
+          <button id="stop-boundary" class="secondary" type="button" disabled aria-pressed="false">정지선 지정 · 실험</button>
+          <label>차량번호 <span class="optional">선택 입력</span><input id="plate" maxlength="16" type="text" placeholder="자동 인식 또는 직접 입력" autocomplete="off"></label>
           <button id="analyze" class="primary" type="button" disabled>선택 차량 분석</button>
-          <progress id="progress" hidden max="100" value="0"></progress>
+          <progress id="progress" aria-label="전체 분석 진행률" hidden max="100" value="0"></progress>
+          <small id="progress-text" class="optional" aria-live="polite" hidden></small>
         </section>
         <section class="panel results" id="results" hidden aria-label="분석 결과">
           <div id="totals" hidden>
             <h2>TOTAL <span id="total-count"></span></h2>
+            <div id="event-types" hidden></div>
             <ol id="events"></ol>
           </div>
           <div id="result-info"></div>
           <button id="save-plate" type="button" class="secondary">수정한 번호판을 JSON에 저장</button>
-          <div class="downloads"><a id="mp4" download="redbox-hud.mp4">HUD MP4</a><a id="json" download="redbox-target.json">분석 JSON</a></div>
+          <div class="downloads"><a id="original" download="redbox-original.mp4" hidden>원본 MP4</a><a id="mp4" download="redbox-hud.mp4">HUD MP4</a><a id="json" download="redbox-target.json">분석 JSON</a></div>
           <button id="review-reset" type="button">다른 차량 선택</button>
         </section>
       </aside>
