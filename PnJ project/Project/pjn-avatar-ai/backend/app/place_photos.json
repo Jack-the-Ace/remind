@@ -1,0 +1,263 @@
+{
+  "boramae": {
+    "src": "/images/seoul/boramae.jpg",
+    "author": "Striker9498",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:20240427_%EB%B3%B4%EB%9D%BC%EB%A7%A4%EA%B3%B5%EC%9B%90_%EC%97%B0%EB%AA%BB.jpg",
+    "title": "20240427 보라매공원 연못.jpg"
+  },
+  "pureun": {
+    "src": "/images/seoul/pureun.jpg",
+    "author": "Shinfull",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pureun_Arboretum_in_spring.jpg",
+    "title": "Pureun Arboretum in spring.jpg"
+  },
+  "seonyudo": {
+    "src": "/images/seoul/seonyudo.jpg",
+    "author": "Nesnad",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Seonyudo_Park_-_historical_-_2005_June_6_various_-_03.jpg",
+    "title": "Seonyudo Park - historical - 2005 June 6 various - 03.jpg"
+  },
+  "botanic": {
+    "src": "/images/seoul/botanic.jpg",
+    "author": "korea.net",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul_botanic_park_05.jpg",
+    "title": "Seoul botanic park 05.jpg"
+  },
+  "gwangjang": {
+    "src": "/images/seoul/gwangjang.jpg",
+    "author": "Bgag",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Gwangjang_Market,_Seoul_02.jpg",
+    "title": "Gwangjang Market, Seoul 02.jpg"
+  },
+  "namdaemun": {
+    "src": "/images/seoul/namdaemun.jpg",
+    "author": "Adbar",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Namdaemun_Market_Alley.jpg",
+    "title": "Namdaemun Market Alley.jpg"
+  },
+  "deoksu": {
+    "src": "/images/seoul/deoksu.jpg",
+    "author": "travel oriented",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Deoksugung_Palace_in_autumn.jpg",
+    "title": "Deoksugung Palace in autumn.jpg"
+  },
+  "forest": {
+    "src": "/images/seoul/forest.jpg",
+    "author": "Enigma7seven",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoulforest_001.jpg",
+    "title": "Seoulforest 001.jpg"
+  },
+  "insadong": {
+    "src": "/images/seoul/insadong.jpg",
+    "author": "Dr. Thomas Liptak",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul,_Jongno_District,_Insa-dong,_Insadong-gil.jpg",
+    "title": "Seoul, Jongno District, Insa-dong, Insadong-gil.jpg"
+  },
+  "nationalmuseum": {
+    "src": "/images/seoul/nationalmuseum.jpg",
+    "title": "National_Museum_of_Korea,_Seoul_(2)_(40236586235).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:National_Museum_of_Korea,_Seoul_(2)_(40236586235).jpg",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Richard Mortel from Riyadh, Saudi Arabia",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "baekje": {
+    "src": "/images/seoul/baekje.jpg",
+    "title": "Seoul_Baekje_Museum_front_side2.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul_Baekje_Museum_front_side2.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Asfreeas",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "seosomun": {
+    "src": "/images/seoul/seosomun.jpg",
+    "title": "Seoul_Museum_of_Art_(2014).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul_Museum_of_Art_(2014).jpg",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "author": "Seoul Institute",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "dream": {
+    "src": "/images/seoul/dream.jpg",
+    "title": "North_Seoul_dream_forest.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:North_Seoul_dream_forest.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Sim1992",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "children": {
+    "src": "/images/seoul/children.jpg",
+    "title": "Seoul_Childrens_Grand_Park_Main_Gate.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul_Childrens_Grand_Park_Main_Gate.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Integral",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "seoseoul": {
+    "src": "/images/seoul/seoseoul.jpg",
+    "title": "서서울호수공원.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9C%EC%84%9C%EC%9A%B8%ED%98%B8%EC%88%98%EA%B3%B5%EC%9B%90.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "KSH1015",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "oil": {
+    "src": "/images/seoul/oil.jpg",
+    "title": "문화비축기지 T4.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%EB%AC%B8%ED%99%94%EB%B9%84%EC%B6%95%EA%B8%B0%EC%A7%80_T4.jpg",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "author": "베르니사주",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "naksan": {
+    "src": "/images/seoul/naksan.jpg",
+    "title": "KOCIS_Korea_Seoul_Fortress_20130924_11_(9910956885).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:KOCIS_Korea_Seoul_Fortress_20130924_11_(9910956885).jpg",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Korea.net / Korean Culture and Information Service (Jeon Han)",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "seokchon": {
+    "src": "/images/seoul/seokchon.jpg",
+    "title": "석촌_호수공원_(1).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9D%EC%B4%8C_%ED%98%B8%EC%88%98%EA%B3%B5%EC%9B%90_(1).jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Jocelyndurrey",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "noryangjin": {
+    "src": "/images/seoul/noryangjin.jpg",
+    "title": "Korea-Seoul-Noryangjin_Fish_Market-03.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Korea-Seoul-Noryangjin_Fish_Market-03.jpg",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Gaël Chardon",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "gyeongbok": {
+    "src": "/images/seoul/gyeongbok.jpg",
+    "title": "Front view of the Imperial Throne Hall Geunjeongjeon at Gyeongbokgung Palace with blue sky in Seoul.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Front_view_of_the_Imperial_Throne_Hall_Geunjeongjeon_at_Gyeongbokgung_Palace_with_blue_sky_in_Seoul.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Basile Morin",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "changdeok": {
+    "src": "/images/seoul/changdeok.jpg",
+    "title": "Changdeokgung Seoul 3.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Changdeokgung_Seoul_3.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "kallerna",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "banpo": {
+    "src": "/images/seoul/banpo.jpg",
+    "title": "Banpo Moonlight Rainbow Fountain.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Banpo_Moonlight_Rainbow_Fountain.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Cookinu",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "olympic": {
+    "src": "/images/seoul/olympic.jpg",
+    "title": "Seoul Olympic Park April 2022.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul_Olympic_Park_April_2022.jpg",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Woohyun Photos",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "mangwon": {
+    "src": "/images/seoul/mangwon.jpg",
+    "title": "Mercado Mangwon en Seúl.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Mercado_Mangwon_en_Se%C3%BAl.jpg",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Enamoradadecorea",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "myeongdong": {
+    "src": "/images/seoul/myeongdong.jpg",
+    "title": "Seoul-Myeongdong-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Seoul-Myeongdong-02.jpg",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "author": "by thelearnr",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "namsema": {
+    "src": "/images/seoul/namsema.jpg",
+    "title": "서울시립남서울미술관.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9C%EC%9A%B8%EC%8B%9C%EB%A6%BD%EB%82%A8%EC%84%9C%EC%9A%B8%EB%AF%B8%EC%88%A0%EA%B4%80.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Hcdndals2002",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "buksema": {
+    "src": "/images/seoul/buksema.jpg",
+    "title": "Buk Seoul Museum of Art.JPG",
+    "source": "https://commons.wikimedia.org/wiki/File:Buk_Seoul_Museum_of_Art.JPG",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "hyolee2",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "hikr": {
+    "src": "/images/seoul/hikr.jpg",
+    "title": "HiKR Ground, July 24, 2024 01.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:HiKR_Ground,_July_24,_2024_01.jpg",
+    "license": "CC BY-SA 2.0 kr",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en",
+    "author": "Zero guk - 네이버 블로그 / Naver Blog",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "sejong": {
+    "src": "/images/seoul/sejong.jpg",
+    "title": "Night view of the Sejong Center in May 2025.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Night_view_of_the_Sejong_Center_in_May_2025.jpg",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "DtSeoul",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  },
+  "artscenter": {
+    "src": "/images/seoul/artscenter.jpg",
+    "title": "Korea-Seoul.Arts.Center-02.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Korea-Seoul.Arts.Center-02.jpg",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "author": "by Kai Hendry",
+    "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+  }
+}

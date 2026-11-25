@@ -1,0 +1,24 @@
+.companion-phase {display:inline-block;margin-inline-start:.7rem;font-size:.8rem;color:#deefeb}.companion-phase.thinking {animation:breathe 1s ease-in-out infinite}
+.companions {border:0;padding:0;margin:18px 0;min-width:0;color:#173e46}
+.companions legend {font-weight:bold;margin-bottom:9px}
+.companion-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:30rem}
+.companion-option {position:relative;cursor:pointer}
+.companion-option input {position:absolute;opacity:0;width:1px;height:1px;padding:0}
+.companion-tile {display:block;border:2px solid #ccdcd9;border-radius:14px;overflow:hidden;background:white}
+.companion-option input:checked + .companion-tile {border-color:#176a61;background:#f1f8f5}
+.companion-option input:focus-visible + .companion-tile {outline:3px solid #be631e;outline-offset:2px}
+.companion-picture {height:clamp(90px,20vw,130px);display:block;overflow:hidden;background:radial-gradient(ellipse at 50% 85%,#fff3db,#eedfc9)}
+.companion-tile[data-portrait=min] .companion-picture {background:radial-gradient(ellipse at 50% 85%,#eef7f8,#cbdfdf)}
+.companion-picture img {display:block;width:auto;height:205%;margin:0 auto;max-width:100%;object-fit:contain;object-position:top}
+.companion-tile[data-portrait=miho] .companion-picture img {height:165%}
+.companion-caption {display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:5px;color:#214d47;font-weight:bold}
+.companion-check {display:grid;place-items:center;width:1.3rem;height:1.3rem;border-radius:50%;border:1px solid #adc7bd;font:700 .85rem system-ui}
+:checked + .companion-tile .companion-check {background:#176a61;border-color:#176a61;color:white}
+.companion-switch {margin:0 0 14px;color:#185c63}
+.companion-switch summary {width:fit-content;cursor:pointer;font-weight:bold}
+.companion-switch[open] {padding:12px 16px;background:white;border:1px solid #d5e5e2;border-radius:12px}
+.companion-switch .companions {margin-bottom:4px}
+/* Eye boxes are relative to Min's original 1086 × 1448 portrait. */
+.miho[data-avatar=min] .lid {width:6.6%;height:1.55%;background:linear-gradient(#b77a69,#dfa890);border-bottom-color:#704936}
+.miho[data-avatar=min] .lid.left {left:40.0%;top:20.05%;rotate:3deg}
+.miho[data-avatar=min] .lid.right {left:53.05%;top:19.58%;rotate:-7deg}

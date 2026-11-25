@@ -1,0 +1,107 @@
+{
+  "boramae": {
+    "lat": 37.491452,
+    "lon": 126.918928,
+    "source": "https://ko.wikipedia.org/wiki/보라매공원"
+  },
+  "forest": {
+    "lat": 37.544625,
+    "lon": 127.039844,
+    "source": "https://ko.wikipedia.org/wiki/서울숲"
+  },
+  "namdaemun": {
+    "lat": 37.55944444,
+    "lon": 126.97741667,
+    "source": "https://ko.wikipedia.org/wiki/남대문시장"
+  },
+  "deoksu": {
+    "lat": 37.56583333,
+    "lon": 126.97472222,
+    "source": "https://ko.wikipedia.org/wiki/덕수궁"
+  },
+  "gyeongbok": {
+    "lat": 37.57861111,
+    "lon": 126.97722222,
+    "source": "https://ko.wikipedia.org/wiki/경복궁"
+  },
+  "changdeok": {
+    "lat": 37.57948333,
+    "lon": 126.991175,
+    "source": "https://ko.wikipedia.org/wiki/창덕궁"
+  },
+  "nationalmuseum": {
+    "lat": 37.52393,
+    "lon": 126.980493,
+    "source": "https://ko.wikipedia.org/wiki/국립중앙박물관"
+  },
+  "dream": {
+    "lat": 37.621052,
+    "lon": 127.041079,
+    "source": "https://ko.wikipedia.org/wiki/북서울 꿈의숲"
+  },
+  "seokchon": {
+    "lat": 37.51,
+    "lon": 127.103,
+    "source": "https://ko.wikipedia.org/wiki/석촌호수공원"
+  },
+  "noryangjin": {
+    "lat": 37.51523056,
+    "lon": 126.94106389,
+    "source": "https://ko.wikipedia.org/wiki/노량진수산시장"
+  },
+  "seosomun": {
+    "lat": 37.56412222,
+    "lon": 126.97380833,
+    "source": "https://en.wikipedia.org/wiki/Seoul_Museum_of_Art"
+  },
+  "children": {
+    "lat": 37.546,
+    "lon": 127.08,
+    "source": "https://en.wikipedia.org/wiki/Children's_Grand_Park,_Seoul"
+  },
+  "olympic": {
+    "lat": 37.5207,
+    "lon": 127.1227,
+    "source": "https://en.wikipedia.org/wiki/Olympic_Park,_Seoul"
+  },
+  "artscenter": {
+    "lat": 37.480433,
+    "lon": 127.0111903,
+    "source": "https://en.wikipedia.org/wiki/Seoul_Arts_Center"
+  },
+  "botanic": {
+    "lat": 37.572341,
+    "lon": 126.834475,
+    "source": "https://www.wikidata.org/wiki/Q47524353"
+  },
+  "seonyudo": {
+    "lat": 37.543694444444,
+    "lon": 126.89980555556,
+    "source": "https://www.wikidata.org/wiki/Q12601738"
+  },
+  "gwangjang": {
+    "lat": 37.57,
+    "lon": 126.999,
+    "source": "https://www.wikidata.org/wiki/Q12585067"
+  },
+  "baekje": {
+    "lat": 37.5154,
+    "lon": 127.1209,
+    "source": "https://www.wikidata.org/wiki/Q12624103"
+  },
+  "seoseoul": {
+    "lat": 37.5276,
+    "lon": 126.8297,
+    "source": "https://www.wikidata.org/wiki/Q7986464"
+  },
+  "oil": {
+    "lat": 37.57083333333334,
+    "lon": 126.89416666666668,
+    "source": "https://www.wikidata.org/wiki/Q65248886"
+  },
+  "sejong": {
+    "lat": 37.5725,
+    "lon": 126.9756,
+    "source": "https://www.wikidata.org/wiki/Q496974"
+  }
+}

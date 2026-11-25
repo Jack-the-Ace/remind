@@ -16,3 +16,9 @@
 !/output/lane_video_197_case_preview/[0-9][0-9][0-9]_*.py
 
 *.avi
+/output/winker_71566*/
+/output/roboflow_v4*/
+/output/lamp_cv*/
+/output/compcars*/
+__pycache__/
+/output/emblem_v1*/

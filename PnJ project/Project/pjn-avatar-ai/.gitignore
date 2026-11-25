@@ -1,0 +1,9 @@
+backend/.env
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+.pytest_cache/
+backend/live-validation-results.json
+.runtime/
+backend/data/

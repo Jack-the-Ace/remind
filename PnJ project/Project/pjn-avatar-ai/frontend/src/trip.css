@@ -1,0 +1,58 @@
+.shell:has(.trip-results) {width:min(100%,1120px)}
+.trip-results {color:#153e43;overflow:hidden;border:1px solid #c9ddda;background:#f8fbfa}
+.trip-feedback {display:grid;gap:.7rem;margin:1rem 0;padding:1rem;border:1px solid #c4dad4;border-radius:12px}.trip-feedback legend,.trip-basis dt {font-weight:bold;color:#205e54}.trip-feedback summary {cursor:pointer}.trip-basis div {display:flex;gap:.75rem;margin:.4rem 0}.trip-basis dt{min-width:6rem}.trip-basis dd{margin:0}.survey-strength meter{width:32%;accent-color:#267f71}.survey-strength h4{margin:1rem 0 .2rem}
+.trip-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:24px 24px 17px}
+.trip-heading h2 {margin:0;font-size:clamp(1.2rem,3vw,1.75rem);letter-spacing:-.04em}
+.trip-heading h2 span {color:#237569;white-space:nowrap}
+.trip-heading>small {white-space:nowrap;color:#28645c;border:1px solid #bad7d1;border-radius:20px;padding:4px 10px}
+.trip-cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0 24px 8px}
+.trip-card {display:flex;flex-direction:column;overflow:hidden;min-width:0;background:white;border:1px solid #c6d9d6;border-radius:15px;padding:0;text-align:start;color:#193d40;box-shadow:0 3px 11px #1648400b}
+.trip-card:focus-visible {outline-offset:-4px}
+.trip-card[aria-pressed=true],.trip-card:hover {border-color:#1b746a;box-shadow:0 4px 14px #16484019}
+.trip-cover,.trip-stop-photo,.trip-hero-photo {display:block;background:#e2ece9;overflow:hidden;position:relative}
+.trip-cover {width:100%;aspect-ratio:1.72}
+.trip-results img {width:100%;height:100%;object-fit:cover;display:block}
+.trip-rank {position:absolute;top:12px;left:12px;padding:5px 9px;border-radius:7px;background:#10483ef2;color:white;font:700 .73rem 'DM Mono',monospace}
+.trip-body {display:flex;flex-direction:column;flex:1;gap:8px;padding:16px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.trip-body>small,.trip-hero-copy>span {color:#347669;font-weight:bold}
+.trip-body>strong {font-size:1.38rem;line-height:1.25}
+.trip-concept {font-weight:bold;color:#355655}
+.trip-reason {color:#48615f;font-size:.91rem}
+.trip-activity {font-size:.82rem;color:#27675e;padding:5px 9px;border-left:2px solid #78a99b;background:#f1f7f5}
+.trip-open {margin-top:auto;display:flex;justify-content:space-between;padding-top:8px;color:#0e665d;font-weight:bold}
+.trip-photo-missing {min-height:70px;height:100%;width:100%;display:grid;place-items:center;color:#516e6b}
+.trip-credits {font-size:.78rem;color:#546b66;margin:12px 24px 18px}
+.trip-credits summary {cursor:pointer;width:fit-content}
+.trip-credits p {margin:5px 0}
+.trip-results a {color:#21695d}
+.trip-detail {background:white;border-top:1px solid #ccded9;scroll-margin-top:14px}
+.trip-hero {display:grid;grid-template-columns:1fr 1fr;background:#104e4a;color:white}
+.trip-hero-photo {min-height:230px}
+.trip-hero-photo img {position:absolute;inset:0}
+.trip-hero-copy {padding:clamp(20px,4vw,42px);line-height:1.6}
+.trip-hero-copy>span {color:#b6e6d6}
+.trip-hero-copy h3 {font-size:1.7rem;margin:3px 0 5px}
+.trip-hero-copy p {margin:3px 0 14px}
+.trip-plan {padding:clamp(14px,3vw,30px)}
+.trip-day h4,.trip-check h4 {margin:20px 0 12px;font-size:1rem}
+.trip-day h4 {color:#17695c;letter-spacing:.09em}
+.trip-stop {display:flex;gap:16px;padding:14px 0;border-top:1px solid #d7e6e1;line-height:1.6}
+.trip-stop-photo {width:clamp(84px,20%,190px);aspect-ratio:1.4;align-self:flex-start;border-radius:9px;flex:none}
+.trip-stop h5 {font-size:1.08rem;margin:0}
+.trip-stop ol,.trip-check ul {padding-inline-start:1.3rem;margin:5px 0}
+.trip-stop small {display:block;color:#687c76}
+.trip-stop p,.trip-stop a,.trip-night,.trip-check {font-size:.9rem}
+.trip-night,.trip-check {padding:12px 16px;border-radius:9px;background:#eff6f2;line-height:1.7}
+.trip-check h4,.trip-check p {margin:0 0 5px}
+.trip-plan>.trip-credits {margin-left:0}
+@media(max-width:740px) {
+  .trip-heading {padding:16px 14px}
+  .trip-cards {display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;scroll-padding-inline:14px;padding:0 14px 10px}
+  .trip-card {flex:0 0 86%;scroll-snap-align:start}
+  .trip-credits {margin-inline:14px}
+  .trip-hero {grid-template-columns:1fr}
+  .trip-hero-photo {min-height:0;aspect-ratio:1.95}
+  .trip-hero-copy {padding:16px}
+  .trip-stop {gap:9px}
+}
+
