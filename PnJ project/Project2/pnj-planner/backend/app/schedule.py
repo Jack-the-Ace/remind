@@ -31,12 +31,12 @@ def _stop(site, lang, sequence):
     return {
         "id":site["id"], "sequence":sequence, "name":site["name"][lang], "region":site["region"][lang],
         "address":site["address"], "coordinates":site["coordinates"], "activities":site["activities"][lang],
-        "isMarket": "market" in site["tags"], "eveningActivity": "night" in site["tags"],
+        "isMarket": "market" in site["tags"], "eveningActivity": "night" in site["tags"] or site.get("timeBand") == "night-event",
         "timeBand":site.get("timeBand"),
         "visitAllocation":({"minutes":None, "source":"programme-unverified"} if site.get("offer") else {"minutes":[30,45],"source":"illustrative-planning-target"}),
         "setting":site["setting"], "walking":site["walking"], "accessNote":site["accessNote"][lang],
         "photo":site["photo"], "source":site["source"], "checkedOn":site["checkedOn"],
-        "informationType":"inherited-static", "openingHours":opening_metadata(site["id"]) or site["hours"], "typicalStayMinutes":site["typicalStayMinutes"],
+        "informationType":"cited-static" if site.get("offer") else "inherited-static", "openingHours":opening_metadata(site["id"]) or site["hours"], "typicalStayMinutes":site["typicalStayMinutes"],
         "timeRange":{"start":None, "end":None}, "admission":{"basicKrw":admission, "category":site["fee"], "source":site["source"]},
         "verify":["opening-hours", "entrance-access", "transport", "optional-purchases"] +
                     ([] if admission is not None else ["admission-price"]) + ([] if site["coordinates"] else ["coordinates"]),
@@ -48,7 +48,7 @@ def _edge(a, b, lang):
         "note":local(lang, "경로와 이동 시간을 확인해 주세요.", "Check the route and travel time.")}
 
 
-def _day_notes(day, lang, diet):
+def _day_notes(day, lang, diet, wants_evening=False):
     p, mid, j = [], [], []
     if day["locked"]:
         for item in day["locked"]:
@@ -71,7 +71,9 @@ def _day_notes(day, lang, diet):
             mid.extend([p[-1], stop["accessNote"]])
             j.extend([p[-1], stop["accessNote"], local(lang, "프로그램의 시작·종료 시각을 확인한 뒤 앞뒤 이동을 계획하세요.", "Use the published start and end times to plan your journey there and back.")])
             continue
-        if stop["eveningActivity"]:
+        if wants_evening:
+            band = local(lang, "원하는 저녁 시간에 이용 가능한지 먼저 확인", "For your requested evening, check access after daytime hours")
+        elif stop["eveningActivity"]:
             band = local(lang, "저녁에 시작하는 예시", "Example evening visit")
         elif i:
             band = local(lang, "이후 여유 있는 시간", "Later in the same outing")
@@ -109,7 +111,7 @@ def _day_notes(day, lang, diet):
     return {"P":p, "PnJ":mid, "J":j}
 
 
-def build_days(trip, assigned, places, lang):
+def build_days(trip, assigned, places, lang, wants_evening=False):
     days = []
     locks_by_day = {d:[lock.model_dump() for lock in trip.locked if lock.day == d] for d in trip.groups}
     seq = 0
@@ -120,7 +122,7 @@ def build_days(trip, assigned, places, lang):
             for pid in assigned.get(d, []):
                 seq += 1
                 day["stops"].append(_stop(places[pid], lang, seq))
-        day["notes"] = _day_notes(day, lang, trip.diet)
+        day["notes"] = _day_notes(day, lang, trip.diet, wants_evening)
         days.append(day)
 
     # Include both boundaries of each free segment, even when the previous or

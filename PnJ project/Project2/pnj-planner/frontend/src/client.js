@@ -57,7 +57,7 @@ export const scoreNames = {extraversion:['Extraversion','외향성'],agreeablene
 export const tags = {
   club:['Clubbing','클럽에서 놀기'], dance:['Dancing','직접 춤추기'], music:['Music','음악'], nightlife:['Nightlife','밤 문화'],
   bookclub:['Book groups','독서 모임'], fanclub:['Fan clubs','팬 모임'],
-  solo:['Independent time','혼자 보내는 시간'],
+  solo:['Independent time','혼자 보내는 시간'], evening:['An evening outing','저녁 나들이'],
   nature:['Nature','자연'],rest:['Rest','휴식'],quiet:['Quiet settings','차분한 분위기'],art:['Art','미술'],culture:['Culture','문화'],
   history:['History','역사'],shopping:['Shopping','쇼핑'],kpop:['K-pop','K-팝'],food:['Food','음식'],night:['Night views','야경'],
   photo:['Photography','사진'],market:['Markets','시장'],walk:['Walking','걷기'],active:['Active experiences','활동적인 체험'],

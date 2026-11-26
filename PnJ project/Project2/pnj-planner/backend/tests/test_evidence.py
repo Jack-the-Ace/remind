@@ -85,3 +85,16 @@ def test_incomparable_costs_and_record_validity():
         assert applicable([event], d, ["sejong"]) == []
     assert applicable([event], date(2026,5,2), ["sejong"]) == [event]
     assert applicable([{**event,"sourceType":"test_fixture"}], date(2026,5,2), ["sejong"]) == []
+
+
+@pytest.mark.parametrize(("sentence","wanted","avoid"), [
+    ("Go dancing", {"dance"}, set()),
+    ("No alcohol and wanna dance", {"dance"}, {"alcohol"}),
+    ("I got a club sandwich", set(), set()),
+    ("A fan club", {"fanclub"}, set()),
+    ("맞춤 여행을 원해", set(), set()),
+    ("클럽 말고 춤추고 싶어", {"dance"}, {"club"}),
+])
+def test_activity_vocabulary_keeps_context(sentence, wanted, avoid):
+    _, tags, limits = interpret(sentence)
+    assert set(tags) == wanted and set(limits.get("avoid", [])) == avoid

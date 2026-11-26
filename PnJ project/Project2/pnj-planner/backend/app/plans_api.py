@@ -106,6 +106,8 @@ def merge_hints(conditions, hints):
         conditions[field] = list(dict.fromkeys([*conditions[field], *hints.get(field, [])]))
     if hints.get("indoor") == "only":
         conditions["indoor"] = "only"
+    elif hints.get("indoor") == "prefer" and conditions["indoor"] == "any":
+        conditions["indoor"] = "prefer"
     if hints.get("walking") == "stepFree":
         conditions["walking"] = "stepFree"
     if hints.get("diet") and hints["diet"] != conditions["diet"]:

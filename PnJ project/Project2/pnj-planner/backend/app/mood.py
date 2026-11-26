@@ -24,9 +24,10 @@ EXPERIENCES = {
     "social": r"교류|어울리고|socialise|socialize", "photo": r"사진|photograph",
     "night": r"야경|night view", "kpop": r"케이팝|k[ -]?pop",
     "club": r"\b(?:night[ -]?clubs?|clubs?|clubbing)\b|나이트\s*클럽|클럽|클러빙",
-    "dance": r"\b(?:dance|dances|dancing)\b|춤|댄스",
+    "dance": r"\b(?:dance|dances|dancing)\b|(?<![가-힣])춤|춤추|댄스",
     "nightlife": r"\bnight[ -]?life\b|밤\s*문화|나이트라이프",
     "music": r"\bmusic\b|음악",
+    "evening": r"\bevening\b|저녁",
     "bookclub": r"\bbook[ -]?clubs?\b|북\s*클럽|독서\s*모임",
     "fanclub": r"\bfan[ -]?clubs?\b|팬\s*클럽",
 }
@@ -35,15 +36,15 @@ NEGATIVE = re.compile(r"\b(?:no|not|avoid|skip|without|don't|never)\b|싫|피하
 OTHER_CLUB = re.compile(r"\b(?:book|fan|sports?|golf|chess|football|running|tennis|youth|social)[ -]?clubs?\b|"
                         r"\bclub (?:soda|sandwich|membership|teams?)\b|(?:북|팬|골프|독서|스포츠)\s*클럽")
 NO_ALCOHOL = re.compile(r"\b(?:non[- ]?alcoholic|alcohol[- ]free|sober)\b|무알코올|논알코올")
-DRINK = re.compile(r"\b(?:drink(?:ing)?(?: alcohol)?|alcohol|booze)\b|음주|술")
+DRINK = re.compile(r"\b(?:alcohol|booze|wine|beer|cocktails?)\b|\bdrink(?:ing)?\s*$|음주|(?<![가-힣])술")
 
 
 def interpret(text, places=None):
     choices, interests, avoid = {}, [], []
     only_indoor = False
     must, avoid_sites = [], []
-    clauses = re.split(r"[,.;!?\n]|지만|대신|싶고|그리고|(?<=않고)|(?<=않아도)|(?<=않아서)|"
-                       r"\bbut\b|\b(?:and|yet)\s+(?=i\b|want\b|don't\b|no\b|not\b)|(?=\bwithout\s+(?:drinking|alcohol))|\bjust want\b",
+    clauses = re.split(r"[,.;!?\n]|지만|대신|싶고|그리고|(?<=말고)|(?<=않고)|(?<=않아도)|(?<=않아서)|"
+                       r"\bbut\b|\b(?:and|yet)\s+(?=i\b|want\b|wanna\b|don't\b|no\b|not\b)|(?=\bwithout\s+(?:drinking|alcohol))|\bjust want\b",
                        text.casefold().replace("’", "'"))
     for clause in clauses:
         negative = NEGATIVE.search(clause)
@@ -84,4 +85,6 @@ def interpret(text, places=None):
         limits["walking"]="stepFree"
     if only_indoor:
         limits["indoor"] = "only"
+    elif "indoor" in interests and "indoor" not in avoid:
+        limits["indoor"] = "prefer"
     return choices, sorted(set(interests) - set(avoid)), limits

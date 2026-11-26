@@ -12,8 +12,12 @@ BASE = Path(__file__).parent
 PLACES = json.loads((BASE / "data/places.json").read_text(encoding="utf-8"))
 PLACES.update(json.loads((BASE / "data/activity_places.json").read_text(encoding="utf-8")))
 RULES = json.loads((BASE / "ranking_rules.json").read_text(encoding="utf-8"))
+# Their cited activities include listening to buskers and browsing concert programmes.
+for music_stop in ("hongdae", "artscenter"):
+    PLACES[music_stop]["tags"].append("music")
 TAGS = {tag for place in PLACES.values() for tag in place["tags"]}
 LABELS = {
+    "music": ("음악 감상", "listening to music"), "evening": ("저녁 나들이", "an evening outing"),
     "new": ("새로운 경험", "trying something new"), "familiar": ("익숙한 활동", "familiar activities"),
     "social": ("함께하는 활동", "shared activities"), "solo": ("혼자 즐기는 시간", "independent exploration"),
     "planned": ("순서가 있는 활동", "structured activities"), "flex": ("자유로운 진행", "flexibility"),
@@ -111,6 +115,9 @@ def _score(site, context, mood, trip, history, focus=None, level=None):
         choices = mood.get("choices", {})
         terms = {tag for field, mapping in RULES["mood"].items() for tag in mapping.get(choices.get(field), [])}
         terms.update(mood.get("tags") or [])
+        if "evening" in terms and "night" in tags:
+            # A time of day alone does not promise a quiet setting or evening access.
+            add("current", "evening", 1)
         if level:
             terms -= activity_match.ACTIVITIES
         if not terms and choices.get("mood") == "tired" and "rest" in tags:
@@ -187,7 +194,7 @@ def _reasons(site, trace, lang):
     return reasons
 
 
-def _assemble(anchor, ranked, traces, free_days, must, reserved, used, start_date):
+def _assemble(anchor, ranked, traces, free_days, must, reserved, used, start_date, setting_wishes):
     """Place mandatory stops in available open slots before filling optional stops."""
     slots = [day for day in free_days for _ in range(2)]
     allocated = {}
@@ -214,7 +221,8 @@ def _assemble(anchor, ranked, traces, free_days, must, reserved, used, start_dat
             base = PLACES[group[0]] if group else None
             candidates = [pid for pid in ranked if pid not in chosen and pid not in reserved
                           and not regular_closure(pid, start_date, day or 1)
-                          and (not base or PLACES[pid]["zone"] == base["zone"])]
+                          and (not base or (PLACES[pid]["zone"] == base["zone"] and
+                               (setting_wishes & set(base["tags"])) <= set(PLACES[pid]["tags"])))]
             if not candidates:
                 break
             def partner_priority(pid):
@@ -265,7 +273,8 @@ def generate(context: dict, mood: dict, trip: dict, history: list, language: str
     if focus and not any(pid in levels for pid in eligible):
         response["matchStatus"] = "no_activity_match"
         if focus in activity_match.GROUPS:
-            notice = say(lang, "이 목록에는 참여할 수 있는 독서·팬 모임의 일정이 아직 없어요.", "The catalogue has no verified book-group or fan-club meetups yet.")
+            group = {"bookclub": ("독서 모임", "book-group meetups"), "fanclub": ("팬 모임", "fan-club meetups")}[focus]
+            notice = say(lang, f"현재 목록에는 참여 일정을 확인한 {group[0]}이 없어요.", f"The catalogue has no verified {group[1]} yet.")
         else:
             notice = say(lang, "현재 자료와 선택한 조건에 맞는 활동 장소를 찾지 못했어요.", "No documented venue for this activity fits the selected conditions.")
         response["notices"].append(notice)
@@ -285,7 +294,7 @@ def generate(context: dict, mood: dict, trip: dict, history: list, language: str
     scored = {pid: _score(PLACES[pid], context, mood or {}, spec, history or [], focus, levels.get(pid)) for pid in eligible}
     ranked = sorted(eligible, key=lambda pid: (*(-v for v in scored[pid][0]), pid))
     traces = {pid: scored[pid][1] for pid in ranked}
-    if set(spec.interests) - TAGS - activity_match.ACTIVITIES:
+    if set(spec.interests) - TAGS - activity_match.ACTIVITIES - {"evening"}:
         response["notices"].append(say(lang,"목록에 없는 관심사는 순위에 반영하지 못했어요.", "An unrecognised interest could not be scored."))
     anchors = [pid for pid in ranked if pid not in spec.mustVisit]
     if spec.mustVisit and (not anchors or len(spec.mustVisit) == 2 * len(free_days)):
@@ -305,16 +314,20 @@ def generate(context: dict, mood: dict, trip: dict, history: list, language: str
         chosen_anchors.append(winner)
     used = set()
     structures = set()
+    wanted = set(spec.interests) | set((mood or {}).get("tags", []))
+    # Do not pad a quiet indoor outing with a noisy market or outdoor walk.
+    setting_wishes = wanted & {"quiet", "indoor"}
     for anchor in [*chosen_anchors, *anchors]:
         if len(response["courses"]) == 3:
             break
-        assigned = _assemble(anchor, ranked, traces, free_days, spec.mustVisit, set(chosen_anchors)-{anchor}, used, visit_date)
+        assigned = _assemble(anchor, ranked, traces, free_days, spec.mustVisit, set(chosen_anchors)-{anchor}, used, visit_date, setting_wishes)
         ids = [pid for group in assigned.values() for pid in group]
         footprint = tuple(tuple(sorted(group)) for group in assigned.values())
         if not ids or footprint in structures:
             continue
         site = PLACES[anchor]
-        days, checks, costs = build_days(spec, assigned, PLACES, lang)
+        wants_evening = "evening" in wanted
+        days, checks, costs = build_days(spec, assigned, PLACES, lang, wants_evening)
         failures, pending = assess_limits(spec, days, costs, lang)
         if focus:
             pending.append(site["accessNote"][lang])

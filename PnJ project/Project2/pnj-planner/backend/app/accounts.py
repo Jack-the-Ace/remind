@@ -357,7 +357,9 @@ def record_checkin(conn, owner, data, places=None):
     if data.editedFromId is not None:
         if data.action != "new":
             raise HTTPException(422, "INVALID_MOOD_EDIT")
-        edited = mood_for_plan(conn, owner, data.editedFromId)["confirmedAt"]
+        previous = mood_for_plan(conn, owner, data.editedFromId)
+        edited = previous["confirmedAt"]
+        limits = previous["suggestedConditions"]
     if data.action == "reuse":
         previous = latest_mood(conn, owner, reusable=True)
         if previous is None:

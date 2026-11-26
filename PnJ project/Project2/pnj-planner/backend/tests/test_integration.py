@@ -2,6 +2,69 @@
 import json
 import socket
 
+
+
+def test_explicit_clubbing_overrides_general_tour_on_the_same_account(app_client):
+    client = app_client
+    account(client, "nightlife-comparison")
+    case = "Just wanna go to CLUB and dance with pretty KOrean girls... and wanna get drunken so much..."
+    def ask(text, chip=None, trip=None):
+        response = client.post("/api/plans", json={"checkIn":{"action":"new", "text":text,
+                               "choices":{"mood":chip} if chip else {}}, "trip":trip or {}, "language":"en"})
+        assert response.status_code == 200
+        return response.json()
+
+    for sentence, chip in ((case,"restless"), (case,None), ("I want to go clubbing and dance.",None),
+                            ("오늘 클럽에서 춤추고 사람들과 어울리고 싶어.",None)):
+        result = ask(sentence, chip)
+        courses = result["courses"]
+        assert {"club", "dance", "music", "nightlife"} <= set(result["activeMood"]["tags"])
+        assert result["activeMood"]["choices"].get("mood") == chip and result["trip"]["avoid"] == []
+        if sentence == case:
+            assert "social" in result["activeMood"]["tags"]
+        assert 0 < len(courses) < 3 and result["notices"]
+        assert {c["activityMatch"]["level"] for c in courses} == {"direct","area"}
+        assert len({c["reasons"][0] for c in courses}) == len(courses)
+        for c in courses:
+            assert c["conditionMatch"]["status"] == "needs_check"
+            assert c["activityMatch"]["source"].startswith("https://")
+            for day in c["days"]:
+                for s in day["stops"]:
+                    trace = c["scoreTrace"][s["id"]]
+                    assert "club" in trace["placeEvidence"]["experienceTags"]
+                    assert any("dance" in a.lower() for a in s["activities"])
+                    assert any(h["match"] == "club" and h["points"] > 0 for h in trace["contributions"]["wish"])
+                    assert s["timeRange"] == {"start":None,"end":None}
+        for mode in ("P", "PnJ", "J"):
+            handoff = client.post(f"/api/plans/{courses[0]['id']}/select",json={"detailMode": mode}).json()
+            assert handoff["activityMatch"] == courses[0]["activityMatch"] and handoff["courseId"] == courses[0]["courseId"]
+    sober = ask("I want to dance, but I don’t drink alcohol.")
+    assert set(sober["trip"]["avoid"]) == {"alcohol"}
+    assert sober["courses"] and all(c["activityMatch"]["offer"] == "dance_class" for c in sober["courses"])
+    quiet = ask("I don’t want clubs. I want a quiet evening.")
+    assert set(quiet["activeMood"]["tags"]) == {"quiet","evening"} and quiet["trip"]["avoid"] == ["club"]
+    inside = ask("조용한 실내에서 쉬고 싶어")
+    assert inside["trip"]["indoor"] == "prefer"
+    for general in (quiet, inside):
+        assert len(general["courses"]) == 3 and all("activityMatch" not in c for c in general["courses"])
+        for c in general["courses"]:
+            for day in c["days"]:
+                for s in day["stops"]:
+                    assert "quiet" in c["scoreTrace"][s["id"]]["placeEvidence"]["experienceTags"]
+                    if general is inside:
+                        assert s["setting"] == "indoor"
+    for group in ("book club", "fan club"):
+        r = ask("I’m looking for a "+group+".")
+        assert r["activeMood"]["tags"] == [group.replace(" ","")] and not r["courses"]
+        assert r["matchStatus"] == "no_activity_match"
+    only = ask("Go to a club", trip={"indoor":"only","budgetKrw":500})
+    assert only["courses"] and all(c["activityMatch"]["level"]=="direct" for c in only["courses"])
+    assert only["courses"][0]["costs"]["total"] is None
+    denied = ask("Go dancing", trip={"avoid":["dance"]})
+    assert not denied["courses"] and denied["matchStatus"] == "no_activity_match"
+    with db() as conn:
+        assert not any(case in row for row in conn.iterdump())
+
 import pytest
 from fastapi.testclient import TestClient
 

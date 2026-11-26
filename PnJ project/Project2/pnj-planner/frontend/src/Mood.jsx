@@ -14,6 +14,7 @@ function pastSummary(last,t){
 }
 export function empathy(m,t){
   if(!m||m.action==='skip')return t('Let’s start with your everyday preferences.','평소 성향을 바탕으로 서울에서 해볼 만한 경험을 골랐어요.')
+  if(m.choices?.mood==='restless' && m.tags?.includes('club'))return t('You’re feeling restless and have a club night in mind. Let’s find a dance floor with music you like.','답답한 오늘은 클럽에 가고 싶군요. 마음에 드는 음악에 맞춰 춤출 곳을 찾아봐요.')
   const lines={
     tired:['Sounds like a tiring day. Pick whichever experience feels easiest today.','오늘 많이 지쳤군요. 가장 부담 없이 느껴지는 경험부터 골라 봐요.'],
     happy:['It’s lovely to hear you’re feeling good. See which outing catches your eye.','기분 좋은 하루군요. 마음이 가는 서울 나들이를 골라 보세요.'],
@@ -25,7 +26,8 @@ export function empathy(m,t){
 }
 export default function Mood({t,lang,last,onResult,initial,trip={}}){
   const [feeling,pick]=useState(initial?.choices?.mood||''),[raw,type]=useState('')
-  const [adjusted,adjust]=useState(initial?.tags||[]),[busy,loading]=useState(false),[error,fail]=useState(null)
+  const [editedTags,adjust]=useState(null),[busy,loading]=useState(false),[error,fail]=useState(null)
+  const adjusted=editedTags ?? (raw.trim()?[]:(initial?.tags||[]))
   async function submit(action){
     if(busy)return
     loading(true);fail(null)

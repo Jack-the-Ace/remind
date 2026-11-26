@@ -5,11 +5,11 @@ ACTIVITIES = {"club", "nightlife", "dance", "music"} | GROUPS
 
 
 def focus_for(trip, mood):
-    wanted = set(trip.interests) | set((mood or {}).get("tags", []))
-    # A club with dancing is a more specific outing than a dance lesson.
-    for key in ("club", "nightlife", "dance", "bookclub", "fanclub", "music"):
-        if key in wanted and key not in trip.avoid:
-            return key
+    # A refined activity takes precedence. Music alone also covers busking and concerts.
+    for wanted in (trip.interests, (mood or {}).get("tags", [])):
+        for key in ("club", "nightlife", "dance", "bookclub", "fanclub"):
+            if key in wanted:
+                return key
     return None
 
 
@@ -19,11 +19,9 @@ def match_level(site, focus, avoid):
         return None
     if focus in {"club", "nightlife"} and offer not in CLUB_OFFERS:
         return None
-    if focus == "music" and offer == "dance_class":
-        return None
     if focus == "dance" and "alcohol" in avoid and offer != "dance_class":
         return None
-    if focus not in {"club", "nightlife", "dance", "music"}:
+    if focus not in {"club", "nightlife", "dance"}:
         return None
     return "area" if offer == "nightlife_area" else "direct"
 
