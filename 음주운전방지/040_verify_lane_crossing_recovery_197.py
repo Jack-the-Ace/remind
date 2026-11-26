@@ -20,6 +20,45 @@ NIGHT = ROOT / "videos/비접촉_사고유발_영상_밤.mp4"
 RECOVERY_HOLD = "crossing_unobserved_during_tracking_gap"
 
 
+def verify_contact_intervals():
+    """상자 하단과 경계의 위치만 통제하고, 실제 분석에 쓰는 집계기를 그대로 실행합니다."""
+    from importlib import import_module
+    lane = import_module("034_detect_lane_crossing_197")
+    # L/R은 차체 전체가 경계 왼쪽/오른쪽, C는 하단이 걸친 상태입니다.
+    cases = [
+        ("연속 3초", "L"+"C"*91, [46, 91]),
+        ("짧은 접촉 세 번", "L"+("C"*12+"L")*3, [13, 26, 39]),
+        ("3초 후 복귀 두 번", "L"+("C"*90+"L")*2, [46, 91, 137, 182]),
+        ("첫 장부터 연속 6초", "C"*181, [45, 90, 135, 180]),
+        ("정확히 1.5초 후 복귀", "L"+"C"*45+"L", [46]),
+        ("2초 후 복귀 두 번", "L"+("C"*60+"L")*2, [46, 107]),
+        ("공백 전후 시간 분리", "L"+"C"*31+"?"+"C"*46, [78]),
+        ("공백 건너 복귀", "L"+"C"*20+"?L", []),
+        ("반대 차로 유지", "L"+"C"*6+"R"*40, []),
+    ]
+    results = []
+    for name, positions, expected in cases:
+        rows=[]
+        for index, pos in enumerate(positions):
+            box = {"L":[0,10,9,20],"C":[5,10,15,20],"R":[13,10,23,20],"?":None}[pos]
+            rows.append(dict(frame=index+1,seconds=4+index/30,box=box,boundary=[[10,0],[10,25]],
+                             status="observed" if box else "tracking_hold",track_id=2 if index<30 else 58))
+        events=lane.analyze_contact_rows(rows,30)
+        recorded=[e for e in events if e["label"]=="차선침범"]
+        assert [e["frame"]-1 for e in recorded]==expected, (name, events)
+        assert all(abs(e["time_s"]-(4+i/30))<1e-7 for e,i in zip(recorded,expected))
+        if name=="반대 차로 유지":
+            assert [e["label"] for e in events]==["차선변경"]
+        results.append(dict(case=name,expected=len(expected),actual=len(recorded),frames=[i+1 for i in expected]))
+    # VFR에서 프레임 수와 시각이 어긋날 때도 실제 PTS가 1.5초를 지난 첫 프레임에 표시합니다.
+    state=lane.LaneBehavior(30)
+    found=[]
+    for n in range(41):
+        found.extend(state.update(n+1, n*.041, "contact"))
+    assert len(found)==1 and found[0]["time_s"]==1.5 and found[0]["frame"]==38
+    return results
+
+
 def load_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 

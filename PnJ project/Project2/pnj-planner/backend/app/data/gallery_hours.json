@@ -1,0 +1,75 @@
+{
+  "version": "sema-2026-11-26",
+  "checkedOn": "2026-11-26",
+  "closure": {
+    "weekday": [
+      0
+    ],
+    "monthDay": [
+      "01-01"
+    ]
+  },
+  "lastAdmissionBeforeCloseMinutes": 60,
+  "scope": "Exhibition galleries, regular published schedule. Holiday changes and temporary closures require confirmation.",
+  "places": {
+    "seosomun": {
+      "source": "https://sema.seoul.go.kr/en/visit/seosomun",
+      "tueThu": [
+        "10:00",
+        "20:00"
+      ],
+      "friday": [
+        "10:00",
+        "21:00"
+      ],
+      "weekendHoliday": {
+        "summer": [
+          "10:00",
+          "19:00"
+        ],
+        "winter": [
+          "10:00",
+          "18:00"
+        ]
+      }
+    },
+    "buksema": {
+      "source": "https://sema.seoul.go.kr/en/visit/bukseoul",
+      "tueThu": [
+        "10:00",
+        "20:00"
+      ],
+      "friday": [
+        "10:00",
+        "21:00"
+      ],
+      "weekendHoliday": {
+        "summer": [
+          "10:00",
+          "19:00"
+        ],
+        "winter": [
+          "10:00",
+          "18:00"
+        ]
+      }
+    },
+    "namsema": {
+      "source": "https://sema.seoul.go.kr/en/visit/namseoul",
+      "tueThu": [
+        "10:00",
+        "20:00"
+      ],
+      "friday": [
+        "10:00",
+        "20:00"
+      ],
+      "weekendHoliday": {
+        "all": [
+          "10:00",
+          "18:00"
+        ]
+      }
+    }
+  }
+}

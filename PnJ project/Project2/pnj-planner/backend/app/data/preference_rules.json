@@ -1,0 +1,22 @@
+{
+  "version": "pnj-facet-hypotheses-2",
+  "axes": [
+    "novelty",
+    "social",
+    "structure",
+    "activity",
+    "crowds",
+    "learning",
+    "food",
+    "trend",
+    "timeOfDay",
+    "pace"
+  ],
+  "hypotheses": {
+    "social": "E2",
+    "activity": "E4",
+    "novelty": "O4",
+    "structure": "C5",
+    "learning": "O5"
+  }
+}

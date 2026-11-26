@@ -162,19 +162,19 @@ def verify(dest):
             boxes=[np.array(c["box"])*np.tile(scale,2) for c in cars]
             if row["box"]:boxes.append(np.array(row["box"])*np.tile(scale,2))
             for n,(boundary,behavior) in enumerate(states,1):
-                side=distance=None;status="tracking_hold"
+                side=distance=support=None;status="tracking_hold"
                 if row["box"]:
                     x,y,X,Y=row["box"];support=boundary.detect(mask,boxes)
                     status="boundary_missing"
                     if support is not None:
                         side,distance,status=boundary.classify(np.array([(x+X)/2,Y])*scale,support,boxes)
-                event=behavior.update(f,side,status,distance)
+                found=behavior.observe(f,lane.source_seconds(cap,f,fps),row["box"],boundary.endpoints(support,scale),status)
                 counts[n-1][status]+=1
                 log.append(dict(frame=f,boundary=n,status=status,side=side,distance=distance))
-                if event:
+                for event in found:
                     start=event["maneuver_start_frame"]
                     light=check_lamps(rows,patterns,start,f,event["to_side"],fps)
-                    route(events,f'{n}-{start}',event["label"],light["status"])
+                    route(events,f'{n}-{f}-{event["reason"]}',event["label"],light["status"])
                     auto.append(dict(boundary=n,**event,light=light))
     finally:cap.release()
     # 이 구간은 사람이 원본에서 전후 위치를 대조한 범위입니다. 자동 판정에 주입하지 않습니다.

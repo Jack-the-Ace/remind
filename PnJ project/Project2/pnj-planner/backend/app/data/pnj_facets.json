@@ -1,0 +1,228 @@
+{
+  "version": "pnj-facets-24-v1",
+  "sources": [
+    "https://ipip.ori.org/30FacetNEO-PI-RItems.htm",
+    "https://ipip.ori.org/"
+  ],
+  "koreanTranslation": "PnJ working translation; the two-item selections and their travel mappings have not been validated.",
+  "facets": {
+    "E3": {
+      "en": "Self-direction and expression",
+      "ko": "자기주도·표현"
+    },
+    "E4": {
+      "en": "Activity level",
+      "ko": "활동 성향"
+    },
+    "E2": {
+      "en": "Group company",
+      "ko": "어울림 선호"
+    },
+    "E1": {
+      "en": "Friendliness",
+      "ko": "대인 친근감"
+    },
+    "O4": {
+      "en": "Openness to new experiences",
+      "ko": "새 경험 개방성"
+    },
+    "O5": {
+      "en": "Intellectual exploration",
+      "ko": "지적 탐구"
+    },
+    "O2": {
+      "en": "Artistic and aesthetic interest",
+      "ko": "예술·미적 관심"
+    },
+    "O3": {
+      "en": "Emotional involvement and awareness",
+      "ko": "감정 관여·자각"
+    },
+    "O1": {
+      "en": "Imagination",
+      "ko": "상상 성향"
+    },
+    "C5": {
+      "en": "Following through",
+      "ko": "계획 실행·지속"
+    },
+    "C6": {
+      "en": "Deliberation and caution",
+      "ko": "숙고·신중"
+    },
+    "A3": {
+      "en": "Consideration and helping",
+      "ko": "배려·도움"
+    }
+  },
+  "items": [
+    [
+      "e3-1",
+      "E3",
+      1,
+      "Take charge.",
+      "필요할 때 앞장서서 일을 맡는다."
+    ],
+    [
+      "e4-1",
+      "E4",
+      1,
+      "Do a lot in my spare time.",
+      "여가 시간에도 여러 가지 일을 한다."
+    ],
+    [
+      "e2-1",
+      "E2",
+      1,
+      "Talk to a lot of different people at parties.",
+      "모임에서 여러 사람과 이야기를 나눈다."
+    ],
+    [
+      "e1-1",
+      "E1",
+      1,
+      "Make friends easily.",
+      "새로운 사람과 쉽게 친해진다."
+    ],
+    [
+      "o4-1",
+      "O4",
+      1,
+      "Prefer variety to routine.",
+      "늘 하던 일보다 다양한 일을 더 좋아한다."
+    ],
+    [
+      "o5-1",
+      "O5",
+      1,
+      "Love to read challenging material.",
+      "이해하는 데 노력이 필요한 글을 즐겨 읽는다."
+    ],
+    [
+      "o2-1",
+      "O2",
+      1,
+      "See beauty in things that others might not notice.",
+      "다른 사람들이 지나치는 것에서도 아름다움을 발견한다."
+    ],
+    [
+      "o3-1",
+      "O3",
+      1,
+      "Experience my emotions intensely.",
+      "내 감정을 강렬하게 느끼는 편이다."
+    ],
+    [
+      "o1-1",
+      "O1",
+      1,
+      "Have a vivid imagination.",
+      "머릿속에 생생하게 상상할 수 있다."
+    ],
+    [
+      "c5-1",
+      "C5",
+      1,
+      "Carry out my plans.",
+      "세운 계획을 실행에 옮긴다."
+    ],
+    [
+      "c6-1",
+      "C6",
+      -1,
+      "Jump into things without thinking.",
+      "충분히 생각하지 않고 일에 뛰어드는 편이다."
+    ],
+    [
+      "a3-1",
+      "A3",
+      1,
+      "Love to help others.",
+      "다른 사람을 돕는 일을 좋아한다."
+    ],
+    [
+      "e3-2",
+      "E3",
+      -1,
+      "Wait for others to lead the way.",
+      "다른 사람이 먼저 방향을 정해 주기를 기다린다."
+    ],
+    [
+      "e4-2",
+      "E4",
+      -1,
+      "Like to take it easy.",
+      "느긋하게 지내는 것을 좋아한다."
+    ],
+    [
+      "e2-2",
+      "E2",
+      -1,
+      "Prefer to be alone.",
+      "혼자 있는 편을 더 좋아한다."
+    ],
+    [
+      "e1-2",
+      "E1",
+      -1,
+      "Keep others at a distance.",
+      "다른 사람들과 거리를 두는 편이다."
+    ],
+    [
+      "o4-2",
+      "O4",
+      -1,
+      "Prefer to stick with things that I know.",
+      "익숙한 것을 계속하는 편이 좋다."
+    ],
+    [
+      "o5-2",
+      "O5",
+      -1,
+      "Avoid philosophical discussions.",
+      "철학적인 주제로 토론하는 것을 피한다."
+    ],
+    [
+      "o2-2",
+      "O2",
+      -1,
+      "Do not enjoy going to art museums.",
+      "미술관에 가는 것을 즐기지 않는다."
+    ],
+    [
+      "o3-2",
+      "O3",
+      -1,
+      "Rarely notice my emotional reactions.",
+      "내가 어떤 감정으로 반응하는지 좀처럼 알아차리지 못한다."
+    ],
+    [
+      "o1-2",
+      "O1",
+      1,
+      "Love to daydream.",
+      "이런저런 공상에 빠지는 것을 좋아한다."
+    ],
+    [
+      "c5-2",
+      "C5",
+      -1,
+      "Have difficulty starting tasks.",
+      "해야 할 일을 시작하는 데 어려움을 느낀다."
+    ],
+    [
+      "c6-2",
+      "C6",
+      -1,
+      "Make rash decisions.",
+      "성급하게 결정을 내리는 편이다."
+    ],
+    [
+      "a3-2",
+      "A3",
+      -1,
+      "Take no time for others.",
+      "다른 사람을 위해 시간을 내지 않는 편이다."
+    ]
+  ]
+}

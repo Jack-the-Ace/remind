@@ -31,6 +31,7 @@ from ultralytics import YOLO
 from preview_lane_track_197 import load_lane_model, predict_lane, track_vehicles, verify_video
 from redbox_stop_line import StopLineMonitor
 from redbox_vehicle_info import VehicleInfo
+from redbox_lane_geometry import ShortTargetMatch
 from track_preview import ROOT, VEHICLES, Target
 
 
@@ -47,7 +48,7 @@ STATUS = {
     "boundary_missing": "판정 보류 · 경계 미검출",
     "boundary_occluded": "판정 보류 · 경계 가림",
     "boundary_not_supported": "판정 보류 · 차량 근처 경계 근거 부족",
-    "near_boundary": "판정 보류 · 경계 근접",
+    "near_boundary": "추적 중 · 경계 근접",
     "crossing_unobserved_during_tracking_gap": "판정 보류 · 추적 공백 중 통과 불명",
     "observed": "추적 중 · 경계 확인",
     "stop_observed": "추적 중 · 정지선 확인",
@@ -222,6 +223,25 @@ def hud_text(draw, x, y, parts, size, *, align="left"):
         x += length
 
 
+LANE_MESSAGES = {
+    "small": "선택 차량이 작게 보여 분석이 어렵습니다.",
+    "unclear": "선택 차량과 차선이 선명하게 보이지 않습니다.",
+}
+
+
+def draw_lane_notice(draw, size, notice):
+    # 차량과 차선이 있는 화면 중앙을 비워 두고 왼쪽 아래에 두 줄만 표시합니다.
+    x, y = 19, size[1]-109
+    if notice in LANE_MESSAGES:
+        points=[(x+10,y),(x+21,y+19),(x,y+19),(x+10,y)]
+        draw.line(points,fill=HUD_RED,width=2)
+        hud_text(draw,x+10,y+6,[("!",HUD_WHITE)],12,align="center")
+        hud_text(draw,x+30,y,[("차선 판독 불가",HUD_RED)],19)
+        hud_text(draw,x+30,y+27,[(LANE_MESSAGES[notice],HUD_WHITE)],15)
+    elif notice=="search":
+        hud_text(draw,x,y+24,[("선택 차량을 찾는 중",HUD_WHITE)],18)
+
+
 def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
     height, width = frame.shape[:2]
     size = (960, max(240, round(height*960/width)//2*2))
@@ -234,13 +254,21 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
     info = row["vehicle_info"]
     phase = row["seconds"]
     clock = f"{int(phase//60):02d}:{phase%60:05.2f}"
-    if row["boundary"]:
-        draw.line([tuple(round(v*s) for v,s in zip(p, scale)) for p in row["boundary"]],
+    reading=row.get("lane_readability") or {}
+    notice=reading.get("notice")
+    if not reading and row.get("status")=="tracking_hold" and not row["box"]:
+        notice="search"
+    if reading.get("mode")=="remote":
+        lines=[edge["points"] for edge in reading["geometry"]["edges"].values() if edge.get("position")]
+    else:
+        lines=[row["boundary"]] if row["boundary"] and (not reading or reading["counting"]) else []
+    for points in lines:
+        draw.line([tuple(round(v*s) for v,s in zip(p, scale)) for p in points],
                   fill=HUD_BLUE, width=2)
     if (stop_line := (row.get("stop_line") or {}).get("line")):
         draw.line([tuple(round(v*s) for v,s in zip(p, scale)) for p in stop_line],
                   fill=HUD_BLUE, width=2)
-    if row["box"]:
+    if row["box"] and notice!="search" and reading.get("raw")!="search":
         x, y, a, b = (round(v*scale[i%2]) for i,v in enumerate(row["box"]))
         draw.rectangle((x, y, a, b), outline=HUD_RED, width=2)
         center = (x+a)//2
@@ -265,7 +293,21 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
         hud_text(draw, size[0]-18, 49 + index*22,
                  heading + [(f"{label}: ", EVENT_COLORS.get(label, HUD_BLUE)), (f"{count}회", HUD_RED)], 17, align="right")
     # 브라우저의 재생 버튼·타임라인과 겹치지 않도록 하단에서 조금 띄웁니다.
-    hud_text(draw, 18, size[1]-69, [(row.get("status_text") or STATUS[row["status"]], HUD_WHITE)], 14)
+    if notice in LANE_MESSAGES or notice=="search":
+        draw_lane_notice(draw,size,notice)
+    else:
+        if notice=="checking":
+            text="차선 재관측 중"
+        elif notice=="ready":
+            positions=reading.get("positions")
+            if positions:
+                text=("양쪽 차선 판독 중" if len(positions)==2 else
+                      ("왼쪽 경계 판독 · 오른쪽 보류" if "left" in positions else "오른쪽 경계 판독 · 왼쪽 보류"))
+            else:
+                text=row.get("status_text") or "선택 차량 관찰 중"
+        else:
+            text=row.get("status_text") or STATUS[row["status"]]
+        hud_text(draw,18,size[1]-69,[(text,HUD_WHITE)],14)
     return image
 
 
@@ -281,12 +323,12 @@ def event_position(box, width, height):
 def draw_event_float(image, event, time_s, *, stack=0):
     if event is None:
         return False
-    elapsed = time_s - event["time_s"]
+    elapsed = round(time_s - event["time_s"], 9)
     if not 0 <= elapsed < EVENT_FLOAT_SECONDS:
         return False
     anchor = event["hud_anchor"]
     label = event.get("display_label", event["label"])
-    text = "+" + label + " 1"
+    text = "+" + label + ("1" if label == "차선침범" else " 1")
     face = font(20)
     width = math.ceil(face.getlength(text)) + 6
     fade = round(255 * min(1, EVENT_FLOAT_SECONDS - elapsed))
@@ -294,7 +336,7 @@ def draw_event_float(image, event, time_s, *, stack=0):
     ImageDraw.Draw(sprite).text((3, 3), text, font=face, anchor="lt", fill=(*ImageColor.getrgb(EVENT_COLORS.get(label, HUD_RED)), fade),
                                stroke_width=2, stroke_fill=(0, 0, 0, round(fade*.75)))
     x = round(image.width*anchor["x"]) - (width if anchor["align"] == "right" else 0)
-    y = round(image.height*anchor["y"] - 13*elapsed - stack*28)
+    y = round(image.height*anchor["y"] - 13*elapsed - stack*55)
     if image.mode == "RGBA":
         image.alpha_composite(sprite, (x, y))
     else:
@@ -303,10 +345,18 @@ def draw_event_float(image, event, time_s, *, stack=0):
 
 
 def draw_event_floats(image, events, time_s):
-    for stack, event in enumerate(reversed(events)):
+    for event in reversed(events):
         if time_s - event["time_s"] >= EVENT_FLOAT_SECONDS:
             break
-        draw_event_float(image, event, time_s, stack=stack)
+        if event["time_s"] <= time_s:
+            draw_event_float(image, event, time_s, stack=event.get("float_slot", 0))
+
+
+def set_float_slot(event, prior):
+    # 같은 사건은 끝날 때까지 같은 줄을 사용합니다. 이전 글자가 사라지면 그 줄을 재사용합니다.
+    used = {e.get("float_slot", 0) for e in prior if 0 <= event["time_s"]-e["time_s"] < EVENT_FLOAT_SECONDS}
+    event["float_slot"] = next(n for n in range(len(used)+1) if n not in used)
+    return event
 
 
 @contextmanager
@@ -342,11 +392,11 @@ def encode_hud(output, shape, fps, web):
 
 def add_event(events, output, event, frame, seconds, vehicle, video, frame_size):
     candidate = len(events)+1
-    entry = dict(event, candidate=candidate, frame=frame, time_s=seconds,
+    entry = dict(event, candidate=candidate, frame=frame, time_s=event.get("time_s", seconds),
                  track_id=vehicle["id"], source_video=video, hud_anchor=event_position(vehicle["box"], *frame_size),
                  direction=f"{event['from_side']}_to_{event['to_side']}",
                  event_source="automatic", incident_id=f"{output.name}-{candidate:03d}")
-    events.append(entry)
+    events.append(set_float_slot(entry, events))
 
 
 def analyze(data, output, progress=lambda frame, total: None, *, web=False, stage=lambda name: None):
@@ -369,6 +419,7 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
     stop_statuses = Counter()
     stop_passages = []
     analyzed = 0
+    source_times = []
     try:
         with (capture(path, camera) as cap, (output/"frames.jsonl").open("x", encoding="utf-8") as log,
               ExitStack() as media):
@@ -380,7 +431,10 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                 raise ValueError("분석 시작 시각을 확인하세요.")
             progress(0, end-start+1)
             stage("analyzing")
-            behavior = crossing_module.LaneBehavior(fps)
+            assessor = None
+            continuity = ShortTargetMatch()
+            def local_mask(crop):
+                return predict_lane(lane_model,crop,torch.device("cuda:0"),(384,240),times)[0]
             stop_monitor = None
             last_sample = -math.inf
             for number in range(start, end+1):
@@ -398,6 +452,7 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                             raise ValueError("보이는 경사진 경계의 위와 아래에서 두 점을 선택하세요.")
                         if lane_model is not None:
                             boundary = crossing_module.Boundary((line*scale).flatten())
+                            assessor = crossing_module.SceneLaneAnalysis(fps,line)
                     if data.get("stop_line") is not None:
                         stop_seed = coordinates(data["stop_line"], 4, w, h)
                         stop_monitor = StopLineMonitor(stop_seed, frame.shape, camera, crossing_module.Crossing(fps))
@@ -407,6 +462,10 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                     target.select(vehicle, frame, number)
                 else:
                     vehicle = target.update(vehicles, frame, number)
+                seconds = crossing_module.source_seconds(cap,number,fps)
+                track_source = "detector" if vehicle else "missing"
+                if assessor is not None:
+                    vehicle,track_source = continuity.update(frame,vehicle,vehicles,seconds)
                 if vehicle:
                     ids[vehicle["id"]] += 1
                     if number - last_sample >= max(1, round(.32*fps)):
@@ -419,6 +478,7 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                         last_sample = number
                 status = ("gpu_unavailable" if data.get("line") and not gpu else "boundary_unset") if vehicle else "tracking_hold"
                 side, distance, endpoints = None, None, None
+                support_gap = None
                 if boundary is not None:
                     mask, _ = predict_lane(lane_model, frame, torch.device("cuda:0"), SIZE, times)
                     boxes = [np.asarray(v["box"])*np.tile(scale, 2) for v in vehicles]
@@ -430,12 +490,17 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                         status = "boundary_missing"
                         if valid_rows is not None:
                             x1, _, x2, y2 = vehicle["box"]
+                            support_gap = float(np.min(np.abs(valid_rows-y2*scale[1]))/scale[1])
                             side, distance, status = boundary.classify(
                                 np.array([(x1+x2)/2, y2])*scale, valid_rows, boxes)
                 lane_observation = status
-                event = behavior.update(number, side, lane_observation, distance)
+                source_times.append(seconds)
+                reading = None
+                detected = []
+                if boundary is not None:
+                    box=vehicle["box"] if vehicle else None
+                    detected,reading=assessor.evaluate(number,seconds,frame,box,endpoints,status,support_gap,vehicles,local_mask)
                 stop_row = None
-                seconds = (number-1)/fps
                 if stop_monitor:
                     stop_row, passage = stop_monitor.update(number, frame, vehicles, vehicle)
                     stop_statuses[stop_row["status"]] += 1
@@ -445,13 +510,18 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                                                   track_id=vehicle["id"], event_source="automatic"))
                     if data.get("line") is None:
                         status = stop_row["status"]
-                if event:
+                for event in detected:
                     add_event(events, output, event, number, seconds, vehicle, path.name, (w, h))
                     event_counts[event["label"]] += 1
                 row = dict(frame=number, seconds=seconds, status=status, side=side, distance_px=distance,
-                           lane_observation=lane_observation, boundary=endpoints,
+                           lane_observation=lane_observation, lane_readability=reading,
+                           track_source=track_source,
+                           footprint_position=(reading.get("positions",{}).get(assessor.geometry.primary) if reading and reading.get("mode")=="remote"
+                                               else assessor.legacy.behavior.last_position if assessor else None),
+                           contact_start_s=(assessor.clocks[assessor.geometry.primary].first_contact if reading and reading.get("mode")=="remote"
+                                            else assessor.legacy.behavior.start if assessor else None), boundary=endpoints,
                            box=vehicle["box"] if vehicle else None, track_id=vehicle["id"] if vehicle else None,
-                           count=len(events), new_event=event is not None, event_counts=dict(event_counts),
+                           count=len(events), new_event=bool(detected), event_counts=dict(event_counts),
                            vehicle_info=info.snapshot())
                 if stop_monitor:
                     row["stop_line"] = stop_row
@@ -488,7 +558,9 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                  ocr_status=ocr_status, windows_ocr_available=bool(info.windows_ocr and info.windows_ocr.process
                                                                  and info.windows_ocr.available),
                  vehicle_info=info.snapshot(), ocr_frames=info.ocr_frames, event_counts=dict(event_counts),
-                 event_total=len(events), events=events)
+                 lane_rule_version=crossing_module.LANE_RULE_VERSION, event_total=len(events), events=events)
+    if any(abs(t-(start+i-1)/fps) > .001 for i,t in enumerate(source_times)):
+        saved["source_times"] = source_times
     if stop_monitor:
         saved.update(stop_seed=data["stop_line"], stop_statuses=dict(stop_statuses), stop_passages=stop_passages,
                      signal_state="확인 불가")
@@ -549,7 +621,7 @@ def load_demos(directory):
             if not re.fullmatch(r"[a-z0-9-]+", path.name) or not all((path/f).is_file() for f in DEMO_FILES):
                 continue
             data = json.loads((path/"target.json").read_text(encoding="utf-8"))
-            if data.get("event_vocabulary") == 2:
+            if data.get("event_vocabulary") == 2 and data.get("lane_rule_version") == crossing_module.LANE_RULE_VERSION:
                 demos[path.name] = (path, data)
     return demos
 
@@ -694,7 +766,7 @@ class Handler(media_handler):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8770)
-    parser.add_argument("--demo-dir", type=Path, default=OUTPUT/"demo_terms_20261130")
+    parser.add_argument("--demo-dir", type=Path, default=OUTPUT/"demo_contact_v1")
     parser.add_argument("--spec", type=Path, help="차량 선택 좌표가 있는 분석 JSON. 목록으로 여러 영상을 시험할 수 있습니다.")
     parser.add_argument("--output", type=Path, help="--spec의 결과를 담을 새 폴더")
     parser.add_argument("--web-media", action="store_true", help="일괄 검증에서도 브라우저 재생용 WebM 저장")

@@ -1,0 +1,491 @@
+{
+  "id": "sto-2025-final-b1-e1-v1",
+  "surveyYear": 2025,
+  "source": "https://www.sto.or.kr/survey/16119_/16119",
+  "publicationDate": "2026-03-03",
+  "sourceSha256": "562dc02d924aa8ffb6e7bf76b6b745ab4a24b68c8e421464a0712657e067b191",
+  "scopeVariable": "SQ8_1",
+  "weight": "WT",
+  "denominator": "all final interviews in the scope, official multiple-response base",
+  "metrics": {
+    "activities": {
+      "shopping": {
+        "variable": "B1_1_1",
+        "label": "쇼핑"
+      },
+      "food": {
+        "variable": "B1_1_2",
+        "label": "음식/미식"
+      },
+      "history": {
+        "variable": "B1_1_3",
+        "label": "고궁/역사 유적지 및 박물관 방문"
+      },
+      "art": {
+        "variable": "B1_1_14",
+        "label": "문화예술체험(전시관/미술관 방문)"
+      },
+      "performance": {
+        "variable": "B1_1_15",
+        "label": "공연관람(연극/영화/뮤지컬 등)"
+      },
+      "night": {
+        "variable": "B1_1_18",
+        "label": "도시 경관 감상(빌딩/야경/현대 건축물)"
+      },
+      "nature": {
+        "variable": "B1_1_19",
+        "label": "자연 경관 감상(강/등산/트레킹 등)"
+      }
+    },
+    "visits": {
+      "gyeongbok": {
+        "variable": "E1_1",
+        "label": "경복궁"
+      },
+      "gwangjang": {
+        "variable": "E1_2",
+        "label": "광장시장"
+      },
+      "sejong": {
+        "variable": "E1_16",
+        "label": "세종문화회관"
+      },
+      "nationalmuseum": {
+        "variable": "E1_41",
+        "label": "국립중앙박물관"
+      },
+      "olympic": {
+        "variable": "E1_48",
+        "label": "올림픽공원"
+      },
+      "seokchon": {
+        "variable": "E1_47",
+        "label": "석촌호수"
+      },
+      "botanic": {
+        "variable": "E1_50",
+        "label": "서울식물원"
+      }
+    }
+  },
+  "integratedAudit": {
+    "rowsByYear": {
+      "2019": 6098,
+      "2023": 1614,
+      "2024": 3216,
+      "2025": 2423
+    },
+    "weightColumnWT": false,
+    "combinedWithFinal": false,
+    "overlapCheck": {
+      "partialUniqueIds": 2423,
+      "exactRawIdMatches": 2423,
+      "alsoMatchThreeActivityFlags": 2423,
+      "identityCrosswalkVerified": false
+    }
+  },
+  "finalWaves": {
+    "1": 1203,
+    "2": 1220,
+    "3": 1215,
+    "4": 1207,
+    "5": 1222
+  },
+  "fieldwork": {
+    "first": "2025-05-25",
+    "last": "2025-12-16"
+  },
+  "groups": {
+    "CN": {
+      "rawN": 948,
+      "weightedDenominator": 2979122.277,
+      "activities": {
+        "shopping": {
+          "rawYes": 871,
+          "weightedYes": 2750235.790014,
+          "rate": 0.92316982
+        },
+        "food": {
+          "rawYes": 856,
+          "weightedYes": 2699467.377116,
+          "rate": 0.90612843
+        },
+        "history": {
+          "rawYes": 196,
+          "weightedYes": 680152.933855,
+          "rate": 0.22830648
+        },
+        "art": {
+          "rawYes": 63,
+          "weightedYes": 176370.77436,
+          "rate": 0.05920226
+        },
+        "performance": {
+          "rawYes": 70,
+          "weightedYes": 200173.437832,
+          "rate": 0.06719209
+        },
+        "night": {
+          "rawYes": 425,
+          "weightedYes": 1347273.854659,
+          "rate": 0.45223852
+        },
+        "nature": {
+          "rawYes": 172,
+          "weightedYes": 540277.580723,
+          "rate": 0.18135462
+        }
+      },
+      "visits": {
+        "gyeongbok": {
+          "rawYes": 229,
+          "weightedYes": 759219.853665,
+          "rate": 0.25484683
+        },
+        "gwangjang": {
+          "rawYes": 130,
+          "weightedYes": 421463.532389,
+          "rate": 0.14147238
+        },
+        "sejong": {
+          "rawYes": 9,
+          "weightedYes": 23249.524085,
+          "rate": 0.00780415
+        },
+        "nationalmuseum": {
+          "rawYes": 25,
+          "weightedYes": 77944.740571,
+          "rate": 0.02616366
+        },
+        "olympic": {
+          "rawYes": 81,
+          "weightedYes": 249539.080555,
+          "rate": 0.08376262
+        },
+        "seokchon": {
+          "rawYes": 5,
+          "weightedYes": 13691.277249,
+          "rate": 0.00459574
+        },
+        "botanic": {
+          "rawYes": 6,
+          "weightedYes": 16050.066598,
+          "rate": 0.00538752
+        }
+      }
+    },
+    "HK": {
+      "rawN": 466,
+      "weightedDenominator": 496853.55,
+      "activities": {
+        "shopping": {
+          "rawYes": 427,
+          "weightedYes": 454978.189668,
+          "rate": 0.91571891
+        },
+        "food": {
+          "rawYes": 425,
+          "weightedYes": 453261.238081,
+          "rate": 0.91226326
+        },
+        "history": {
+          "rawYes": 148,
+          "weightedYes": 157674.944808,
+          "rate": 0.31734692
+        },
+        "art": {
+          "rawYes": 43,
+          "weightedYes": 45392.560151,
+          "rate": 0.09136004
+        },
+        "performance": {
+          "rawYes": 23,
+          "weightedYes": 24206.059374,
+          "rate": 0.0487187
+        },
+        "night": {
+          "rawYes": 181,
+          "weightedYes": 193161.651476,
+          "rate": 0.38876979
+        },
+        "nature": {
+          "rawYes": 69,
+          "weightedYes": 73269.692413,
+          "rate": 0.14746738
+        }
+      },
+      "visits": {
+        "gyeongbok": {
+          "rawYes": 133,
+          "weightedYes": 141297.797576,
+          "rate": 0.2843852
+        },
+        "gwangjang": {
+          "rawYes": 124,
+          "weightedYes": 131333.608935,
+          "rate": 0.26433062
+        },
+        "sejong": {
+          "rawYes": 7,
+          "weightedYes": 7423.001374,
+          "rate": 0.01494002
+        },
+        "nationalmuseum": {
+          "rawYes": 13,
+          "weightedYes": 13427.196325,
+          "rate": 0.02702445
+        },
+        "olympic": {
+          "rawYes": 17,
+          "weightedYes": 18034.687199,
+          "rate": 0.03629779
+        },
+        "seokchon": {
+          "rawYes": 2,
+          "weightedYes": 2152.900538,
+          "rate": 0.00433307
+        },
+        "botanic": {
+          "rawYes": 6,
+          "weightedYes": 6187.090948,
+          "rate": 0.01245254
+        }
+      }
+    },
+    "JP": {
+      "rawN": 1085,
+      "weightedDenominator": 2880094.654,
+      "activities": {
+        "shopping": {
+          "rawYes": 961,
+          "weightedYes": 2555840.074335,
+          "rate": 0.8874153
+        },
+        "food": {
+          "rawYes": 964,
+          "weightedYes": 2563767.756704,
+          "rate": 0.89016788
+        },
+        "history": {
+          "rawYes": 235,
+          "weightedYes": 635939.345622,
+          "rate": 0.22080502
+        },
+        "art": {
+          "rawYes": 45,
+          "weightedYes": 120429.026427,
+          "rate": 0.04181426
+        },
+        "performance": {
+          "rawYes": 33,
+          "weightedYes": 90807.088281,
+          "rate": 0.0315292
+        },
+        "night": {
+          "rawYes": 276,
+          "weightedYes": 724204.983482,
+          "rate": 0.2514518
+        },
+        "nature": {
+          "rawYes": 103,
+          "weightedYes": 280962.218463,
+          "rate": 0.09755312
+        }
+      },
+      "visits": {
+        "gyeongbok": {
+          "rawYes": 179,
+          "weightedYes": 478930.161591,
+          "rate": 0.16628973
+        },
+        "gwangjang": {
+          "rawYes": 319,
+          "weightedYes": 861690.055536,
+          "rate": 0.2991881
+        },
+        "sejong": {
+          "rawYes": 13,
+          "weightedYes": 33093.168322,
+          "rate": 0.01149031
+        },
+        "nationalmuseum": {
+          "rawYes": 10,
+          "weightedYes": 25108.006318,
+          "rate": 0.00871777
+        },
+        "olympic": {
+          "rawYes": 25,
+          "weightedYes": 68988.049177,
+          "rate": 0.0239534
+        },
+        "seokchon": {
+          "rawYes": 11,
+          "weightedYes": 29959.828207,
+          "rate": 0.01040238
+        },
+        "botanic": {
+          "rawYes": 3,
+          "weightedYes": 7929.834984,
+          "rate": 0.00275332
+        }
+      }
+    },
+    "TW": {
+      "rawN": 608,
+      "weightedDenominator": 1065324.466,
+      "activities": {
+        "shopping": {
+          "rawYes": 566,
+          "weightedYes": 992922.701978,
+          "rate": 0.93203783
+        },
+        "food": {
+          "rawYes": 558,
+          "weightedYes": 976696.354356,
+          "rate": 0.91680646
+        },
+        "history": {
+          "rawYes": 258,
+          "weightedYes": 459318.142591,
+          "rate": 0.43115328
+        },
+        "art": {
+          "rawYes": 76,
+          "weightedYes": 135156.464698,
+          "rate": 0.12686883
+        },
+        "performance": {
+          "rawYes": 47,
+          "weightedYes": 81040.796946,
+          "rate": 0.07607147
+        },
+        "night": {
+          "rawYes": 270,
+          "weightedYes": 472692.471816,
+          "rate": 0.44370752
+        },
+        "nature": {
+          "rawYes": 108,
+          "weightedYes": 191664.355695,
+          "rate": 0.17991172
+        }
+      },
+      "visits": {
+        "gyeongbok": {
+          "rawYes": 286,
+          "weightedYes": 510460.279938,
+          "rate": 0.47915945
+        },
+        "gwangjang": {
+          "rawYes": 292,
+          "weightedYes": 512302.22783,
+          "rate": 0.48088845
+        },
+        "sejong": {
+          "rawYes": 9,
+          "weightedYes": 15370.563781,
+          "rate": 0.01442806
+        },
+        "nationalmuseum": {
+          "rawYes": 14,
+          "weightedYes": 25989.663949,
+          "rate": 0.02439601
+        },
+        "olympic": {
+          "rawYes": 26,
+          "weightedYes": 43277.875891,
+          "rate": 0.04062413
+        },
+        "seokchon": {
+          "rawYes": 8,
+          "weightedYes": 13993.516921,
+          "rate": 0.01313545
+        },
+        "botanic": {
+          "rawYes": 3,
+          "weightedYes": 4545.521591,
+          "rate": 0.0042668
+        }
+      }
+    },
+    "all": {
+      "rawN": 6067,
+      "weightedDenominator": 11587037.513,
+      "activities": {
+        "shopping": {
+          "rawYes": 4886,
+          "weightedYes": 9630224.19325,
+          "rate": 0.83112048
+        },
+        "food": {
+          "rawYes": 4768,
+          "weightedYes": 9467126.190228,
+          "rate": 0.81704458
+        },
+        "history": {
+          "rawYes": 3174,
+          "weightedYes": 5239316.309934,
+          "rate": 0.45217048
+        },
+        "art": {
+          "rawYes": 1242,
+          "weightedYes": 1924188.269701,
+          "rate": 0.16606387
+        },
+        "performance": {
+          "rawYes": 428,
+          "weightedYes": 764923.213059,
+          "rate": 0.06601543
+        },
+        "night": {
+          "rawYes": 2787,
+          "weightedYes": 5078193.809888,
+          "rate": 0.43826507
+        },
+        "nature": {
+          "rawYes": 1720,
+          "weightedYes": 2903821.075718,
+          "rate": 0.25060945
+        }
+      },
+      "visits": {
+        "gyeongbok": {
+          "rawYes": 2950,
+          "weightedYes": 4891653.531771,
+          "rate": 0.42216602
+        },
+        "gwangjang": {
+          "rawYes": 2063,
+          "weightedYes": 3641209.763698,
+          "rate": 0.31424855
+        },
+        "sejong": {
+          "rawYes": 197,
+          "weightedYes": 310342.471653,
+          "rate": 0.02678359
+        },
+        "nationalmuseum": {
+          "rawYes": 527,
+          "weightedYes": 826413.727236,
+          "rate": 0.07132226
+        },
+        "olympic": {
+          "rawYes": 297,
+          "weightedYes": 600721.831111,
+          "rate": 0.0518443
+        },
+        "seokchon": {
+          "rawYes": 166,
+          "weightedYes": 247405.941925,
+          "rate": 0.02135196
+        },
+        "botanic": {
+          "rawYes": 114,
+          "weightedYes": 175204.146212,
+          "rate": 0.0151207
+        }
+      }
+    }
+  }
+}

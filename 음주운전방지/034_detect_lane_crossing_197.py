@@ -68,6 +68,12 @@ class Boundary:
         self.line = .62 * self.line + .38 * fit
         return y[keep]
 
+    def endpoints(self, rows, scale):
+        if rows is None:
+            return None
+        return [[float(np.polyval(self.line, y)/scale[0]), float(y/scale[1])]
+                for y in (rows.min(), rows.max())]
+
     def classify(self, point, rows, boxes, *, paint_support=False):
         px, py = point
         x_on_lane = float(np.polyval(self.line, py))
@@ -132,63 +138,469 @@ class Crossing:
         return event
 
 
+LANE_RULE_VERSION = "contact-1.5s-v1"
+
+
+def footprint(box, endpoints, status, was_contact=False, paint_half_width=0.0):
+    """현재 프레임에서 확인한 선과 차량 하단 양끝을 같은 원본 좌표로 비교합니다."""
+    if box is None or endpoints is None or status not in {"observed", "near_boundary"}:
+        return None
+    (x1, y1), (x2, y2) = endpoints
+    if abs(y2-y1) < 1e-6:
+        return None
+    left, _, right, bottom = box
+    lane_x = x1 + (bottom-y1)*(x2-x1)/(y2-y1)
+    # 도색의 가장자리까지 포함합니다. 접촉 중에는 작은 박스 떨림만큼 여유를 두고 복귀합니다.
+    margin = paint_half_width + (min(2., (right-left)*.025) if was_contact else 0.)
+    if right < lane_x-margin:
+        return "left"
+    if left > lane_x+margin:
+        return "right"
+    return "contact"
+
+
+def source_seconds(cap, frame, fps):
+    """디코딩 직후의 원본 PTS를 읽습니다. 시각을 주지 않는 컨테이너만 FPS로 환산합니다."""
+    value = cap.get(cv2.CAP_PROP_POS_MSEC)
+    if math.isfinite(value) and (value > 0 or (value == 0 and frame == 1)):
+        return value/1000.
+    return (frame-1)/fps
+
+
 class LaneBehavior:
-    """선택한 차량과 같은 경계의 상대 위치로 한 번의 움직임을 분류합니다."""
+    """지정 차량 하나와 경계 하나의 관측을 원본 시각 순으로 받습니다."""
 
     def __init__(self, fps):
         self.fps = fps
-        self.stability = math.ceil(HOLD_SECONDS * fps)
-        self.contact = math.ceil(.10 * fps)
+        self.previous_frame = self.previous_time = None
         self.reset()
 
     def reset(self):
-        self.origin = self.side = self.side_frame = None
-        self.approach_frame = self.first_opposite = self.contact_frame = None
+        self.origin = self.last_position = None
+        self.start = self.start_frame = None
+        self.ticks = 0
+        self.opposite = self.opposite_frame = None
+        self.maneuver_frame = None
+        self.already_counted = False
 
-    def update(self, frame, side, status, distance):
-        if status not in {"observed", "near_boundary"}:
+    def observe(self, frame, seconds, box, endpoints, status, paint_half_width=0.):
+        position = footprint(box, endpoints, status, self.last_position == "contact", paint_half_width)
+        return self.update(frame, seconds, position)
+
+    def update(self, frame, seconds, position):
+        events = []
+        if self.previous_frame is not None and (
+                frame != self.previous_frame+1 or seconds <= self.previous_time
+                or seconds-self.previous_time > max(.25, 1.75/self.fps)):
             self.reset()
-            return None
-        if status == "near_boundary":
-            side = None
-        if side != self.side or self.side_frame is None:
-            self.side, self.side_frame = side, frame
-        stable = frame - self.side_frame + 1
-        if self.origin is None:
-            if side is not None and stable >= self.stability:
-                self.origin = side
-            return None
-        if side is None:
-            # 경계 부근의 한 프레임 흔들림을 밟고 복귀한 사건으로 세지 않습니다.
-            if distance is None or abs(distance) > SIDE_MARGIN / 2:
-                self.contact_frame = None
-            elif self.contact_frame is None:
-                self.contact_frame = frame
-            if (self.contact_frame is not None and frame-self.contact_frame+1 >= self.contact
-                    and self.approach_frame is None):
-                self.approach_frame = self.contact_frame
-            self.first_opposite = None
-            return None
-        self.contact_frame = None
-        if side != self.origin:
-            if self.first_opposite is None:
-                self.first_opposite = self.side_frame
-            if self.approach_frame is None and stable >= self.stability:
-                self.approach_frame = self.first_opposite
-            if (frame - self.first_opposite) / self.fps < 1:
-                return None
-            label = "차선변경"
-        elif self.approach_frame is not None and stable >= self.stability:
-            label = "차선침범"
+        self.previous_frame, self.previous_time = frame, seconds
+        if position is None:
+            self.reset()
+            return events
+        if position not in {"left", "right", "contact"}:
+            raise ValueError(position)
+        self.last_position = position
+
+        def record(label, reason, when, to_side):
+            events.append(dict(label=label, reason=reason, time_s=min(seconds, when),
+                               from_side=self.origin or "unknown", to_side=to_side,
+                               maneuver_start_frame=self.maneuver_frame, contact_start_s=self.start,
+                               opposite_start_frame=self.opposite_frame, confirmed_frame=frame,
+                               frame=frame, rule_version=LANE_RULE_VERSION))
+
+        if self.start is not None:
+            # 복귀 프레임도 먼저 시간을 정산합니다. 정확히 3초면 두 번이고 복귀 보너스는 없습니다.
+            while seconds + 1e-8 >= self.start + (self.ticks+1)*1.5:
+                self.ticks += 1
+                record("차선침범", "contact_interval", self.start+self.ticks*1.5, "boundary")
+                self.already_counted = True
+        if position == "contact":
+            if self.start is None:
+                self.start, self.start_frame, self.ticks = seconds, frame, 0
+                if self.maneuver_frame is None:
+                    self.maneuver_frame = frame
+            self.opposite = self.opposite_frame = None
+            return events
+
+        if position == self.origin and self.maneuver_frame is not None and not self.already_counted:
+            record("차선침범", "returned_to_origin", seconds, position)
+        self.start = self.start_frame = None
+        self.ticks = 0
+        if self.origin is None or position == self.origin:
+            self.origin = position
+            self.opposite = self.opposite_frame = self.maneuver_frame = None
+            self.already_counted = False
         else:
-            self.first_opposite = None
-            return None
-        event = dict(label=label, from_side=self.origin, to_side=side,
-                     maneuver_start_frame=self.approach_frame,
-                     opposite_start_frame=self.first_opposite, confirmed_frame=frame)
-        self.origin = side
-        self.approach_frame = self.first_opposite = None
-        return event
+            if self.opposite is None:
+                self.opposite, self.opposite_frame = seconds, frame
+                if self.maneuver_frame is None:
+                    self.maneuver_frame = frame
+            if seconds-self.opposite + 1e-8 >= 1.:
+                record("차선변경", "held_new_lane", seconds, position)
+                self.origin = position
+                self.opposite = self.opposite_frame = self.maneuver_frame = None
+                self.already_counted = False
+        return events
+
+
+# 원본 해상도에서 적용하는 보수적인 시연 기준입니다. 확대된 검출 입력의 크기는 쓰지 않습니다.
+READABILITY_RULES = dict(min_width=22, min_height=15, detail_width=32, detail_height=21,
+                         min_laplacian=12, min_contrast=14, foreground_overlap=.35, identity_cover=.75,
+                         clear_edge_margin=3, nearby_paint_contrast=10, nearby_paint_rows=3,
+                         settle_seconds=HOLD_SECONDS)
+
+
+def lane_evidence(image, box, endpoints, status, support_gap, vehicles):
+    """추적된 차체, 앞을 가린 차, 원본 도색이 서로 구별되는지를 측정합니다."""
+    metrics = {"support_gap_px":support_gap}
+    if box is None:
+        return "search", metrics
+    left,top,right,bottom = box
+    w,h = right-left,bottom-top
+    metrics.update(width_px=w,height_px=h)
+    height,width = image.shape[:2]
+    x,X = np.clip([int(left),int(np.ceil(right))],0,width)
+    y,Y = np.clip([int(top),int(np.ceil(bottom))],0,height)
+    if X-x < 2 or Y-y < 2:
+        return "small", metrics
+    patch = cv2.cvtColor(image[y:Y,x:X],cv2.COLOR_BGR2GRAY)
+    # 가까운 차는 넓고 매끈한 차체가 분산을 낮춥니다. 큰 패치만 같은 관찰 크기로 줄여
+    # 윤곽의 선명도를 비교합니다. 작은 차를 키워 새 정보가 생긴 것으로 취급하지 않습니다.
+    shrink=min(1.,64/patch.shape[1],48/patch.shape[0])
+    detail=cv2.resize(patch,(max(2,round(patch.shape[1]*shrink)),max(2,round(patch.shape[0]*shrink))),
+                      interpolation=cv2.INTER_AREA) if shrink<1 else patch
+    lap = float(cv2.Laplacian(detail,cv2.CV_32F).var())
+    contrast = float(np.ptp(np.percentile(patch,[10,90])))
+    # 하단 띠를 더 가까운 차량이 덮는지 봅니다. 같은 타깃 박스는 깊이 조건에서 제외됩니다.
+    cover = body_cover = 0.
+    for car in vehicles:
+        a,b,A,B = car["box"]
+        if B <= bottom+max(4,h*.35):
+            continue
+        area = max(0,min(right,A)-max(left,a))*max(0,min(bottom,B)-max(bottom-h*.35,b))
+        cover = max(cover,area/max(1,w*h*.35))
+        full_area=max(0,min(right,A)-max(left,a))*max(0,min(bottom,B)-max(top,b))
+        body_cover=max(body_cover,full_area/max(1,w*h))
+    metrics.update(laplacian=lap,contrast=contrast,foreground_cover=cover,body_cover=body_cover)
+    rule = READABILITY_RULES
+    if min(cover,body_cover)>=rule["identity_cover"]:
+        return "search", metrics
+    if cover >= rule["foreground_overlap"]:
+        return "unclear", metrics
+    if w < rule["min_width"] or h < rule["min_height"]:
+        return "small", metrics
+    if lap < rule["min_laplacian"] or contrast < rule["min_contrast"]:
+        return "unclear", metrics
+    if endpoints is None or status not in {"observed","near_boundary"}:
+        return "unclear", metrics
+    if w >= rule["detail_width"] and h >= rule["detail_height"]:
+        return "ready", metrics
+
+    # 작은 차는 마스크만으로 선을 밟았는지 단정하기 어렵습니다. 차와 선 사이가
+    # 분명히 벌어졌고, 가까운 도색이 원본에도 있는 경우에만 한쪽에 있음을 인정합니다.
+    (a,b),(A,B) = endpoints
+    if abs(B-b)<1e-6:
+        return "unclear", metrics
+    slope=(A-a)/(B-b)
+    line_x=a+(bottom-b)*slope
+    clearance=max(left-line_x,line_x-right)
+    metrics["clearance_px"]=clearance
+    if clearance <= rule["clear_edge_margin"]:
+        return "small", metrics
+    if support_gap is None or support_gap > max(5,h*.55):
+        return "unclear", metrics
+    votes=0
+    for yy in range(Y+1,min(height,Y+1+min(16,max(5,round(.7*h))))):
+        xx=round(a+(yy-b)*slope)
+        if xx<10 or xx+10>=width:
+            continue
+        strip=cv2.cvtColor(image[yy:yy+1,xx-10:xx+11],cv2.COLOR_BGR2GRAY)[0]
+        flank=max(float(np.median(strip[:4])),float(np.median(strip[-4:])))
+        if float(np.max(strip[8:13]))-flank >= rule["nearby_paint_contrast"]:
+            votes+=1
+    metrics["paint_rows"]=votes
+    return ("ready" if votes>=rule["nearby_paint_rows"] else "unclear"), metrics
+
+
+class LaneReadability:
+    """관측이 끊긴 순간에는 집계를 멈추고, 같은 경계 근거가 안정되면 다시 시작합니다."""
+
+    def __init__(self, fps):
+        self.behavior=LaneBehavior(fps)
+        self.active=False
+        self.pending=[]
+        self.notice=None
+        self.reason=None
+        self.since=0.
+        self.not_ready_since=None
+        self.located_since=None
+
+    def update(self, frame, seconds, box, boundary, status, raw, paint_half_width=0.):
+        last=self.behavior
+        if last.previous_frame is not None and (frame != last.previous_frame+1 or seconds <= last.previous_time
+                or seconds-last.previous_time>max(.25,1.75/last.fps)) and not self.pending:
+            self.active=False
+        recent=self.pending[-1] if self.pending else None
+        if recent and (frame!=recent[0]+1 or not 0<seconds-recent[1]<=max(.25,1.75/last.fps)):
+            self.pending.clear()
+        position=footprint(box,boundary,status,last.last_position=="contact",paint_half_width)
+        events=[]
+        if raw!="ready" or position is None:
+            if raw=="ready":
+                raw="unclear"
+            self.pending.clear()
+            self.active=False
+            last.update(frame,seconds,None)
+        elif self.active:
+            events=last.update(frame,seconds,position)
+        else:
+            if self.pending and self.pending[-1][2]!=position:
+                self.pending.clear()
+            self.pending.append((frame,seconds,position))
+            if seconds-self.pending[0][1]+1e-8>=HOLD_SECONDS:
+                # 안정된 구간의 첫 관측 시각부터 셉니다. 공백 앞의 시간은 이어 붙이지 않습니다.
+                self.active=True
+                for item in self.pending:
+                    events.extend(last.update(*item))
+                self.pending.clear()
+        if raw=="search":
+            self.located_since=None
+        elif self.located_since is None:
+            self.located_since=seconds
+        if raw!=self.reason:
+            self.reason,self.since=raw,seconds
+        if self.active:
+            self.notice="ready"
+            self.not_ready_since=None
+        else:
+            if self.not_ready_since is None:
+                self.not_ready_since=seconds
+            if self.notice is None:
+                self.notice=raw if raw!="ready" else "checking"
+            elif raw=="search":
+                if seconds-self.since+1e-8>=HOLD_SECONDS:
+                    self.notice="search"
+            elif self.notice=="search":
+                # 차량 확인과 차선 확인은 다른 조건입니다. 차를 다시 찾으면 위치 안내부터 해제합니다.
+                if seconds-self.located_since+1e-8>=HOLD_SECONDS:
+                    self.notice=raw if raw!="ready" else "checking"
+            elif raw!="ready":
+                duration=seconds-(self.not_ready_since if self.notice=="ready" else self.since)
+                if duration+1e-8>=HOLD_SECONDS:
+                    self.notice=raw
+        return events,dict(raw=raw,notice=self.notice,counting=self.active)
+
+
+
+class MeasuredBoundary:
+    """작은 차의 각 경계를 별도로 기록하고, 미확인 프레임은 접촉 시간에서 뺍니다."""
+    def __init__(self, fps):
+        self.state=LaneBehavior(fps)
+        self.restart()
+
+    def restart(self):
+        self.state.reset()
+        self.state.previous_frame=self.state.previous_time=None
+        self.last_valid=None
+        self.index=0
+        self.offset=0.
+        self.pending=[]
+        self.first_contact=None
+        self.band_since=None
+        self.approach_at=None
+        self.band_used=False
+        self.return_side=None
+        self.last_frame=None
+        self.maneuver_frame=self.opposite_frame=None
+
+    def update(self, frame, seconds, position, visible, edge_band=False, strong_contact=False):
+        interrupted=(self.last_frame is not None and frame!=self.last_frame+1)
+        if not visible or interrupted:
+            self.restart()
+        self.last_frame=frame
+        if not visible:
+            return []
+        # 경계와 차체를 모두 관측했지만 오차 띠 안이면 접근의 순서만 기억합니다.
+        # 이 시간은 1.5초 타이머에 넣지 않고, 선 자체가 사라진 때와도 구분합니다.
+        near_return=(position==self.state.origin and position is not None and
+                     self.band_used and self.state.last_position=='contact')
+        if near_return and self.return_side!=(frame-1,position):
+            self.return_side=(frame,position)
+            position=None
+            edge_band=True
+        elif not near_return:
+            self.return_side=None
+        if position is None and edge_band and self.last_valid:
+            if self.approach_at is None:
+                self.approach_at=seconds
+            if self.band_since is None:
+                self.band_since=seconds
+            self.band_used=True
+            self.pending.clear()
+            if seconds-self.band_since>=1.5:
+                self.restart()
+            return []
+        continuous_band=self.band_since is not None and (position is not None)
+        self.band_since=None
+        if self.last_valid and not continuous_band and (frame-self.last_valid[0]>3 or
+                seconds-self.last_valid[1]>min(.25,3.5/self.state.fps)):
+            self.restart()
+        if position is None:
+            self.pending.clear()
+            return []
+        if position=='contact' and self.approach_at is None:
+            self.approach_at=seconds
+        if self.last_valid:
+            n,t=self.last_valid
+            if frame!=n+1:
+                self.offset+=seconds-t
+                if not continuous_band and self.state.last_position!=position and position!=self.state.origin:
+                    self.restart()
+        self.last_valid=(frame,seconds)
+        self.index+=1
+        when=seconds-self.offset
+        item=(self.index,when,position)
+        if position=='contact' and self.state.last_position!='contact':
+            self.pending.append((item,seconds))
+            if len(self.pending)<3 and not strong_contact:
+                return []
+            batch=[i for i,_ in self.pending]
+            self.first_contact=self.pending[0][1]
+        else:
+            batch=[item]
+            if self.pending:
+                # 미확인 접촉 두 장 이하로는 원래 차로를 바꾸거나 사건을 만들지 않습니다.
+                self.state.previous_frame=item[0]-1
+        self.pending=[]
+        events=[]
+        for i,at,pos in batch:
+            # 공백 시간을 뺀 두 관측이 같은 시각이면 최소 부동소수점 차만 둡니다.
+            if self.state.previous_time is not None:
+                at=max(at,self.state.previous_time+1e-10)
+                self.state.previous_frame=i-1
+            found=self.state.update(i,at,pos)
+            for e in found:
+                e.update(frame=frame,confirmed_frame=frame,time_s=min(seconds,e['time_s']+self.offset),
+                         contact_start_s=self.first_contact)
+                # 내부 가상 프레임 번호는 제출 로그에 남기지 않습니다.
+                e['maneuver_start_frame']=self.maneuver_frame
+                if e.get('opposite_start_frame') is not None:
+                    e['opposite_start_frame']=self.opposite_frame
+            if self.band_used and self.approach_at is not None and seconds-self.approach_at>=1.5:
+                # 불확실한 접근이 길면 짧은 침범이었다고 단정할 수 없습니다.
+                found=[e for e in found if e['reason']!='returned_to_origin']
+            events.extend(found)
+            if pos=='contact' and self.state.start_frame==i and self.state.maneuver_frame==i:
+                self.maneuver_frame=frame-len(batch)+1
+            if self.state.opposite_frame==i:
+                self.opposite_frame=frame
+                if self.state.maneuver_frame==i:
+                    self.maneuver_frame=frame
+        if position!='contact':
+            self.first_contact=self.approach_at=None
+            self.band_used=False
+        return events
+
+
+class SceneLaneAnalysis:
+    """웹과 제출본이 공유하는 관측 단계입니다. 문자·등화 판독 여부는 입력받지 않습니다."""
+    def __init__(self, fps, seed):
+        from redbox_lane_geometry import RoadGeometry
+        self.geometry=RoadGeometry(seed)
+        self.legacy=LaneReadability(fps)
+        self.clocks={side:MeasuredBoundary(fps) for side in ('left','right')}
+        self.mode=None
+        self.notice=None
+        self.bad_since=None
+
+    def evaluate(self, f, seconds, image, box, endpoints, status, gap, vehicles, model_mask):
+        raw,metrics=lane_evidence(image,box,endpoints,status,gap,vehicles)
+        # 크기는 분석을 그만두는 문턱이 아니라 주변 도로를 다시 읽을지 결정하는 기준입니다.
+        remote=box is not None and (box[2]-box[0]<40 or box[3]-box[1]<26)
+        if self.mode=="remote" and box is not None:
+            # 경계 근처에서 박스 크기가 한두 화소 흔들려도 같은 판독·타이머를 유지합니다.
+            busy=any(c.state.start is not None or c.pending or c.band_since is not None for c in self.clocks.values())
+            remote=remote or busy or box[2]-box[0]<48 or box[3]-box[1]<32
+        if not remote and (box is not None or self.mode=="standard"):
+            quality=dict(mode='standard',raw=raw,metrics=metrics)
+        else:
+            blurred=(metrics.get('laplacian',0)<12 and metrics.get('contrast',0)<14)
+            covered=metrics.get('foreground_cover',0)>=READABILITY_RULES['foreground_overlap']
+            blocked=(raw=='search' or covered or blurred)
+            geometry=dict(primary=self.geometry.primary,edges={})
+            if box and not blocked:
+                geometry=self.geometry.measure(f,image,box,endpoints,vehicles,model_mask)
+            pos={k:v['position'] for k,v in geometry['edges'].items() if v['position']}
+            if self.geometry.primary not in pos and raw=='ready' and self.geometry.primary not in geometry['edges']:
+                old=footprint(box,endpoints,status)
+                if old in {'left','right'}:
+                    pos[self.geometry.primary]=old
+                    geometry['edges'][self.geometry.primary]=dict(position=old,points=endpoints,source='global_model_and_native')
+            reason=('target_missing_or_covered' if raw=='search' else 'foreground_cover' if covered else 'low_body_contrast' if blurred else
+                    'position_observed' if pos else 'edge_uncertainty' if geometry['edges'] else 'no_supported_paint')
+            quality=dict(mode='remote',raw='search' if raw=='search' else ('ready' if pos else 'unclear'),
+                         metrics=metrics,geometry=geometry,positions=pos,reason=reason,visible=bool(box and not blocked))
+        return self.advance(f,seconds,box,endpoints,status,quality)
+
+    def advance(self, f, seconds, box, endpoints, status, quality):
+        mode=quality['mode']
+        if mode!=self.mode:
+            for clock in self.clocks.values(): clock.restart()
+            self.legacy=LaneReadability(self.legacy.behavior.fps)
+            self.mode=mode
+        raw=quality['raw']
+        if mode=='standard':
+            events,state=self.legacy.update(f,seconds,box,endpoints,status,raw)
+            self.notice=state['notice']
+            self.bad_since=None
+            return events,dict(quality,**{k:v for k,v in state.items() if k!='raw'})
+        events=[]
+        for side,clock in self.clocks.items():
+            edge=quality['geometry']['edges'].get(side) or {}
+            band=(box is not None and edge.get('position') is None and edge.get('model_rows',0)>=4
+                  and edge.get('gap_px',float('inf'))<=max(5,.35*(box[3]-box[1])))
+            pos=quality['positions'].get(side)
+            strong=False
+            if pos=='contact' and box and 'x_at_bottom' in edge:
+                x=edge['x_at_bottom']
+                # 도색이 바퀴 안쪽까지 충분히 들어온 한 장은 짧은 행동의 직접 근거로 사용합니다.
+                strong=(min(x-box[0],box[2]-x)>max(3,.22*(box[2]-box[0])) and
+                        edge['gap_px']<=2 and edge['residual_px']<=.8 and edge['model_rows']>=8)
+            found=clock.update(f,seconds,pos,quality['visible'],band,strong)
+            events.extend(dict(e,boundary_side=side) for e in found)
+        ready=bool(quality['positions'])
+        if ready:
+            self.bad_since=None
+            self.notice='ready'
+        else:
+            if self.bad_since is None or self.bad_since[0]!=raw:
+                self.bad_since=(raw,seconds)
+            if self.notice is None or seconds-self.bad_since[1]+1e-8>=HOLD_SECONDS:
+                self.notice=raw
+        return events,dict(quality,notice=self.notice,counting=ready)
+
+
+
+def analyze_contact_rows(rows, fps):
+    """저장한 관측도 실시간 분석과 같은 집계기에 순서대로 넣습니다."""
+    behavior = LaneBehavior(fps)
+    gate = LaneReadability(fps)
+    events = []
+    scene = None
+    for row in rows:
+        args=(row["frame"],row["seconds"],row.get("box"),row.get("boundary"),row.get("lane_observation",row.get("status")))
+        reading=row.get("lane_readability") or {}
+        if reading.get("mode"):
+            if scene is None:
+                # 재생에는 저장된 양쪽 경계 관측만 필요합니다.
+                scene=SceneLaneAnalysis(fps,[[0,0],[1,1]])
+            found,_=scene.advance(*args,reading)
+        elif reading:
+            found,_=gate.update(*args,row["lane_readability"]["raw"],row.get("paint_half_width",0.))
+        else:
+            found=behavior.observe(*args,row.get("paint_half_width",0.))
+        events.extend(dict(event, track_id=row.get("track_id"), event_source="automatic") for event in found)
+    return events
 
 
 def draw_hud(canvas, font, number, fps, count, track_id, status):
@@ -288,6 +700,12 @@ def render(args):
     boundary = Boundary(seed)
     paint_rows = (max(143, int(min(seed[1], seed[3])) - 13), min(SIZE[1] - 2, int(max(seed[1], seed[3])) - 3))
     crossing = Crossing(fps)
+    # 기존 6프레임 경계 통과 진단과 사용자에게 표시할 행동 사건은 각각 보관합니다.
+    from importlib import import_module
+    from collections import Counter
+    hud_module = import_module("041_redbox_mvp")
+    behavior = LaneBehavior(fps)
+    actions, action_counts = [], Counter()
     events = []
     actual_count = 0
     hold_labels = {
@@ -311,7 +729,7 @@ def render(args):
                     raise RuntimeError(f"원본 프레임 {number}를 읽을 수 없습니다.")
                 actual_count = number
                 mask, _ = predict_lane(model, frame, device, SIZE, timing)
-                seconds = (number - 1) / fps
+                seconds = source_seconds(cap, number, fps)
                 canvas = draw_overlay(frame, mask, detections, number, seconds, SIZE)
                 selection_active = True
                 if selected:
@@ -364,6 +782,13 @@ def render(args):
                 # 추적을 놓치면 반대쪽 확인을 처음부터 다시 시작합니다.
                 # 보이지 않는 동안 경계를 넘었는지는 계산에 넣지 않습니다.
                 event = crossing.update(number, side, reason in {"track_id_missing", "track_class_changed", "tracking_hold"})
+                endpoints = boundary.endpoints(rows, scale)
+                for action in behavior.observe(number, seconds, vehicle["box"] if vehicle else None, endpoints, reason):
+                    entry = dict(action, track_id=target_id, source_video=args.video.name, event_source="automatic",
+                                 incident_id=f"selection-{args.selection}-F{number}-{len(actions)+1}",
+                                 hud_anchor=hud_module.event_position(vehicle["box"],width,height))
+                    actions.append(hud_module.set_float_slot(entry,actions))
+                    action_counts[entry["label"]] += 1
                 if crossing.recovery_hold:
                     reason = "crossing_unobserved_during_tracking_gap"
                 if event is not None:
@@ -373,8 +798,17 @@ def render(args):
                                        confirmation_boundary_source=boundary_source, **event))
                 status = ("경계 왼쪽" if side == "left" else "경계 오른쪽") if reason == "observed" else hold_labels[reason]
                 draw_hud(canvas, font, number, fps, len(events), target_id if target_id is not None else "—", status)
+                if actions:
+                    panel = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
+                    draw = ImageDraw.Draw(panel)
+                    for i,(label,total) in enumerate(action_counts.items()):
+                        hud_module.hud_text(draw,width-18,18+i*30,[(label+" ",hud_module.EVENT_COLORS[label]),
+                                            (str(total)+"회",hud_module.HUD_WHITE)],22,align="right")
+                    hud_module.draw_event_floats(panel,actions,seconds)
+                    canvas = cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGB2BGR)
                 writer.write(canvas)
                 stream.write(json.dumps(dict(frame=number, time_s=seconds, target_id=target_id,
+                                             footprint_position=behavior.last_position, event_counts=dict(action_counts),
                                              target_point=point, side=side, distance_px=distance, status=reason,
                                              boundary_source=boundary_source,
                                              boundary_fit=boundary.line.tolist() if rows is not None else None,
@@ -384,6 +818,8 @@ def render(args):
         writer.release()
         cap.release()
     verify_video(path, (height, width), fps, actual_count)
+    (output/"lane_events.json").write_text(json.dumps(dict(lane_rule_version=LANE_RULE_VERSION,events=actions,
+                                          event_counts=dict(action_counts)),indent=2,ensure_ascii=False),encoding="utf-8")
     save_original_clips(args.video, output, events, fps, (height, width), count)
     (output / "candidates.json").write_text(json.dumps(events, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(events, indent=2, ensure_ascii=False))

@@ -84,17 +84,18 @@ def prepare_events(rows, meta, spec, size):
         if any(b[0] <= a[1]+1 for a, b in zip(stops, stops[1:])):
             raise ValueError("같은 정차 구간은 한 번만 지정하세요.")
     else:
-        # 예전 분석의 경계 관측을 새 규칙으로 다시 읽습니다.
-        behavior = mvp.crossing_module.LaneBehavior(meta["fps"])
         events = []
-        for row in rows:
-            result = behavior.update(row["frame"], row["side"],
-                                     row.get("lane_observation", row["status"]), row["distance_px"])
-            if result:
-                events.append(dict(result, event_source="automatic", frame=row["frame"],
-                                   time_s=row["seconds"], track_id=row["track_id"]))
+    # 저장된 차량 하단과 같은 프레임의 경계를 공통 집계기로 다시 판독합니다.
+    measured = mvp.crossing_module.analyze_contact_rows(rows, meta["fps"])
+    if "events" in spec:
+        if any(e["label"] == "차선침범" for e in events):
+            raise ValueError("차선침범은 지정 차량과 선의 관측 기록에서 계산하세요.")
+        events.extend(e for e in measured if e["label"] == "차선침범")
+    else:
+        events = measured
     events.sort(key=lambda event: event["frame"])
-    for event in events:
+    for index, event in enumerate(events):
+        mvp.set_float_slot(event, events[:index])
         row = rows[event["frame"]-meta["selection_frame"]]
         event["hud_anchor"] = mvp.event_position(row["box"], *size)
         event["source_video"] = meta["video"]
@@ -126,6 +127,12 @@ def build(spec, output, ffmpeg):
         width, height = (int(cap.get(p)) for p in (cv2.CAP_PROP_FRAME_WIDTH,cv2.CAP_PROP_FRAME_HEIGHT))
         native = (width,height)
         pair_size = (2*width,height+56)
+        # 예전 로그가 FPS 환산 시각을 담고 있어도 사건 시계는 원본 PTS로 맞춥니다.
+        cap.set(cv2.CAP_PROP_POS_FRAMES, meta["selection_frame"]-1)
+        for row in rows:
+            if not cap.grab():
+                raise ValueError("원본 시각을 읽을 수 없습니다.")
+            row["seconds"] = mvp.crossing_module.source_seconds(cap,row["frame"],fps)
         events = prepare_events(rows,meta,spec,native)
         assert cap.set(cv2.CAP_PROP_POS_FRAMES, meta["selection_frame"]-1)
         label_image = Image.new("RGB",(2*width,56),"#101828")
@@ -141,7 +148,7 @@ def build(spec, output, ffmpeg):
             ok, frame = cap.read()
             if not ok:
                 raise RuntimeError(f"원본 읽기 실패: F{row['frame']}")
-            assert abs((row["frame"]-1)/fps-row["seconds"]) < 1e-8
+            row["seconds"] = mvp.crossing_module.source_seconds(cap, row["frame"], fps)
             current = [event for event in events if event["frame"] == row["frame"]]
             for event in current:
                 counts[event.get("display_label",event["label"])] += 1
@@ -167,7 +174,7 @@ def build(spec, output, ffmpeg):
     # 정지선 통과 감지 로그와 수동 지정 시연 이벤트를 둘 다 보관합니다.
     meta["source_events"] = meta["events"]
     meta.update(demo_title=spec["title"], playback_mode="prerendered", event_vocabulary=2, events=events,
-                event_total=len(events), event_counts=dict(counts),
+                lane_rule_version=mvp.crossing_module.LANE_RULE_VERSION, event_total=len(events), event_counts=dict(counts),
                 event_float_seconds=mvp.EVENT_FLOAT_SECONDS, reviewed_stop_line=spec.get("reviewed_stop_line"))
     (out/"target.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     with (out/"frames.jsonl").open("x",encoding="utf-8") as log:

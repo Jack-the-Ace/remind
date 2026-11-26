@@ -227,7 +227,7 @@ function showResult(job, result, cached = false) {
     const li = document.createElement("li");
     const button = document.createElement("button");
     button.textContent = `${clock(event.time_s)}  ${event.display_label ?? event.label}`;
-    button.onclick = () => { video.currentTime = Math.max(0, event.time_s - start + .35/result.fps); };
+    button.onclick = () => { video.currentTime = (event.frame - result.selection_frame + .35)/result.fps; };
     li.append(button);
     li.hidden = true;
     $("events").append(li);
@@ -266,9 +266,10 @@ function showResult(job, result, cached = false) {
 function updatePlayback(mediaTime, decodedFrame = false) {
   if (!state.job) return;
   const offset = mediaTime*state.job.result.fps;
-  const frame = state.job.result.selection_frame + (decodedFrame ? Math.round(offset) : Math.floor(offset + .025));
+  const frame = state.job.result.selection_frame + (decodedFrame ? Math.round(offset) : Math.floor(offset + 1e-6));
   const shownFrame = Math.min(frame, state.job.result.end_frame);
-  $("time-label").textContent = clock((shownFrame-1)/state.job.result.fps);
+  const sourceTime = state.job.result.source_times?.[shownFrame - state.job.result.selection_frame];
+  $("time-label").textContent = clock(sourceTime ?? (shownFrame-1)/state.job.result.fps);
   let count = 0;
   const counts = new Map();
   state.job.result.events.forEach((event, index) => {

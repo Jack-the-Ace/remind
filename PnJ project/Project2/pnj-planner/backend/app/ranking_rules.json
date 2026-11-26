@@ -1,0 +1,102 @@
+{
+  "version": "seoul-planner/2.2",
+  "minimumResidenceSample": 100,
+  "catalogVersion": "pnj-seoul/2026-11-26+activity-venues",
+  "weights": {
+    "wish": 24,
+    "current": 9,
+    "direct": 2,
+    "hypothesis": 0.4,
+    "feedback": 2,
+    "exposure": 0.15,
+    "weather": 3,
+    "repeatVisit": 0.5,
+    "historicalActivity": 0.2
+  },
+  "axes": {
+    "novelty": [
+      "new",
+      "familiar"
+    ],
+    "social": [
+      "social",
+      "solo"
+    ],
+    "structure": [
+      "planned",
+      "flex"
+    ],
+    "activity": [
+      "active",
+      "rest"
+    ],
+    "crowds": [
+      "busy",
+      "quiet"
+    ],
+    "learning": [
+      "culture",
+      ""
+    ],
+    "food": [
+      "food",
+      ""
+    ],
+    "trend": [
+      "",
+      ""
+    ],
+    "timeOfDay": [
+      "night",
+      ""
+    ],
+    "pace": [
+      "rest",
+      "active"
+    ]
+  },
+  "mood": {
+    "goal": {
+      "rest": [
+        "rest",
+        "quiet"
+      ],
+      "discover": [
+        "new"
+      ],
+      "connect": [
+        "social"
+      ],
+      "learn": [
+        "culture",
+        "history"
+      ]
+    },
+    "atmosphere": {
+      "quiet": [
+        "quiet"
+      ],
+      "lively": [
+        "busy",
+        "city"
+      ],
+      "green": [
+        "nature"
+      ],
+      "indoor": [
+        "indoor"
+      ]
+    },
+    "activity": {
+      "low": [
+        "rest"
+      ],
+      "medium": [],
+      "high": [
+        "active",
+        "walk"
+      ]
+    }
+  },
+  "assumptions": "Prototype weights, not psychometric findings. Mood label alone never prescribes an activity. timeOfDay refers to stated preference for evening activities. No trend weighting without a measured data source."
+}

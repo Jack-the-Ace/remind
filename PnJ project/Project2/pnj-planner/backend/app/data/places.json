@@ -1,0 +1,2036 @@
+{
+  "pureun": {
+    "id": "pureun",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "구로구 서해안로 2117",
+    "zone": "서남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "Pureun Arboretum",
+      "ko": "푸른수목원"
+    },
+    "region": {
+      "en": "Guro-gu",
+      "ko": "구로구"
+    },
+    "activities": {
+      "en": [
+        "Pause by a tree that catches your eye",
+        "Sketch the colour and shape of a leaf"
+      ],
+      "ko": [
+        "마음에 드는 나무를 골라 잠시 바라보기",
+        "잎의 색과 모양을 여행 노트에 남기기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "나무 사이에서 생각을 비우는 오후",
+      "en": "A slow afternoon among the trees"
+    },
+    "tags": [
+      "budget",
+      "flex",
+      "nature",
+      "outdoor",
+      "quiet",
+      "rest",
+      "solo"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/pureun.jpg",
+      "author": "Shinfull",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Pureun_Arboretum_in_spring.jpg",
+      "title": "Pureun Arboretum in spring.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "boramae": {
+    "id": "boramae",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "동작구 여의대방로20길 33",
+    "zone": "서남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.491452,
+      "lon": 126.918928,
+      "source": "https://ko.wikipedia.org/wiki/보라매공원"
+    },
+    "name": {
+      "en": "Boramae Park",
+      "ko": "보라매공원"
+    },
+    "region": {
+      "en": "Dongjak-gu",
+      "ko": "동작구"
+    },
+    "activities": {
+      "en": [
+        "Watch the reflections by the pond",
+        "Take a break and note a favourite view"
+      ],
+      "ko": [
+        "연못가에서 물에 비치는 풍경 감상하기",
+        "잠시 쉬면서 마음에 든 풍경을 기록하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "연못가에 머무는 작은 소풍",
+      "en": "A picnic by the pond"
+    },
+    "tags": [
+      "budget",
+      "familiar",
+      "flex",
+      "nature",
+      "outdoor",
+      "quiet",
+      "rest",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/boramae.jpg",
+      "author": "Striker9498",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:20240427_%EB%B3%B4%EB%9D%BC%EB%A7%A4%EA%B3%B5%EC%9B%90_%EC%97%B0%EB%AA%BB.jpg",
+      "title": "20240427 보라매공원 연못.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "botanic": {
+    "id": "botanic",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "강서구 마곡동로 161",
+    "zone": "서남",
+    "fee": "paid",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.572341,
+      "lon": 126.834475,
+      "source": "https://www.wikidata.org/wiki/Q47524353"
+    },
+    "name": {
+      "en": "Seoul Botanic Park",
+      "ko": "서울식물원"
+    },
+    "region": {
+      "en": "Gangseo-gu",
+      "ko": "강서구"
+    },
+    "activities": {
+      "en": [
+        "Look for unfamiliar leaf shapes in the greenhouse",
+        "Spend time observing one favourite plant"
+      ],
+      "ko": [
+        "온실에서 낯선 잎 모양 찾아보기",
+        "마음에 든 식물 하나를 골라 관찰하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "온실에서 만나는 낯선 식물",
+      "en": "A greenhouse full of unfamiliar plants"
+    },
+    "tags": [
+      "indoor",
+      "nature",
+      "new",
+      "paid",
+      "planned",
+      "quiet",
+      "rest",
+      "solo"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/botanic.jpg",
+      "author": "korea.net",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul_botanic_park_05.jpg",
+      "title": "Seoul botanic park 05.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "seonyudo": {
+    "id": "seonyudo",
+    "source": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=351&vcontsId=175826",
+    "checkedOn": "2026-11-25",
+    "address": "영등포구 선유로 343",
+    "zone": "서남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.543694444444,
+      "lon": 126.89980555556,
+      "source": "https://www.wikidata.org/wiki/Q12601738"
+    },
+    "name": {
+      "en": "Seonyudo Park",
+      "ko": "선유도공원"
+    },
+    "region": {
+      "en": "Yeongdeungpo-gu",
+      "ko": "영등포구"
+    },
+    "activities": {
+      "en": [
+        "Follow the old waterworks and look for aquatic plants",
+        "Photograph the meeting of water and concrete"
+      ],
+      "ko": [
+        "옛 정수 시설을 따라 수생식물 살펴보기",
+        "물과 콘크리트가 만나는 풍경 사진 찍기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "옛 정수장에 자란 수생정원 산책",
+      "en": "Walk a water garden in a former filtration plant"
+    },
+    "tags": [
+      "culture",
+      "nature",
+      "new",
+      "outdoor",
+      "quiet",
+      "rest",
+      "solo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/seonyudo.jpg",
+      "author": "Nesnad",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Seonyudo_Park_-_historical_-_2005_June_6_various_-_03.jpg",
+      "title": "Seonyudo Park - historical - 2005 June 6 various - 03.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "forest": {
+    "id": "forest",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "성동구 뚝섬로 273",
+    "zone": "동북",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.544625,
+      "lon": 127.039844,
+      "source": "https://ko.wikipedia.org/wiki/서울숲"
+    },
+    "name": {
+      "en": "Seoul Forest",
+      "ko": "서울숲"
+    },
+    "region": {
+      "en": "Seongdong-gu",
+      "ko": "성동구"
+    },
+    "activities": {
+      "en": [
+        "Walk along a tree-lined path",
+        "Pause and listen to the sounds of the forest"
+      ],
+      "ko": [
+        "나무 그늘을 따라 산책하기",
+        "걸음을 멈추고 숲의 소리 들어보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "숲길을 따라 걷는 초록 산책",
+      "en": "A green walking break in Seoul Forest"
+    },
+    "tags": [
+      "active",
+      "budget",
+      "familiar",
+      "flex",
+      "nature",
+      "outdoor",
+      "quiet",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/forest.jpg",
+      "author": "Enigma7seven",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoulforest_001.jpg",
+      "title": "Seoulforest 001.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "gwangjang": {
+    "id": "gwangjang",
+    "source": "https://english.visitseoul.net/hallyu/TraditionalMarketShopping/ENN026629",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 창경궁로 88",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "mixed",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.57,
+      "lon": 126.999,
+      "source": "https://www.wikidata.org/wiki/Q12585067"
+    },
+    "name": {
+      "en": "Gwangjang Market",
+      "ko": "광장시장"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Browse the food stalls and pick a dish",
+        "Look at the colours and patterns in the fabric stalls"
+      ],
+      "ko": [
+        "먹거리 골목에서 먹어 보고 싶은 메뉴 고르기",
+        "직물 가게의 색과 무늬 구경하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "먹거리 골목에서 새로운 맛 찾기",
+      "en": "Discover a new flavour in the market"
+    },
+    "tags": [
+      "active",
+      "busy",
+      "city",
+      "flex",
+      "food",
+      "market",
+      "new",
+      "shopping",
+      "social",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/gwangjang.jpg",
+      "author": "Bgag",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Gwangjang_Market,_Seoul_02.jpg",
+      "title": "Gwangjang Market, Seoul 02.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "namdaemun": {
+    "id": "namdaemun",
+    "source": "https://english.visitseoul.net/hallyu/TraditionalMarketShopping/ENN026629",
+    "checkedOn": "2026-11-25",
+    "address": "중구 남대문시장4길 21",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "mixed",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.55944444,
+      "lon": 126.97741667,
+      "source": "https://ko.wikipedia.org/wiki/남대문시장"
+    },
+    "name": {
+      "en": "Namdaemun Market",
+      "ko": "남대문시장"
+    },
+    "region": {
+      "en": "Jung-gu",
+      "ko": "중구"
+    },
+    "activities": {
+      "en": [
+        "Browse the shops for a keepsake",
+        "Explore one lane for a snack"
+      ],
+      "ko": [
+        "상점가에서 마음에 드는 소품 찾아보기",
+        "골목을 한 곳 골라 간식 구경하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "시장 골목에서 취향에 맞는 물건 찾기",
+      "en": "Browse the lanes for a personal find"
+    },
+    "tags": [
+      "active",
+      "busy",
+      "city",
+      "familiar",
+      "food",
+      "market",
+      "planned",
+      "shopping",
+      "social",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/namdaemun.jpg",
+      "author": "Adbar",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Namdaemun_Market_Alley.jpg",
+      "title": "Namdaemun Market Alley.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "deoksu": {
+    "id": "deoksu",
+    "source": "https://royal.cha.go.kr/ENG/contents/E104010000.do",
+    "checkedOn": "2026-11-25",
+    "address": "중구 세종대로 99",
+    "zone": "도심",
+    "fee": "paid",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.56583333,
+      "lon": 126.97472222,
+      "source": "https://ko.wikipedia.org/wiki/덕수궁"
+    },
+    "name": {
+      "en": "Deoksugung Palace",
+      "ko": "덕수궁"
+    },
+    "region": {
+      "en": "Jung-gu",
+      "ko": "중구"
+    },
+    "activities": {
+      "en": [
+        "Look at the roof and eaves of Junghwajeon",
+        "Compare Seokjojeon’s exterior with the traditional halls"
+      ],
+      "ko": [
+        "중화전 앞에서 지붕과 처마 살펴보기",
+        "석조전 외관과 전통 전각 비교하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "궁궐의 건축을 읽는 역사 산책",
+      "en": "Read a palace through its architecture"
+    },
+    "tags": [
+      "active",
+      "city",
+      "culture",
+      "history",
+      "new",
+      "outdoor",
+      "paid",
+      "planned",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/deoksu.jpg",
+      "author": "travel oriented",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Deoksugung_Palace_in_autumn.jpg",
+      "title": "Deoksugung Palace in autumn.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "insadong": {
+    "id": "insadong",
+    "source": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=&vcontsId=87748",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 인사동길 일대",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "mixed",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "Insadong-gil",
+      "ko": "인사동길"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Browse craft materials and patterns at Ssamzigil",
+        "Look for a souvenir along Insadong-gil"
+      ],
+      "ko": [
+        "쌈지길에서 공예품의 재료와 무늬 살펴보기",
+        "인사동길에서 마음에 드는 기념품 골라보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "공예품을 찾아 걷는 인사동 나들이",
+      "en": "A craft-shopping walk in Insa-dong"
+    },
+    "tags": [
+      "active",
+      "busy",
+      "city",
+      "culture",
+      "flex",
+      "history",
+      "new",
+      "shopping",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/insadong.jpg",
+      "author": "Dr. Thomas Liptak",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul,_Jongno_District,_Insa-dong,_Insadong-gil.jpg",
+      "title": "Seoul, Jongno District, Insa-dong, Insadong-gil.jpg",
+      "changes": "Local JPEG from PnJ's attributed collection; displayed with a responsive crop."
+    }
+  },
+  "gyeongbok": {
+    "id": "gyeongbok",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 사직로 161",
+    "zone": "도심",
+    "fee": "paid",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.57861111,
+      "lon": 126.97722222,
+      "source": "https://ko.wikipedia.org/wiki/경복궁"
+    },
+    "name": {
+      "en": "Gyeongbokgung Palace",
+      "ko": "경복궁"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Look at how the halls frame the courtyard of Geunjeongjeon",
+        "Frame Gyeonghoeru Pavilion with its reflection"
+      ],
+      "ko": [
+        "근정전 앞마당에서 건물의 배치를 살펴보기",
+        "경회루를 물에 비친 모습과 함께 담기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "전각 사이에서 읽는 조선의 하루",
+      "en": "A day in the courtyards of a Joseon palace"
+    },
+    "tags": [
+      "culture",
+      "history",
+      "outdoor",
+      "photo",
+      "planned",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/gyeongbok.jpg",
+      "title": "Front view of the Imperial Throne Hall Geunjeongjeon at Gyeongbokgung Palace with blue sky in Seoul.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Front_view_of_the_Imperial_Throne_Hall_Geunjeongjeon_at_Gyeongbokgung_Palace_with_blue_sky_in_Seoul.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "author": "Basile Morin",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "changdeok": {
+    "id": "changdeok",
+    "source": "https://royal.khs.go.kr/ENG/contents/E702000000.do?schGroupCode=cdg&schGroupCodeNm=Changdeokgung",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 율곡로 99",
+    "zone": "도심",
+    "fee": "paid",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.57948333,
+      "lon": 126.991175,
+      "source": "https://ko.wikipedia.org/wiki/창덕궁"
+    },
+    "name": {
+      "en": "Changdeokgung Palace",
+      "ko": "창덕궁"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Follow the turns from Donhwamun Gate towards the inner halls",
+        "Look for painted patterns under the eaves of Injeongjeon"
+      ],
+      "ko": [
+        "돈화문에서 안쪽 전각까지 길의 굽이를 따라가기",
+        "인정전 처마에서 눈에 띄는 단청 무늬 찾아보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the route from Anguk Station to Donhwamun Gate. The palace has no visitor car park.",
+      "ko": "안국역에서 돈화문까지의 길을 확인하세요. 궁에는 관람객 주차장이 없어요."
+    },
+    "theme": {
+      "ko": "지형을 따라 이어지는 궁궐 산책",
+      "en": "A palace walk that follows the contours of the land"
+    },
+    "tags": [
+      "culture",
+      "history",
+      "nature",
+      "outdoor",
+      "photo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/changdeok.jpg",
+      "title": "Changdeokgung Seoul 3.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Changdeokgung_Seoul_3.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "author": "kallerna",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "nationalmuseum": {
+    "id": "nationalmuseum",
+    "source": "https://english.seoul.go.kr/national-museum-of-korea/",
+    "checkedOn": "2026-11-25",
+    "address": "용산구 서빙고로 137",
+    "zone": "도심",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.52393,
+      "lon": 126.980493,
+      "source": "https://ko.wikipedia.org/wiki/국립중앙박물관"
+    },
+    "name": {
+      "en": "National Museum of Korea",
+      "ko": "국립중앙박물관"
+    },
+    "region": {
+      "en": "Yongsan-gu",
+      "ko": "용산구"
+    },
+    "activities": {
+      "en": [
+        "Pick one object in the permanent collection",
+        "Note one detail about how it was used"
+      ],
+      "ko": [
+        "상설전에서 마음이 가는 유물 하나를 고르기",
+        "설명문에서 새로 알게 된 쓰임새 기록하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "상설전에서 유물 하나를 깊이 보는 시간",
+      "en": "A closer look at one object in the permanent collection"
+    },
+    "tags": [
+      "budget",
+      "culture",
+      "history",
+      "indoor",
+      "museum",
+      "planned",
+      "solo"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/nationalmuseum.jpg",
+      "title": "National_Museum_of_Korea,_Seoul_(2)_(40236586235).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:National_Museum_of_Korea,_Seoul_(2)_(40236586235).jpg",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "author": "Richard Mortel from Riyadh, Saudi Arabia",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "baekje": {
+    "id": "baekje",
+    "source": "https://english.seoul.go.kr/policy/culture/culture/",
+    "checkedOn": "2026-11-25",
+    "address": "송파구 위례성대로 71",
+    "zone": "동남",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.5154,
+      "lon": 127.1209,
+      "source": "https://www.wikidata.org/wiki/Q12624103"
+    },
+    "name": {
+      "en": "Seoul Baekje Museum",
+      "ko": "한성백제박물관"
+    },
+    "region": {
+      "en": "Songpa-gu",
+      "ko": "송파구"
+    },
+    "activities": {
+      "en": [
+        "Look for everyday tools in the permanent exhibition",
+        "Share an idea about how a favourite object was used"
+      ],
+      "ko": [
+        "상설전에서 백제 사람들의 생활 도구를 찾아보기",
+        "마음에 드는 유물의 쓰임새 이야기하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "유물로 상상하는 백제의 서울",
+      "en": "Discover Seoul’s Baekje past through its artefacts"
+    },
+    "tags": [
+      "budget",
+      "culture",
+      "history",
+      "indoor",
+      "museum",
+      "planned",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/baekje.jpg",
+      "title": "Seoul_Baekje_Museum_front_side2.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul_Baekje_Museum_front_side2.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "Asfreeas",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "seosomun": {
+    "id": "seosomun",
+    "source": "https://sema.seoul.go.kr/en/visit/seosomun",
+    "checkedOn": "2026-11-25",
+    "address": "중구 덕수궁길 61",
+    "zone": "도심",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.56412222,
+      "lon": 126.97380833,
+      "source": "https://en.wikipedia.org/wiki/Seoul_Museum_of_Art"
+    },
+    "name": {
+      "en": "Seoul Museum of Art, Seosomun",
+      "ko": "서울시립미술관 서소문본관"
+    },
+    "region": {
+      "en": "Jung-gu",
+      "ko": "중구"
+    },
+    "activities": {
+      "en": [
+        "Choose a work that draws your eye in an open gallery",
+        "Compare your first impression with the title"
+      ],
+      "ko": [
+        "관람 가능한 전시에서 시선이 머무는 작품을 고르기",
+        "작품 제목을 보기 전후의 인상 비교하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the approach from City Hall Station along Deoksugung-gil. The museum has limited parking.",
+      "ko": "시청역에서 덕수궁길로 이어지는 길을 확인하세요. 미술관 주차 공간은 제한적이에요."
+    },
+    "theme": {
+      "ko": "작품 한 점 앞에서 보내는 오후",
+      "en": "An afternoon with a single work of art"
+    },
+    "tags": [
+      "art",
+      "budget",
+      "culture",
+      "indoor",
+      "museum",
+      "quiet",
+      "solo"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/seosomun.jpg",
+      "title": "Seoul_Museum_of_Art_(2014).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul_Museum_of_Art_(2014).jpg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "author": "Seoul Institute",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "buksema": {
+    "id": "buksema",
+    "source": "https://sema.seoul.go.kr/en/visit/bukseoul",
+    "checkedOn": "2026-11-25",
+    "address": "노원구 동일로 1238",
+    "zone": "동북",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "Buk-Seoul Museum of Art",
+      "ko": "서울시립 북서울미술관"
+    },
+    "region": {
+      "en": "Nowon-gu",
+      "ko": "노원구"
+    },
+    "activities": {
+      "en": [
+        "Find the colour that first catches your eye in a work on display",
+        "Compare impressions of the same work"
+      ],
+      "ko": [
+        "전시 중인 작품에서 가장 먼저 보인 색을 고르기",
+        "같은 작품을 보고 떠오른 생각 나누기"
+      ]
+    },
+    "accessNote": {
+      "en": "Compare Hagye and Junggye stations and check the entrance path through the park.",
+      "ko": "하계역과 중계역 중 편한 쪽을 골라 공원에서 미술관 입구로 이어지는 길을 확인하세요."
+    },
+    "theme": {
+      "ko": "서로의 눈으로 보는 현대미술",
+      "en": "Two perspectives on contemporary art"
+    },
+    "tags": [
+      "art",
+      "budget",
+      "culture",
+      "indoor",
+      "museum",
+      "new",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/buksema.jpg",
+      "title": "Buk Seoul Museum of Art.JPG",
+      "source": "https://commons.wikimedia.org/wiki/File:Buk_Seoul_Museum_of_Art.JPG",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "hyolee2",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "namsema": {
+    "id": "namsema",
+    "source": "https://sema.seoul.go.kr/en/visit/namseoul",
+    "checkedOn": "2026-11-25",
+    "address": "관악구 남부순환로 2076",
+    "zone": "서남",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "Nam-Seoul Museum of Art",
+      "ko": "서울시립 남서울미술관"
+    },
+    "region": {
+      "en": "Gwanak-gu",
+      "ko": "관악구"
+    },
+    "activities": {
+      "en": [
+        "Notice the windows and columns along the gallery corridor",
+        "View the outline of a sculpture from two angles"
+      ],
+      "ko": [
+        "복도를 따라 전시 공간의 창과 기둥을 살펴보기",
+        "조각의 윤곽을 다른 각도에서 바라보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Use Sadang Station or check a nearby car park. The museum has no on-site parking; check stair access before visiting.",
+      "ko": "사당역에서 접근할 수 있어요. 미술관에는 주차장이 없어 인근 주차장과 계단 이용 방법을 미리 확인하세요."
+    },
+    "theme": {
+      "ko": "옛 영사관에서 건축과 조각 마주하기",
+      "en": "Architecture and sculpture in a former consulate"
+    },
+    "tags": [
+      "art",
+      "budget",
+      "culture",
+      "history",
+      "indoor",
+      "museum",
+      "quiet"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/namsema.jpg",
+      "title": "서울시립남서울미술관.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9C%EC%9A%B8%EC%8B%9C%EB%A6%BD%EB%82%A8%EC%84%9C%EC%9A%B8%EB%AF%B8%EC%88%A0%EA%B4%80.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "author": "Hcdndals2002",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "dream": {
+    "id": "dream",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "강북구 월계로 173",
+    "zone": "동북",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.621052,
+      "lon": 127.041079,
+      "source": "https://ko.wikipedia.org/wiki/북서울 꿈의숲"
+    },
+    "name": {
+      "en": "Dream Forest",
+      "ko": "북서울꿈의숲"
+    },
+    "region": {
+      "en": "Gangbuk-gu",
+      "ko": "강북구"
+    },
+    "activities": {
+      "en": [
+        "Watch the water at Wolyeongji Pond",
+        "Photograph a tree reflected on the water"
+      ],
+      "ko": [
+        "월영지 가장자리에서 수면을 바라보기",
+        "물 위에 비친 나무 한 그루 사진에 담기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "연못 곁에서 빛을 담는 시간",
+      "en": "Light and reflections by the pond"
+    },
+    "tags": [
+      "nature",
+      "outdoor",
+      "photo",
+      "quiet",
+      "rest"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/dream.jpg",
+      "title": "North_Seoul_dream_forest.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:North_Seoul_dream_forest.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "Sim1992",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "children": {
+    "id": "children",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "광진구 능동로 216",
+    "zone": "동북",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.546,
+      "lon": 127.08,
+      "source": "https://en.wikipedia.org/wiki/Children's_Grand_Park,_Seoul"
+    },
+    "name": {
+      "en": "Seoul Children’s Grand Park",
+      "ko": "서울어린이대공원"
+    },
+    "region": {
+      "en": "Gwangjin-gu",
+      "ko": "광진구"
+    },
+    "activities": {
+      "en": [
+        "Choose a path together on the park map",
+        "Take a picnic break in the shade"
+      ],
+      "ko": [
+        "공원 지도에서 함께 걸을 길을 고르기",
+        "나무 그늘에서 소풍 쉬는 시간 갖기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "가족이 함께 고르는 공원 산책",
+      "en": "A park walk the family can shape together"
+    },
+    "tags": [
+      "active",
+      "nature",
+      "outdoor",
+      "social",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/children.jpg",
+      "title": "Seoul_Childrens_Grand_Park_Main_Gate.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul_Childrens_Grand_Park_Main_Gate.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "Integral",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "seoseoul": {
+    "id": "seoseoul",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "양천구 남부순환로64길 20",
+    "zone": "서남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.5276,
+      "lon": 126.8297,
+      "source": "https://www.wikidata.org/wiki/Q7986464"
+    },
+    "name": {
+      "en": "West Seoul Lake Park",
+      "ko": "서서울호수공원"
+    },
+    "region": {
+      "en": "Yangcheon-gu",
+      "ko": "양천구"
+    },
+    "activities": {
+      "en": [
+        "Watch the ripples and sky from the lakeside",
+        "Look for the outlines of the old waterworks"
+      ],
+      "ko": [
+        "호숫가에서 물결과 하늘을 바라보기",
+        "남아 있는 정수장 구조물의 선 찾아보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "옛 정수장이 호수공원이 된 풍경",
+      "en": "A reservoir seen through the traces of a waterworks"
+    },
+    "tags": [
+      "nature",
+      "outdoor",
+      "photo",
+      "quiet",
+      "rest"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/seoseoul.jpg",
+      "title": "서서울호수공원.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9C%EC%84%9C%EC%9A%B8%ED%98%B8%EC%88%98%EA%B3%B5%EC%9B%90.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "KSH1015",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "oil": {
+    "id": "oil",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "마포구 증산로 87",
+    "zone": "서북",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.57083333333334,
+      "lon": 126.89416666666668,
+      "source": "https://www.wikidata.org/wiki/Q65248886"
+    },
+    "name": {
+      "en": "Oil Tank Culture Park",
+      "ko": "문화비축기지"
+    },
+    "region": {
+      "en": "Mapo-gu",
+      "ko": "마포구"
+    },
+    "activities": {
+      "en": [
+        "Compare the shapes and heights of the tanks from the plaza",
+        "Photograph the weathered steel surfaces"
+      ],
+      "ko": [
+        "광장에서 탱크들의 높이와 형태를 비교하기",
+        "철판 표면에 남은 흔적 사진 찍기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "산업 시설의 흔적을 따라가는 건축 산책",
+      "en": "An architectural walk among former oil tanks"
+    },
+    "tags": [
+      "art",
+      "culture",
+      "new",
+      "outdoor",
+      "photo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/oil.jpg",
+      "title": "문화비축기지 T4.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%EB%AC%B8%ED%99%94%EB%B9%84%EC%B6%95%EA%B8%B0%EC%A7%80_T4.jpg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "author": "베르니사주",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "olympic": {
+    "id": "olympic",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "송파구 올림픽로 424",
+    "zone": "동남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.5207,
+      "lon": 127.1227,
+      "source": "https://en.wikipedia.org/wiki/Olympic_Park,_Seoul"
+    },
+    "name": {
+      "en": "Olympic Park",
+      "ko": "올림픽공원"
+    },
+    "region": {
+      "en": "Songpa-gu",
+      "ko": "송파구"
+    },
+    "activities": {
+      "en": [
+        "Choose a nearby sculpture on the park map",
+        "Walk around it and watch the backdrop change"
+      ],
+      "ko": [
+        "공원 안내도에서 가까운 야외 조각을 고르기",
+        "작품 둘레를 걸으며 배경이 바뀌는 모습 관찰하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "야외 조각을 이정표 삼아 걷는 산책",
+      "en": "A walk between outdoor sculptures"
+    },
+    "tags": [
+      "active",
+      "art",
+      "nature",
+      "outdoor",
+      "photo",
+      "social",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/olympic.jpg",
+      "title": "Seoul Olympic Park April 2022.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul_Olympic_Park_April_2022.jpg",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "author": "Woohyun Photos",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "naksan": {
+    "id": "naksan",
+    "source": "https://english.seoul.go.kr/service/amusement/parks/",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 낙산길 41",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "Naksan Park",
+      "ko": "낙산공원"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Check the uphill section and follow the wall",
+        "Frame the rooftops against the evening sky"
+      ],
+      "ko": [
+        "오르막 구간을 확인하고 성벽을 따라 걷기",
+        "해 질 무렵 지붕과 하늘의 경계 담기"
+      ]
+    },
+    "accessNote": {
+      "en": "The wall path climbs. Check the stairs and your return route before setting off.",
+      "ko": "성곽을 따라 오르막이 있어요. 돌아올 길과 계단 구간을 먼저 살펴보세요."
+    },
+    "theme": {
+      "ko": "성곽 너머로 서울의 저녁 바라보기",
+      "en": "An evening skyline beyond the city wall"
+    },
+    "tags": [
+      "active",
+      "history",
+      "night",
+      "outdoor",
+      "photo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/naksan.jpg",
+      "title": "KOCIS_Korea_Seoul_Fortress_20130924_11_(9910956885).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:KOCIS_Korea_Seoul_Fortress_20130924_11_(9910956885).jpg",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "author": "Korea.net / Korean Culture and Information Service (Jeon Han)",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "banpo": {
+    "id": "banpo",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "서초구 신반포로11길 40",
+    "zone": "동남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "Banpo Hangang Park",
+      "ko": "반포한강공원"
+    },
+    "region": {
+      "en": "Seocho-gu",
+      "ko": "서초구"
+    },
+    "activities": {
+      "en": [
+        "Frame the bridge against the sky from the riverbank",
+        "Watch the colours on the water after sunset"
+      ],
+      "ko": [
+        "강가에서 다리와 하늘이 겹치는 구도를 고르기",
+        "해가 진 뒤 수면의 색 변화 감상하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "강 건너 불빛을 바라보는 저녁",
+      "en": "An evening of reflections across the river"
+    },
+    "tags": [
+      "nature",
+      "night",
+      "outdoor",
+      "photo",
+      "rest",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/banpo.jpg",
+      "title": "Banpo Moonlight Rainbow Fountain.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Banpo_Moonlight_Rainbow_Fountain.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "author": "Cookinu",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "seokchon": {
+    "id": "seokchon",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "송파구 잠실동 석촌호수 일대",
+    "zone": "동남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": {
+      "lat": 37.51,
+      "lon": 127.103,
+      "source": "https://ko.wikipedia.org/wiki/석촌호수공원"
+    },
+    "name": {
+      "en": "Seokchon Lake",
+      "ko": "석촌호수"
+    },
+    "region": {
+      "en": "Songpa-gu",
+      "ko": "송파구"
+    },
+    "activities": {
+      "en": [
+        "Choose one stretch of the lakeside path",
+        "Find a spot where building lights reflect in the water"
+      ],
+      "ko": [
+        "호숫가 한 구간을 골라 천천히 걷기",
+        "건물 불빛이 물에 비치는 지점 찾아보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "호수에 비친 도심 풍경 한 컷",
+      "en": "City reflections from the lakeside"
+    },
+    "tags": [
+      "flex",
+      "nature",
+      "night",
+      "outdoor",
+      "photo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/seokchon.jpg",
+      "title": "석촌_호수공원_(1).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:%EC%84%9D%EC%B4%8C_%ED%98%B8%EC%88%98%EA%B3%B5%EC%9B%90_(1).jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "author": "Jocelyndurrey",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "kstar": {
+    "id": "kstar",
+    "source": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=192985",
+    "checkedOn": "2026-11-25",
+    "address": "강남구 압구정동 394 일대",
+    "zone": "동남",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "K-Star Road",
+      "ko": "한류스타거리"
+    },
+    "region": {
+      "en": "Gangnam-gu",
+      "ko": "강남구"
+    },
+    "activities": {
+      "en": [
+        "Look for the GangnamDols near Apgujeong Rodeo Station",
+        "Photograph a detail that reminds you of your favourite group"
+      ],
+      "ko": [
+        "압구정로데오역 쪽에서 강남돌을 찾아보기",
+        "좋아하는 그룹의 상징을 찾아 사진 찍기"
+      ]
+    },
+    "accessNote": {
+      "en": "Start near Apgujeong Rodeo Station. The street has no dedicated car park.",
+      "ko": "압구정로데오역에서 출발할 수 있어요. 거리 자체에는 주차장이 없어요."
+    },
+    "theme": {
+      "ko": "강남돌을 찾아가는 팬 산책",
+      "en": "A fan walk in search of GangnamDols"
+    },
+    "tags": [
+      "city",
+      "kpop",
+      "new",
+      "outdoor",
+      "photo",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": null
+  },
+  "hikr": {
+    "id": "hikr",
+    "source": "https://english.visitkorea.or.kr/svc/sp/hikr",
+    "checkedOn": "2026-11-25",
+    "address": "중구 청계천로 40",
+    "zone": "도심",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "HiKR Ground",
+      "ko": "하이커 그라운드"
+    },
+    "region": {
+      "en": "Jung-gu",
+      "ko": "중구"
+    },
+    "activities": {
+      "en": [
+        "Explore the K-pop sets open to visitors",
+        "Choose a backdrop and plan your own shot"
+      ],
+      "ko": [
+        "공개 중인 K-POP 체험 공간을 둘러보기",
+        "배경을 골라 나만의 촬영 구도 구상하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Approach from Jonggak Station towards Cheonggyecheon. Check parking restrictions if driving.",
+      "ko": "종각역에서 청계천 쪽으로 접근할 수 있어요. 차로 간다면 주차장 이용 조건을 확인하세요."
+    },
+    "theme": {
+      "ko": "뮤직비디오의 한 장면을 상상하는 여행",
+      "en": "Picture yourself on a K-pop set"
+    },
+    "tags": [
+      "budget",
+      "culture",
+      "indoor",
+      "kpop",
+      "new",
+      "photo",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/hikr.jpg",
+      "title": "HiKR Ground, July 24, 2024 01.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:HiKR_Ground,_July_24,_2024_01.jpg",
+      "license": "CC BY-SA 2.0 kr",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en",
+      "author": "Zero guk - 네이버 블로그 / Naver Blog",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "ktown": {
+    "id": "ktown",
+    "source": "https://english.visitseoul.net/entertainment/Ktown4u-COEX/ENP0rc3u4",
+    "checkedOn": "2026-11-25",
+    "address": "강남구 영동대로 513",
+    "zone": "동남",
+    "fee": "free-basic",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": null,
+    "name": {
+      "en": "Ktown4u COEX",
+      "ko": "케이타운포유 코엑스"
+    },
+    "region": {
+      "en": "Gangnam-gu",
+      "ko": "강남구"
+    },
+    "activities": {
+      "en": [
+        "Pick an album cover that catches your eye in the shop",
+        "Compare two album designs by the same artist"
+      ],
+      "ko": [
+        "매장에서 마음에 드는 앨범 표지를 고르기",
+        "같은 가수의 서로 다른 앨범 디자인 비교하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the indoor route from Samseong Station and the shop floor before setting off.",
+      "ko": "삼성역에서 코엑스 내부로 이어지는 길과 매장 층을 확인하세요."
+    },
+    "theme": {
+      "ko": "음반 디자인으로 읽는 팬 문화",
+      "en": "Explore fan culture through album design"
+    },
+    "tags": [
+      "busy",
+      "city",
+      "indoor",
+      "kpop",
+      "shopping"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": 0,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": null
+  },
+  "hongdae": {
+    "id": "hongdae",
+    "source": "https://english.visitseoul.net/attractions/HONGDAE-R2/ENPjggl5r",
+    "checkedOn": "2026-11-25",
+    "address": "마포구 서교동 347-20",
+    "zone": "서북",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "Hongdae R2 Busking Street",
+      "ko": "홍대 레드로드 R2"
+    },
+    "region": {
+      "en": "Mapo-gu",
+      "ko": "마포구"
+    },
+    "activities": {
+      "en": [
+        "Find the street stage and check the day’s listings",
+        "Stay for a song if a performance is on"
+      ],
+      "ko": [
+        "거리 무대 위치와 당일 공연 공지를 살펴보기",
+        "공연이 있으면 한 곡 감상하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the walking route from Hongik University Station to Red Road R2.",
+      "ko": "홍대입구역에서 레드로드 R2로 이어지는 보행 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "거리 무대 주변에서 즐기는 홍대 나들이",
+      "en": "An outing around Hongdae’s street stages"
+    },
+    "tags": [
+      "active",
+      "busy",
+      "city",
+      "culture",
+      "outdoor",
+      "performance",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": null
+  },
+  "mangwon": {
+    "id": "mangwon",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "마포구 포은로8길 14",
+    "zone": "서북",
+    "fee": "unknown",
+    "setting": "mixed",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "Mangwon Market",
+      "ko": "망원시장"
+    },
+    "region": {
+      "en": "Mapo-gu",
+      "ko": "마포구"
+    },
+    "activities": {
+      "en": [
+        "Compare snack prices and pick one to try",
+        "Ask a vendor about the ingredients or spice level"
+      ],
+      "ko": [
+        "간식 가격을 살펴보고 먹고 싶은 한 가지를 고르기",
+        "상인에게 재료나 매운 정도 물어보기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the walk from Mangwon Station to the market entrance.",
+      "ko": "망원역에서 시장 입구까지 걷는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "예산 안에서 고르는 시장 간식",
+      "en": "A market snack within your own budget"
+    },
+    "tags": [
+      "budget",
+      "busy",
+      "food",
+      "market",
+      "shopping",
+      "social",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/mangwon.jpg",
+      "title": "Mercado Mangwon en Seúl.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Mercado_Mangwon_en_Se%C3%BAl.jpg",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "author": "Enamoradadecorea",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "noryangjin": {
+    "id": "noryangjin",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "동작구 노들로 674",
+    "zone": "서남",
+    "fee": "unknown",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.51523056,
+      "lon": 126.94106389,
+      "source": "https://ko.wikipedia.org/wiki/노량진수산시장"
+    },
+    "name": {
+      "en": "Noryangjin Fisheries Wholesale Market",
+      "ko": "노량진수산시장"
+    },
+    "region": {
+      "en": "Dongjak-gu",
+      "ko": "동작구"
+    },
+    "activities": {
+      "en": [
+        "Browse the seafood on display at the stalls",
+        "Ask about both the seafood price and preparation charges before ordering"
+      ],
+      "ko": [
+        "판매대에서 제철 수산물의 종류를 살펴보기",
+        "주문 전에 가격과 상차림 비용 함께 확인하기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "수산시장에서 재료부터 살펴보는 미식 여행",
+      "en": "A seafood outing that starts with the ingredients"
+    },
+    "tags": [
+      "busy",
+      "food",
+      "indoor",
+      "market",
+      "new",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/noryangjin.jpg",
+      "title": "Korea-Seoul-Noryangjin_Fish_Market-03.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Korea-Seoul-Noryangjin_Fish_Market-03.jpg",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "author": "Gaël Chardon",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "sejong": {
+    "id": "sejong",
+    "source": "https://sejongpac.or.kr/eng/main/main.do",
+    "checkedOn": "2026-11-25",
+    "address": "종로구 세종대로 175",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.5725,
+      "lon": 126.9756,
+      "source": "https://www.wikidata.org/wiki/Q496974"
+    },
+    "name": {
+      "en": "Sejong Center for the Performing Arts",
+      "ko": "세종문화회관"
+    },
+    "region": {
+      "en": "Jongno-gu",
+      "ko": "종로구"
+    },
+    "activities": {
+      "en": [
+        "Check the programme and seat availability for your date",
+        "After a booked performance, share a scene that stayed with you"
+      ],
+      "ko": [
+        "방문일 공연과 잔여 좌석을 확인하기",
+        "예매한 공연을 보고 기억에 남은 장면 나누기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "광화문에서 고르는 공연 한 편",
+      "en": "An evening at the theatre in Gwanghwamun"
+    },
+    "tags": [
+      "culture",
+      "indoor",
+      "performance",
+      "planned",
+      "social"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/sejong.jpg",
+      "title": "Night view of the Sejong Center in May 2025.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Night_view_of_the_Sejong_Center_in_May_2025.jpg",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "author": "DtSeoul",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "artscenter": {
+    "id": "artscenter",
+    "source": "https://www.sac.or.kr/site/eng/show/show_list",
+    "checkedOn": "2026-11-25",
+    "address": "서초구 남부순환로 2406",
+    "zone": "동남",
+    "fee": "unknown",
+    "setting": "indoor",
+    "walking": "self-paced",
+    "coordinates": {
+      "lat": 37.480433,
+      "lon": 127.0111903,
+      "source": "https://en.wikipedia.org/wiki/Seoul_Arts_Center"
+    },
+    "name": {
+      "en": "Seoul Arts Center",
+      "ko": "예술의전당"
+    },
+    "region": {
+      "en": "Seocho-gu",
+      "ko": "서초구"
+    },
+    "activities": {
+      "en": [
+        "Compare the Music Hall and Opera House programmes",
+        "If you have a ticket, enjoy the performance and jot down one impression"
+      ],
+      "ko": [
+        "음악당과 오페라극장의 프로그램을 비교하기",
+        "표를 구했다면 공연을 즐기고 감상 한 줄 남기기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "공연을 중심에 둔 서초 나들이",
+      "en": "Build a Seocho outing around a performance"
+    },
+    "tags": [
+      "art",
+      "culture",
+      "indoor",
+      "performance",
+      "planned"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/artscenter.jpg",
+      "title": "Korea-Seoul.Arts.Center-02.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Korea-Seoul.Arts.Center-02.jpg",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "author": "by Kai Hendry",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  },
+  "myeongdong": {
+    "id": "myeongdong",
+    "source": "https://english.seoul.go.kr/wp-content/uploads/2026/03/2026_guidebook_EN.pdf",
+    "checkedOn": "2026-11-25",
+    "address": "중구 명동길 일대",
+    "zone": "도심",
+    "fee": "unknown",
+    "setting": "outdoor",
+    "walking": "extended",
+    "coordinates": null,
+    "name": {
+      "en": "Myeongdong Shopping Street",
+      "ko": "명동거리"
+    },
+    "region": {
+      "en": "Jung-gu",
+      "ko": "중구"
+    },
+    "activities": {
+      "en": [
+        "Pick an item and compare two shops",
+        "Choose a street snack that looks good"
+      ],
+      "ko": [
+        "관심 있는 품목을 정해 가게 두 곳을 비교하기",
+        "길거리 간식 중 먹고 싶은 메뉴 고르기"
+      ]
+    },
+    "accessNote": {
+      "en": "Check the nearest transit stop and the walk from the car park to your chosen entrance.",
+      "ko": "입구와 가까운 정류장, 주차 후 걸어야 하는 구간을 확인하세요."
+    },
+    "theme": {
+      "ko": "취향에 맞는 가게를 찾는 명동 나들이",
+      "en": "Find a shop that suits your taste in Myeongdong"
+    },
+    "tags": [
+      "active",
+      "busy",
+      "city",
+      "food",
+      "outdoor",
+      "shopping",
+      "walk"
+    ],
+    "hours": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "feeScope": "basic visit only; exhibitions, purchases and travel excluded",
+    "verification": "inherited static catalogue; verify for travel date",
+    "photo": {
+      "src": "/photos/myeongdong.jpg",
+      "title": "Seoul-Myeongdong-02.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seoul-Myeongdong-02.jpg",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "author": "by thelearnr",
+      "changes": "Resized and JPEG-encoded; displayed with a responsive crop."
+    }
+  }
+}

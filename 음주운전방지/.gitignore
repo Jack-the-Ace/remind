@@ -22,3 +22,10 @@
 /output/compcars*/
 __pycache__/
 /output/emblem_v1*/
+/output/mvp_review*/
+/output/rb_h264_*/
+
+/videos/**/*.mp4
+/videos/**/*.mov
+/videos/**/*.mkv
+/output/mvp_far_recheck/

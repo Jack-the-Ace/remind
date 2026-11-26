@@ -1,0 +1,31 @@
+{
+  "version": "mini-ipip-en-ko-review-1",
+  "sources": [
+    "https://www.ipip.ori.org/MiniIPIPKey.htm",
+    "https://www.ipip.ori.org/newScoringInstructions.htm",
+    "https://ipip.ori.org/"
+  ],
+  "koreanTranslation": "Project working translation for review. Measurement validity has not been established.",
+  "items": [
+    ["m01", "extraversion", 1, "Am the life of the party.", "모임에서 분위기를 주도하는 편이다."],
+    ["m02", "agreeableness", 1, "Sympathize with others' feelings.", "다른 사람의 감정에 공감한다."],
+    ["m03", "conscientiousness", 1, "Get chores done right away.", "해야 할 자질구레한 일은 바로 처리한다."],
+    ["m04", "neuroticism", 1, "Have frequent mood swings.", "기분의 기복이 잦다."],
+    ["m05", "imagination", 1, "Have a vivid imagination.", "상상한 것이 머릿속에 생생하게 그려진다."],
+    ["m06", "extraversion", -1, "Don't talk a lot.", "말수가 적은 편이다."],
+    ["m07", "agreeableness", -1, "Am not interested in other people's problems.", "다른 사람의 고민에는 관심이 없다."],
+    ["m08", "conscientiousness", -1, "Often forget to put things back in their proper place.", "물건을 제자리에 두는 것을 자주 잊는다."],
+    ["m09", "neuroticism", -1, "Am relaxed most of the time.", "대부분의 시간을 편안한 마음으로 보낸다."],
+    ["m10", "imagination", -1, "Am not interested in abstract ideas.", "추상적인 생각에는 관심이 없다."],
+    ["m11", "extraversion", 1, "Talk to a lot of different people at parties.", "모임에 가면 여러 사람과 두루 이야기를 나눈다."],
+    ["m12", "agreeableness", 1, "Feel others' emotions.", "다른 사람의 감정이 나에게도 전해지는 편이다."],
+    ["m13", "conscientiousness", 1, "Like order.", "질서가 잡혀 있는 것을 좋아한다."],
+    ["m14", "neuroticism", 1, "Get upset easily.", "쉽게 속이 상하는 편이다."],
+    ["m15", "imagination", -1, "Have difficulty understanding abstract ideas.", "추상적인 생각을 이해하는 데 어려움을 느낀다."],
+    ["m16", "extraversion", -1, "Keep in the background.", "앞에 나서기보다 뒤에 있는 편이다."],
+    ["m17", "agreeableness", -1, "Am not really interested in others.", "다른 사람에게 별로 관심이 없다."],
+    ["m18", "conscientiousness", -1, "Make a mess of things.", "주변을 어질러 놓는 편이다."],
+    ["m19", "neuroticism", -1, "Seldom feel blue.", "기분이 가라앉는 일이 드물다."],
+    ["m20", "imagination", -1, "Do not have a good imagination.", "상상력이 풍부한 편은 아니다."]
+  ]
+}

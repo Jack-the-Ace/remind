@@ -1,0 +1,183 @@
+{
+  "faust-seoul": {
+    "id": "faust-seoul",
+    "offer": "nightclub",
+    "name": {
+      "ko": "파우스트",
+      "en": "FAUST"
+    },
+    "region": {
+      "ko": "용산구 이태원",
+      "en": "Itaewon, Yongsan-gu"
+    },
+    "zone": "도심",
+    "address": "용산구 이태원동",
+    "theme": {
+      "ko": "이태원 DJ 나이트에서 춤추기",
+      "en": "Dance to a DJ set in Itaewon"
+    },
+    "activities": {
+      "ko": [
+        "파우스트의 클럽 나이트에서 음악에 맞춰 춤추기"
+      ],
+      "en": [
+        "Dance to a DJ set at a FAUST club night"
+      ]
+    },
+    "accessNote": {
+      "ko": "방문일의 행사, 입구, 입장 시간·연령·신분증·요금을 주최 측에서 확인하세요.",
+      "en": "Check the dated event listing for the entrance, door times, age and ID rules, and price."
+    },
+    "tags": [
+      "club",
+      "dance",
+      "music",
+      "nightlife",
+      "social",
+      "active",
+      "indoor"
+    ],
+    "source": "https://tixx.im/hosts/47",
+    "corroboration": "https://faustseoul.wixsite.com/faust02/contact",
+    "reason": {
+      "ko": "테크노 클럽 나이트를 열어 온 곳이라 좋아하는 DJ의 음악에 맞춰 직접 춤출 수 있는 후보예요.",
+      "en": "FAUST has hosted techno club nights where you can get on the floor and dance to a DJ set."
+    },
+    "planningTip": {
+      "ko": "미리 정해 두면 편하다면, 끌리는 DJ의 행사 하나를 고르고 입장 조건부터 확인해 보세요.",
+      "en": "If a little structure helps, pick a DJ set you like and check its door policy before heading out."
+    },
+    "timeBand": "night-event",
+    "checkedOn": "2026-11-26",
+    "verification": "Activity type documented; verify dated programme, entry and availability with the operator.",
+    "setting": "indoor",
+    "walking": "unknown",
+    "hours": null,
+    "coordinates": null,
+    "photo": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "fee": "unknown",
+    "feeScope": "Admission and any booking requirements unverified."
+  },
+  "hongdae-club-area": {
+    "id": "hongdae-club-area",
+    "offer": "nightlife_area",
+    "name": {
+      "ko": "홍대 클럽 거리",
+      "en": "Hongdae club district"
+    },
+    "region": {
+      "ko": "마포구 홍대 일대",
+      "en": "Hongdae, Mapo-gu"
+    },
+    "zone": "서북",
+    "address": "마포구 홍대 일대",
+    "theme": {
+      "ko": "홍대에서 취향에 맞는 클럽 나이트 찾기",
+      "en": "Find your sound in Hongdae’s club district"
+    },
+    "activities": {
+      "ko": [
+        "홍대 일대 클럽의 음악 장르와 당일 프로그램을 비교해 춤출 곳 고르기"
+      ],
+      "en": [
+        "Compare club programmes around Hongdae and choose a dance floor by music style"
+      ]
+    },
+    "accessNote": {
+      "ko": "권역 안내예요. 개별 클럽과 행사 날짜를 고른 뒤 운영·입장 조건을 확인하세요.",
+      "en": "Choose an individual venue and verify its programme, opening and admission for your date."
+    },
+    "tags": [
+      "club",
+      "dance",
+      "music",
+      "nightlife",
+      "social",
+      "city"
+    ],
+    "source": "https://english.visitseoul.net/tours/Hot-Nights-at-Hongdae%E2%80%99s-HottestClubs/ENN000577",
+    "corroboration": "https://english.seoul.go.kr/wp-content/uploads/2025/01/2025-Tourist-guidebookENG.pdf",
+    "reason": {
+      "ko": "서울관광 안내에 힙합·일렉트로닉 클럽이 소개된 권역이에요. 음악을 비교해 춤출 곳을 고를 수 있지만, 방문일의 개별 행사는 아직 정해지지 않았어요.",
+      "en": "Visit Seoul describes hip-hop and electronic clubs around Hongdae. You can look for a dance floor by genre here; a specific club night still needs to be chosen."
+    },
+    "planningTip": {
+      "ko": "미리 계획하고 싶다면, 마음에 드는 장르를 정하고 출발 전에 한 곳의 프로그램을 확인해 보세요.",
+      "en": "For a more planned night, choose a genre and check one venue’s programme before you go."
+    },
+    "timeBand": "night-event",
+    "checkedOn": "2026-11-26",
+    "verification": "Activity type documented; verify dated programme, entry and availability with the operator.",
+    "setting": "mixed",
+    "walking": "unknown",
+    "hours": null,
+    "coordinates": null,
+    "photo": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "fee": "unknown",
+    "feeScope": "Admission and any booking requirements unverified."
+  },
+  "one-million-dance": {
+    "id": "one-million-dance",
+    "offer": "dance_class",
+    "name": {
+      "ko": "원밀리언 댄스 스튜디오",
+      "en": "1MILLION Dance Studio"
+    },
+    "region": {
+      "ko": "성동구 성수",
+      "en": "Seongsu, Seongdong-gu"
+    },
+    "zone": "동북",
+    "address": "성동구 뚝섬로13길 33",
+    "theme": {
+      "ko": "성수에서 직접 안무 배우기",
+      "en": "Learn a dance routine in Seongsu"
+    },
+    "activities": {
+      "ko": [
+        "수준에 맞는 수업을 골라 안무를 직접 배워 보기"
+      ],
+      "en": [
+        "Join a dance class at your level and practise a routine"
+      ]
+    },
+    "accessNote": {
+      "ko": "원하는 날짜의 수업 시간, 대상, 예약 가능 여부와 수강료를 확인하세요.",
+      "en": "Check the class level, timetable, price and booking availability for your date."
+    },
+    "tags": [
+      "dance",
+      "music",
+      "active",
+      "social",
+      "indoor",
+      "planned"
+    ],
+    "source": "https://www.1milliondance.com/classes",
+    "corroboration": "https://english.visitseoul.net/entertainment/1Million-Dance-Studio-Seoul/ENP034360",
+    "reason": {
+      "ko": "이곳의 댄스 수업에서는 관람석에 앉는 대신 직접 안무를 배워요. 초보자용 Starter 수업도 안내돼 있어요.",
+      "en": "Here you learn the choreography yourself. The studio lists a Starter class if you’re new to dance."
+    },
+    "planningTip": {
+      "ko": "순서가 있는 활동이 편하다면, 수업 수준을 먼저 고르고 예약 시간을 확인해 보세요.",
+      "en": "If you like a little structure, choose a class level first, then check the booking time."
+    },
+    "timeBand": "class-timetable",
+    "checkedOn": "2026-11-26",
+    "verification": "Activity type documented; verify dated programme, entry and availability with the operator.",
+    "setting": "indoor",
+    "walking": "unknown",
+    "hours": null,
+    "coordinates": null,
+    "photo": null,
+    "typicalStayMinutes": null,
+    "basicAdmissionKrw": null,
+    "fee": "unknown",
+    "feeScope": "Admission and any booking requirements unverified."
+  }
+}
