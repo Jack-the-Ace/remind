@@ -229,9 +229,9 @@ LANE_MESSAGES = {
 }
 
 
-def draw_lane_notice(draw, size, notice):
+def draw_lane_notice(draw, size, notice, x=19):
     # 차량과 차선이 있는 화면 중앙을 비워 두고 왼쪽 아래에 두 줄만 표시합니다.
-    x, y = 19, size[1]-109
+    y = size[1]-109
     if notice in LANE_MESSAGES:
         points=[(x+10,y),(x+21,y+19),(x,y+19),(x+10,y)]
         draw.line(points,fill=HUD_RED,width=2)
@@ -286,6 +286,18 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
     hud_text(draw, size[0]-18, 18, [(f"판정: {row.get('verdict') or '-'}", HUD_RED),
                                   ("  |  ", HUD_WHITE), (f"예측: {row.get('prediction') or '-'}", HUD_BLUE)],
              19, align="right")
+    text_x=18
+    if "contact_seconds" in row and row["box"]:
+        left,top,right,bottom=row["box"]
+        if left*scale[0]<270 and bottom*scale[1]>size[1]-116:
+            text_x=size[0]-300
+    if "contact_seconds" in row:
+        duration=row["contact_seconds"]
+        value="—" if duration is None else f"{duration:.2f}초"
+        suffix=" · 정지 화면" if row.get("freeze") else ""
+        hud_text(draw,text_x,size[1]-44,[("차선 접촉  ",HUD_GREEN),(value+suffix,HUD_WHITE)],15)
+    if "brand" in info:
+        hud_text(draw,18,96,[("브랜드 · 모델  ",HUD_GREEN),((info.get("brand") or "-")+" / "+(info.get("model_name") or "-"),HUD_WHITE)],14)
     counts = row["event_counts"]
     visible = [(label, count) for label, count in counts.items() if count]
     for index, (label, count) in enumerate(visible):
@@ -294,7 +306,7 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
                  heading + [(f"{label}: ", EVENT_COLORS.get(label, HUD_BLUE)), (f"{count}회", HUD_RED)], 17, align="right")
     # 브라우저의 재생 버튼·타임라인과 겹치지 않도록 하단에서 조금 띄웁니다.
     if notice in LANE_MESSAGES or notice=="search":
-        draw_lane_notice(draw,size,notice)
+        draw_lane_notice(draw,size,notice,text_x+1)
     else:
         if notice=="checking":
             text="차선 재관측 중"
@@ -307,7 +319,7 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
                 text=row.get("status_text") or "선택 차량 관찰 중"
         else:
             text=row.get("status_text") or STATUS[row["status"]]
-        hud_text(draw,18,size[1]-69,[(text,HUD_WHITE)],14)
+        hud_text(draw,text_x,size[1]-69,[(text,HUD_WHITE)],14)
     return image
 
 
@@ -432,6 +444,9 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
             progress(0, end-start+1)
             stage("analyzing")
             assessor = None
+            from redbox_lane_geometry import recording_clock, PaintCurve
+            curves={k:PaintCurve(v) for k,v in data.get("lane_curves",{}).items() if k in ("left","right")}
+            video_clock=recording_clock(cap,start,end,crossing_module.source_seconds) if can_detect_boundary else None
             continuity = ShortTargetMatch()
             def local_mask(crop):
                 return predict_lane(lane_model,crop,torch.device("cuda:0"),(384,240),times)[0]
@@ -468,8 +483,8 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                     vehicle,track_source = continuity.update(frame,vehicle,vehicles,seconds)
                 if vehicle:
                     ids[vehicle["id"]] += 1
-                    if number - last_sample >= max(1, round(.32*fps)):
-                        reading_plate = reader is not None and len(info.ocr_frames) < 12
+                    if (not video_clock or not video_clock[number-start]['duplicate']) and number - last_sample >= max(1, round(.32*fps)):
+                        reading_plate = reader is not None and not info.plate_candidate()
                         if reading_plate:
                             stage("ocr")
                         info.sample(frame, vehicle, number)
@@ -499,7 +514,15 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                 detected = []
                 if boundary is not None:
                     box=vehicle["box"] if vehicle else None
-                    detected,reading=assessor.evaluate(number,seconds,frame,box,endpoints,status,support_gap,vehicles,local_mask)
+                    if curves:
+                        top=round(h*float(data.get("lane_roi_top",0)))
+                        if not 0<=top<h: raise ValueError("차선 분석 영역 확인 필요")
+                        local=mask if top==0 else predict_lane(lane_model,frame[top:],torch.device("cuda:0"),SIZE,times)[0]
+                        full=np.zeros((h,w),np.uint8)
+                        full[top:]=cv2.dilate(cv2.resize(local,(w,h-top),interpolation=cv2.INTER_NEAREST),np.ones((5,5),np.uint8))
+                        detected,reading=assessor.evaluate_curves(number,seconds,frame,box,vehicles,full,curves,video_clock[number-start])
+                    else:
+                        detected,reading=assessor.evaluate(number,seconds,frame,box,endpoints,status,support_gap,vehicles,local_mask,video_clock[number-start])
                 stop_row = None
                 if stop_monitor:
                     stop_row, passage = stop_monitor.update(number, frame, vehicles, vehicle)
@@ -523,6 +546,8 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                            box=vehicle["box"] if vehicle else None, track_id=vehicle["id"] if vehicle else None,
                            count=len(events), new_event=bool(detected), event_counts=dict(event_counts),
                            vehicle_info=info.snapshot())
+                if video_clock:
+                    row.update(video_clock[number-start],contact_seconds=reading.get('contact_seconds') if reading else None)
                 if stop_monitor:
                     row["stop_line"] = stop_row
                 statuses[status] += 1

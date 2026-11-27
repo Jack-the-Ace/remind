@@ -470,7 +470,8 @@ class MeasuredBoundary:
             batch=[item]
             if self.pending:
                 # 미확인 접촉 두 장 이하로는 원래 차로를 바꾸거나 사건을 만들지 않습니다.
-                self.state.previous_frame=item[0]-1
+                if self.state.previous_time is not None:
+                    self.state.previous_frame=item[0]-1
         self.pending=[]
         events=[]
         for i,at,pos in batch:
@@ -512,8 +513,10 @@ class SceneLaneAnalysis:
         self.mode=None
         self.notice=None
         self.bad_since=None
+        self.observations=[]
+        self.last_reading=None
 
-    def evaluate(self, f, seconds, image, box, endpoints, status, gap, vehicles, model_mask):
+    def evaluate(self, f, seconds, image, box, endpoints, status, gap, vehicles, model_mask, clock=None):
         raw,metrics=lane_evidence(image,box,endpoints,status,gap,vehicles)
         # 크기는 분석을 그만두는 문턱이 아니라 주변 도로를 다시 읽을지 결정하는 기준입니다.
         remote=box is not None and (box[2]-box[0]<40 or box[3]-box[1]<26)
@@ -540,7 +543,50 @@ class SceneLaneAnalysis:
                     'position_observed' if pos else 'edge_uncertainty' if geometry['edges'] else 'no_supported_paint')
             quality=dict(mode='remote',raw='search' if raw=='search' else ('ready' if pos else 'unclear'),
                          metrics=metrics,geometry=geometry,positions=pos,reason=reason,visible=bool(box and not blocked))
+        if clock is not None:
+            return self.advance_recorded(f,seconds,box,endpoints,status,quality,clock)
         return self.advance(f,seconds,box,endpoints,status,quality)
+
+    def evaluate_curves(self, f, seconds, image, box, vehicles, full_mask, curves, clock, reset=None):
+        """직접 고른 흰 경계를 추적합니다. 선택 도형은 경계 식별용이며 판정에는 현재 영상이 필요합니다."""
+        if reset:
+            self.clocks[reset].restart()
+        raw,metrics=lane_evidence(image,box,None,"boundary_missing",None,vehicles)
+        visible=(bool(box) and raw!="search" and metrics.get("foreground_cover",0)<READABILITY_RULES["foreground_overlap"]
+                 and not (metrics.get("laplacian",0)<12 and metrics.get("contrast",0)<14))
+        if clock["freeze"] and self.last_reading and visible:
+            return self.advance_recorded(f,seconds,box,None,None,self.last_reading,clock)
+        edges={}
+        for side,curve in curves.items():
+            fit=curve.measure(image,full_mask,vehicles,box)
+            if fit and visible:
+                edges[side]=fit
+        pos={side:e["position"] for side,e in edges.items() if e["position"]}
+        quality=dict(mode="remote",geometry=dict(edges=edges),positions=pos,visible=visible,metrics=metrics,
+                     raw="search" if raw=="search" else "ready" if pos else "unclear")
+        if reset: quality["reset_boundary"]=reset
+        return self.advance_recorded(f,seconds,box,None,None,quality,clock)
+
+    def advance_recorded(self,f,seconds,box,endpoints,status,quality,clock):
+        # 녹화 정지 화면은 같은 관측입니다. 실제 프레임 번호와 주행 시계의 번호를 따로 기억합니다.
+        if clock['freeze'] and self.last_reading and box and quality.get('visible',True) and quality.get('raw')!='search' and self.last_reading.get('raw')!='search':
+            return [],dict(self.last_reading,freeze=True)
+        drive=clock['drive_s']
+        self.observations.append((f,seconds))
+        events,state=self.advance(len(self.observations),drive,box,endpoints,status,quality)
+        for event in events:
+            event.update(driving_time_s=event['time_s'],time_s=seconds,frame=f,confirmed_frame=f)
+            for key in ('maneuver_start_frame','opposite_start_frame'):
+                if event.get(key): event[key]=self.observations[event[key]-1][0]
+        if state.get('mode')=='remote':
+            values=[c.state.previous_time-c.state.start for side,c in self.clocks.items()
+                    if state['positions'].get(side)=='contact' and c.state.start is not None]
+        else:
+            c=self.legacy.behavior
+            values=[drive-c.start] if c.start is not None else []
+        state.update(contact_seconds=round(max(values,default=0.),3) if state['counting'] else None,freeze=False)
+        self.last_reading=state
+        return events,state
 
     def advance(self, f, seconds, box, endpoints, status, quality):
         mode=quality['mode']
@@ -594,7 +640,12 @@ def analyze_contact_rows(rows, fps):
             if scene is None:
                 # 재생에는 저장된 양쪽 경계 관측만 필요합니다.
                 scene=SceneLaneAnalysis(fps,[[0,0],[1,1]])
-            found,_=scene.advance(*args,reading)
+            if reading.get('reset_boundary'):
+                scene.clocks[reading['reset_boundary']].restart()
+            if 'drive_s' in row:
+                found,_=scene.advance_recorded(*args,reading,row)
+            else:
+                found,_=scene.advance(*args,reading)
         elif reading:
             found,_=gate.update(*args,row["lane_readability"]["raw"],row.get("paint_half_width",0.))
         else:
@@ -722,6 +773,9 @@ def render(args):
     try:
         if not cap.isOpened() or not writer.open(str(path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height)):
             raise RuntimeError("MP4를 열 수 없습니다.")
+        from redbox_lane_geometry import recording_clock
+        clip_clock=recording_clock(cap,1,len(track),source_seconds)
+        observed_frames=[]
         with (output / "frames.jsonl").open("x", encoding="utf-8") as stream:
             for number, detections in enumerate(track, 1):
                 ok, frame = cap.read()
@@ -783,7 +837,15 @@ def render(args):
                 # 보이지 않는 동안 경계를 넘었는지는 계산에 넣지 않습니다.
                 event = crossing.update(number, side, reason in {"track_id_missing", "track_class_changed", "tracking_hold"})
                 endpoints = boundary.endpoints(rows, scale)
-                for action in behavior.observe(number, seconds, vehicle["box"] if vehicle else None, endpoints, reason):
+                observed=clip_clock[number-1]
+                actions_now=[]
+                if not observed["freeze"] or vehicle is None or not active:
+                    observed_frames.append(number)
+                    actions_now=behavior.observe(len(observed_frames),observed["drive_s"],vehicle["box"] if vehicle and active else None,endpoints,reason)
+                for action in actions_now:
+                    action.update(frame=number,confirmed_frame=number,driving_time_s=action["time_s"],time_s=seconds)
+                    for key in ("opposite_start_frame","maneuver_start_frame"):
+                        if action.get(key): action[key]=observed_frames[action[key]-1]
                     entry = dict(action, track_id=target_id, source_video=args.video.name, event_source="automatic",
                                  incident_id=f"selection-{args.selection}-F{number}-{len(actions)+1}",
                                  hud_anchor=hud_module.event_position(vehicle["box"],width,height))
@@ -807,7 +869,7 @@ def render(args):
                     hud_module.draw_event_floats(panel,actions,seconds)
                     canvas = cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGB2BGR)
                 writer.write(canvas)
-                stream.write(json.dumps(dict(frame=number, time_s=seconds, target_id=target_id,
+                stream.write(json.dumps(dict(frame=number, time_s=seconds, target_id=target_id, **observed,
                                              footprint_position=behavior.last_position, event_counts=dict(action_counts),
                                              target_point=point, side=side, distance_px=distance, status=reason,
                                              boundary_source=boundary_source,

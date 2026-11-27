@@ -190,3 +190,169 @@ class RoadGeometry:
         return dict(roi=roi,primary=self.primary,edges=fits)
 
 
+
+class PaintCurve:
+    """선택한 흰 도색을 원본 행마다 찾아 점선 사이의 도로 경계를 이어 봅니다."""
+    def __init__(self, points):
+        a=np.asarray(points,float)
+        self.low=float(a[:,1].min())
+        self.high=float(a[:,1].max())
+        self.poly=np.polyfit(a[:,1],a[:,0],min(2,len(a)-1))
+        self.recent=[]
+        self.last_call=0
+        self.call=0
+
+    def measure(self, image, mask, vehicles, box):
+        self.call+=1
+        h,w=image.shape[:2]
+        step=max(2,round(h/200))
+        lo=max(0,round(self.low-.20*(self.high-self.low)))
+        hi=min(h-1,round(self.high+.34*(self.high-self.low)))
+        ys=np.arange(lo,hi,step)
+        old=np.polyval(self.poly,ys)
+        radius=max(10,round(w*.023))
+        offsets=np.arange(-radius,radius+1)
+        xs=np.clip(np.rint(old).astype(int)[:,None]+offsets,0,w-1)
+        stretch=np.clip((ys-self.low)/(self.high-self.low),0,1)
+        stride=np.rint((.003+.008*stretch)*w).astype(int)[:,None]
+        y=ys[:,None]
+        sample=image[y,xs].astype(float)
+        # 양옆 노면보다 밝고 색차가 작은 흰 페인트만 허용합니다. 분홍·초록 유도선은 제외합니다.
+        brightness=sample.mean(2)
+        before=image[y,np.maximum(0,xs-stride)].mean(2)
+        after=image[y,np.minimum(w-1,xs+stride)].mean(2)
+        contrast=brightness-np.maximum(before,after)
+        good=(contrast>=8)&(np.ptp(sample,axis=2)<np.maximum(16,brightness*.14))
+        for car in vehicles:
+            a,b,A,B=car['box']
+            good &= ~((y>=b-1)&(y<=B+1)&(xs>=a-1)&(xs<=A+1))
+        votes=mask[y,xs]!=0
+        score=np.minimum(65,contrast)-.48*np.abs(offsets)+12*votes
+        score[~good]=-999
+        ix=np.argmax(score,axis=1)
+        row=np.arange(len(ys))
+        keep=good[row,ix]
+        yy=ys[keep]; xx=xs[row,ix][keep]; net=votes[row,ix][keep]
+        if len(yy)<6: return None
+        # 1차 적합 뒤 잔차가 큰 횡방향 화살표·다른 도색을 빼고 다시 곡선을 구합니다.
+        degree=2 if len(yy)>12 and np.ptp(yy)>.62*(self.high-self.low) else 1
+        for _ in range(2):
+            if len(yy)<6 or np.ptp(yy)<.24*(self.high-self.low): return None
+            fit=np.polyfit(yy,xx,degree)
+            valid=np.abs(np.polyval(fit,yy)-xx)<=max(2.6,w*.005)
+            yy,xx,net=yy[valid],xx[valid],net[valid]
+        if len(yy)<6 or np.ptp(yy)<.24*(self.high-self.low) or net.sum()<2: return None
+        fit=np.polyfit(yy,xx,degree)
+        base=np.linspace(self.low,self.high,5)
+        # 도색이 모인 구간 밖으로는 곡률을 그대로 연장하지 않습니다.
+        def projected(t):
+            z=np.clip(t,yy.min(),yy.max())
+            return np.polyval(fit,z)+(t-z)*np.polyval(np.polyder(fit),z)
+        proposed=projected(base)
+        delta=proposed-np.polyval(self.poly,base)
+        self.poly=np.polyfit(base,np.polyval(self.poly,base)+np.clip(delta,-radius*.60,radius*.60),2)
+        if box is None: return None
+        left,top,right,bottom=box
+        gap=float(np.min(abs(yy-bottom)))
+        height=bottom-top
+        if gap>max(15,min(h*.10,height*1.3)): return None
+        residual=float(np.median(abs(projected(yy)-xx)))
+        at=float(projected(bottom))
+        # 급커브에서는 먼 도색의 접선이 바퀴 위치를 빗나갑니다. 차 바로 아래 실제 도색으로 다시 맞춥니다.
+        near_y=np.arange(max(1,int(np.ceil(bottom))+1), min(h-1,int(bottom+max(30,min(.095*h,2.4*height)))))
+        local=[]
+        for ny in near_y:
+            center=projected(ny)
+            rad=max(8,min(.85*(right-left),.033*w))
+            start=max(1,int(center-rad))
+            end=min(w-1,int(center+rad)+1)
+            if start>=end: continue
+            xx0=np.arange(start,end)
+            stride=max(3,round(w*.004))
+            a=image[ny,xx0].astype(float)
+            level=a.mean(1)
+            score=level-np.maximum(image[ny,np.maximum(0,xx0-stride)].mean(1),
+                                    image[ny,np.minimum(w-1,xx0+stride)].mean(1))
+            eligible=(score>=7)&(np.ptp(a,axis=1)<np.maximum(16,level*.14))
+            for v in vehicles:
+                l,t,r,b=v['box']
+                if t-1<=ny<=b+1: eligible &= (xx0<l-1)|(xx0>r+1)
+            if not eligible.any(): continue
+            rank=np.where(eligible,score.clip(0,60)-.48*abs(xx0-center)+5*(mask[ny,xx0]>0),-1e6)
+            ix=rank.argmax()
+            local.append((ny,xx0[ix]))
+        if len(local)>=8:
+            ly,lx=np.asarray(local).T
+            # 같은 대시의 양쪽 가장자리나 반사광 한 점이 아니라 연속된 다수의 행을 요구합니다.
+            smooth=np.abs(np.diff(lx))<=3.2*np.diff(ly)
+            keep=np.r_[smooth,True]&np.r_[True,smooth]
+            ly,lx=ly[keep],lx[keep]
+            if len(ly)>=8 and np.ptp(ly)>=10:
+                dy=ly-bottom
+                degree=2 if len(ly)>=13 and np.ptp(dy)>=21 else 1
+                coef=np.polyfit(dy,lx,degree,w=1/(1+dy/max(12,height)))
+                errors=abs(np.polyval(coef,dy)-lx)
+                good=errors<=max(2.2,2*np.median(errors))
+                if good.sum()>=7 and np.ptp(dy[good])>=9:
+                    coef=np.polyfit(dy[good],lx[good],degree if good.sum()>10 else 1)
+                    near=float(dy[good].min())
+                    if near<=max(7,.55*height) and abs(coef[-1]-at)<=rad:
+                        at=float(coef[-1])
+                        gap=near
+                        residual=float(np.median(abs(np.polyval(coef,dy[good])-lx[good])))
+                        split=float(dy[good].max())
+                        original_projection=projected
+                        projected=lambda t: np.where(t-bottom<=split,np.polyval(coef,t-bottom),original_projection(t))
+        # 한 프레임의 다른 페인트 조각으로 차가 선을 왕복한 것처럼 보이지 않게 합니다.
+        if self.last_call!=self.call-1: self.recent.clear()
+        self.last_call=self.call
+        span=max(1,right-left)
+        self.recent=(self.recent+[(at-left)/span])[-5:]
+        at=left+span*float(np.median(self.recent))
+        error=1+residual+.12*gap
+        inset=max(1.,.045*(right-left))
+        pos=('left' if right<at-error else 'right' if left>at+error else
+             'contact' if left+inset+error<at<right-inset-error else None)
+        points=np.unique(np.r_[bottom,np.linspace(max(bottom,yy.min()),max(bottom+1,yy.max()),8)])
+        line=np.column_stack([projected(points),points])
+        line[0,0]=at
+        return dict(points=line.tolist(),position=pos,
+                    x_at_bottom=at,gap_px=gap,residual_px=residual,native_rows=len(yy),model_rows=int(net.sum()))
+
+
+def road_thumbnail(image):
+    h,w=image.shape[:2]
+    gray=cv2.cvtColor(image[round(.48*h):round(.95*h),round(.02*w):round(.97*w)],cv2.COLOR_BGR2GRAY)
+    small=cv2.resize(gray,(180,90),interpolation=cv2.INTER_AREA).astype(np.float32)
+    # 플레이어가 화면 전체를 어둡게 해도 노면 무늬의 이동을 비교할 수 있게 합니다.
+    return (small-small.mean())/max(1.,small.std())
+
+def recording_clock(cap,start,end,source_seconds):
+    cap.set(1,start-1)
+    stamps=[]
+    difference=[]
+    anchor=None
+    for f in range(start,end+1):
+        ok,im=cap.read()
+        if not ok: raise OSError(f)
+        thumb=road_thumbnail(im)
+        d=1. if anchor is None else float(np.mean(np.abs(thumb-anchor)))
+        difference.append(d)
+        if d>=.043: anchor=thumb
+        stamps.append(source_seconds(cap,f,cap.get(5)))
+    fps=cap.get(5)
+    if not cap.set(1,start-1): raise OSError("원본 시작 프레임 탐색 실패")
+    duplicate=np.array(difference)<.043
+    freeze=np.zeros(len(stamps),bool)
+    changes=np.diff(np.r_[False,duplicate,False].astype(int))
+    for i,j in zip(np.flatnonzero(changes==1),np.flatnonzero(changes==-1)):
+        # 촬영차까지 멈춰 있는 일반 정차는 제외하지 않습니다. 전후 도로 화면의 이동도 함께 요구합니다.
+        context=round(1.5*fps)
+        before=np.asarray(difference[max(1,i-context):i])
+        after=np.asarray(difference[j:j+context])
+        if j-i>=round(.20*fps) and (before>.065).sum()>=2 and (after>.065).sum()>=2:
+            freeze[i:j]=True
+    drive=np.array(stamps)-np.cumsum(np.r_[0.,np.diff(stamps)]*freeze)
+    return [dict(duplicate=bool(d),freeze=bool(f),drive_s=float(t),scene_delta=round(delta,4))
+            for d,f,t,delta in zip(duplicate,freeze,drive,difference)]
+

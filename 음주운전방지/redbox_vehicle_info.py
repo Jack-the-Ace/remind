@@ -103,40 +103,44 @@ class VehicleInfo:
         color = apparent_color(crop)
         if color:
             self.colors[color] += 1
-        if self.reader is None or len(self.ocr_frames) >= 12:
+        if self.reader is None or self.plate_candidate():
             return
         matches = {}
         ch, cw = crop.shape[:2]
-        if cw >= 105 and ch >= 65:
-            # CRAFT로 차량 하단의 문자 사각형을 찾고 한국어 OCR에 넣습니다.
-            search = crop[round(ch*.38):round(ch*.99), round(cw*.05):round(cw*.96)]
-            rects, _ = self.reader.detect(search, mag_ratio=2, text_threshold=.46, low_text=.28,
-                                          link_threshold=.20, min_size=9, width_ths=.85)
-            gray = cv2.cvtColor(search, cv2.COLOR_BGR2GRAY)
-            boxes = []
-            for left, right, top, bottom in sorted(rects[0], key=lambda box: box[1]-box[0], reverse=True):
-                w, h = right-left, bottom-top
-                if 30 < w < .85*gray.shape[1] and 1.45 < w/max(1,h) < 8:
-                    boxes.append([left, right, top, bottom])
-            for left, right, top, bottom in boxes[:2]:
-                roi = gray[max(0,top-7):bottom+7, max(0,left-8):right+8]
-                if not roi.size:
-                    continue
-                for variant in (roi, cv2.createCLAHE(2,(6,3)).apply(roi)):
-                    text = re.sub(r"[\s·•.,'\`]+", "", self.windows_ocr.read(variant))
-                    for plate in PLATE_IN_TEXT.findall(text):
-                        matches.setdefault(plate, {})["windows_ko"] = True
-            # 다른 검출 설정에서 분리된 문자 박스도 있으므로 EasyOCR 결과를 함께 모읍니다.
-            for points, raw, confidence in self.reader.readtext(
-                    search, allowlist=PLATE_CHARACTERS, mag_ratio=2, text_threshold=.50,
-                    low_text=.30, link_threshold=.33, min_size=10):
-                text = re.sub(r"\s+", "", raw)
-                q = np.asarray(points)
-                bw, bh = np.ptp(q, axis=0)
-                if (PLATE.fullmatch(text) and confidence >= .24
-                        and 1.5 <= bw / max(bh, 1) <= 9 and bw >= 26):
-                    entry = matches.setdefault(text, {})
-                    entry["easyocr"] = max(entry.get("easyocr", 0), round(float(confidence), 3))
+        # 멀리 있는 차량으로 OCR 표본을 소진하지 않습니다. 확정 전에는 최근 관측으로 다시 시도합니다.
+        if cw < 105 or ch < 65:
+            return
+        if len(self.ocr_frames) >= 12:
+            self.ocr_frames.pop(0)
+        # CRAFT로 차량 하단의 문자 사각형을 찾고 한국어 OCR에 넣습니다.
+        search = crop[round(ch*.38):round(ch*.99), round(cw*.05):round(cw*.96)]
+        rects, _ = self.reader.detect(search, mag_ratio=2, text_threshold=.46, low_text=.28,
+                                      link_threshold=.20, min_size=9, width_ths=.85)
+        gray = cv2.cvtColor(search, cv2.COLOR_BGR2GRAY)
+        boxes = []
+        for left, right, top, bottom in sorted(rects[0], key=lambda box: box[1]-box[0], reverse=True):
+            w, h = right-left, bottom-top
+            if 30 < w < .85*gray.shape[1] and 1.45 < w/max(1,h) < 8:
+                boxes.append([left, right, top, bottom])
+        for left, right, top, bottom in boxes[:2]:
+            roi = gray[max(0,top-7):bottom+7, max(0,left-8):right+8]
+            if not roi.size:
+                continue
+            for variant in (roi, cv2.createCLAHE(2,(6,3)).apply(roi)):
+                text = re.sub(r"[\s·•.,'\`]+", "", self.windows_ocr.read(variant))
+                for plate in PLATE_IN_TEXT.findall(text):
+                    matches.setdefault(plate, {})["windows_ko"] = True
+        # 다른 검출 설정에서 분리된 문자 박스도 있으므로 EasyOCR 결과를 함께 모읍니다.
+        for points, raw, confidence in self.reader.readtext(
+                search, allowlist=PLATE_CHARACTERS, mag_ratio=2, text_threshold=.50,
+                low_text=.30, link_threshold=.33, min_size=10):
+            text = re.sub(r"\s+", "", raw)
+            q = np.asarray(points)
+            bw, bh = np.ptp(q, axis=0)
+            if (PLATE.fullmatch(text) and confidence >= .24
+                    and 1.5 <= bw / max(bh, 1) <= 9 and bw >= 26):
+                entry = matches.setdefault(text, {})
+                entry["easyocr"] = max(entry.get("easyocr", 0), round(float(confidence), 3))
         self.ocr_frames.append({"frame": number, "matches": matches})
 
     def plate_candidate(self):
