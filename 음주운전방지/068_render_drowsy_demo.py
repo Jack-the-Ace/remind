@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 
 import cv2
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image
 
 
 review = import_module("067_render_driving_review")
@@ -92,8 +92,6 @@ def hud(image, row, prediction, events, *, counts=None):
         data["lane_readability"]=row["lane_readability"]
     layer = mvp.draw_hud(image, data, "recorded", overlay_only=True)
     mvp.draw_event_floats(layer, events, row["seconds"])
-    mvp.hud_text(ImageDraw.Draw(layer), 18, 99,
-                 [("브랜드: ", mvp.HUD_GREEN), ("-", mvp.HUD_WHITE)], 16)
     # 도로 영상은 그대로 두고, 투명한 HUD만 원본 해상도로 키웁니다.
     height, width = image.shape[:2]
     overlay = np.asarray(layer.resize((width, height), Image.Resampling.BILINEAR))

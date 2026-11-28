@@ -29,14 +29,24 @@
     <div class="workspace">
       <section class="viewer" aria-label="영상 미리보기 및 분석 재생">
         <header class="stage-head"><strong id="filename">영상 선택</strong><span id="stage-status" aria-live="polite">준비 중</span></header>
-        <div class="stage">
+        <div class="stage"><div id="video-surface">
           <canvas id="preview" width="960" height="544" aria-label="차량과 차선 경계를 선택할 프레임"></canvas>
           <video id="replay" controls playsinline preload="metadata" hidden aria-label="HUD 분석 결과 재생"></video>
+          <div id="preview-left" class="hud-corner hud-left" hidden>
+            <div><span>컬러: </span><strong id="hud-color">-</strong></div><div><span>차종: </span><strong id="hud-type">-</strong></div>
+            <div id="preview-plate">차량번호: -</div>
+            <div id="hud-brand" hidden></div>
+          </div>
+          <div id="preview-right" class="hud-corner hud-right" hidden>
+            <div><span id="hud-verdict">판정: -</span> | <b id="hud-prediction">예측: -</b></div>
+            <div id="hud-event-lines" hidden></div>
+          </div>
           <div id="preview-rec" class="preview-rec" data-recording="false" hidden>
             <strong>● REC</strong><span id="preview-time">00:00.00</span>
           </div>
-        </div>
+        </div></div>
         <div class="transport">
+          <button id="hud-fullscreen" type="button" hidden>전체화면</button>
           <span id="time-label" class="mono">00:00.00</span>
           <label class="scrub"><span class="sr-only">선택할 영상 시각</span><input id="timeline" type="range" min="0" max="60" step=".1" value="0"></label>
           <button id="prev" type="button" aria-label="1초 전">−1초</button>

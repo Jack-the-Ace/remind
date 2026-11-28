@@ -207,8 +207,10 @@ HUD_GREEN = "#46ff78"
 HUD_BLUE = "#50b7ff"
 HUD_WHITE = "#ffffff"
 REC_INACTIVE = "#b5b5b5"
+HUD_PANEL_RGBA = (128, 128, 128, 128)
+HUD_PANEL_PADDING = 2
 EVENT_FLOAT_SECONDS = 2.0
-EVENT_COLORS = {"차선변경": HUD_GREEN, "차선침범": HUD_RED, "정지선 위반": HUD_RED}
+EVENT_COLORS = {"차선변경": HUD_GREEN, "차선침범": HUD_RED, "정지선 위반": HUD_RED, "정지선위반": HUD_RED}
 
 
 def hud_text(draw, x, y, parts, size, *, align="left"):
@@ -221,6 +223,40 @@ def hud_text(draw, x, y, parts, size, *, align="left"):
         draw.text((round(x), y), text, fill=color, font=face, anchor="lt",
                   stroke_width=2, stroke_fill=(0, 0, 0, 179))
         x += length
+
+
+@lru_cache(maxsize=96)
+def panel_sprite(rows, align, padding):
+    # 글자와 외곽선을 먼저 투명 레이어에 그립니다. 실제로 칠해진 범위에만 여백을 더합니다.
+    margin = max(size for _, _, size in rows) + 2
+    width = math.ceil(max(sum(font(size).getlength(t) for t, _ in parts) for _, parts, size in rows))
+    height = max(y + size * 2 for y, _, size in rows)
+    ink = Image.new("RGBA", (width + 2*margin, height + 2*margin))
+    anchor = width + margin if align == "right" else margin
+    draw = ImageDraw.Draw(ink)
+    for y, parts, size in rows:
+        hud_text(draw, anchor, margin+y, parts, size, align=align)
+    bounds = ink.getbbox()
+    x, y, right, bottom = bounds
+    sprite = Image.new("RGBA", (right-x+2*padding, bottom-y+2*padding), HUD_PANEL_RGBA)
+    sprite.alpha_composite(ink.crop(bounds), (padding, padding))
+    return sprite, (x-padding-anchor, y-padding-margin)
+
+
+def hud_panel(image, x, y, rows, *, align="left"):
+    if not rows:
+        return
+    lines = tuple((dy, tuple(parts), size) for dy, parts, size in rows)
+    sprite, offset = panel_sprite(lines, align, HUD_PANEL_PADDING)
+    position = (x + offset[0], y + offset[1])
+    if image.mode == "RGBA":
+        image.alpha_composite(sprite, position)
+    else:
+        image.paste(sprite, position, sprite)
+
+
+def count_parts(label, count):
+    return [(f"{label}: {count}회", EVENT_COLORS.get(label, HUD_BLUE))]
 
 
 LANE_MESSAGES = {
@@ -242,7 +278,27 @@ def draw_lane_notice(draw, size, notice, x=19):
         hud_text(draw,x,y+24,[("선택 차량을 찾는 중",HUD_WHITE)],18)
 
 
-def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
+def draw_top_panels(image, row):
+    info = row["vehicle_info"]
+    left_rows = [
+        (0, [("컬러: ", HUD_GREEN), (info["color"] or "-", HUD_WHITE)], 17),
+        (23, [("차종: ", HUD_GREEN), (info["vehicle_type"] or "-", HUD_WHITE)], 17),
+        (48, [(info["plate"] or "차량번호: -", HUD_GREEN)], 26),
+    ]
+    if "brand" in info or info.get("model_name"):
+        left_rows.append((79, [("브랜드 · 모델  ", HUD_GREEN),
+                               ((info.get("brand") or "-")+" / "+(info.get("model_name") or "-"), HUD_WHITE)], 14))
+    hud_panel(image, 18, 17, left_rows)
+    right_rows = [(0, [(f"판정: {row.get('verdict') or '-'}", HUD_RED), ("  |  ", HUD_WHITE),
+                       (f"예측: {row.get('prediction') or '-'}", HUD_BLUE)], 19)]
+    visible = [(label, count) for label, count in row["event_counts"].items() if count]
+    for index, (label, count) in enumerate(visible):
+        heading = [("TOTAL", HUD_GREEN), ("  |  ", HUD_WHITE)] if index == 0 else []
+        right_rows.append((31 + index*22, heading + count_parts(label, count), 17))
+    hud_panel(image, image.width-18, 18, right_rows, align="right")
+
+
+def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False, top_panels=True):
     height, width = frame.shape[:2]
     size = (960, max(240, round(height*960/width)//2*2))
     if overlay_only:
@@ -251,7 +307,6 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
         image = Image.fromarray(cv2.cvtColor(cv2.resize(frame, size, interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(image, "RGBA")
     scale = (size[0]/width, size[1]/height)
-    info = row["vehicle_info"]
     phase = row["seconds"]
     clock = f"{int(phase//60):02d}:{phase%60:05.2f}"
     reading=row.get("lane_readability") or {}
@@ -275,17 +330,13 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
         marker_y = max(10, y-5)
         draw.polygon([(center-7, marker_y-10), (center+7, marker_y-10), (center, marker_y)], fill=HUD_RED)
 
-    hud_text(draw, 18, 17, [("컬러: ", HUD_GREEN), (info["color"] or "-", HUD_WHITE)], 17)
-    hud_text(draw, 18, 40, [("차종: ", HUD_GREEN), (info["vehicle_type"] or "-", HUD_WHITE)], 17)
-    hud_text(draw, 18, 65, [(info["plate"] or "차량번호: -", HUD_GREEN)], 26)
     # 저장 영상은 기본적으로 회색 REC입니다. 실제 녹화 상태만 빨간 REC를 켭니다.
     hud_text(draw, size[0]//2, 16, [("● REC", HUD_RED if recording else REC_INACTIVE)], 25, align="center")
     hud_text(draw, size[0]//2, 47, [(clock, HUD_WHITE)], 16, align="center")
     source = {"recorded": "실제 영상", "synthetic": "합성 영상", "independent_test": "독립 테스트"}[source_kind]
     hud_text(draw, size[0]//2, 68, [(f"{source} · {'녹화 중' if recording else '분석 재생'}", HUD_WHITE)], 11, align="center")
-    hud_text(draw, size[0]-18, 18, [(f"판정: {row.get('verdict') or '-'}", HUD_RED),
-                                  ("  |  ", HUD_WHITE), (f"예측: {row.get('prediction') or '-'}", HUD_BLUE)],
-             19, align="right")
+    if top_panels:
+        draw_top_panels(image, row)
     text_x=18
     if "contact_seconds" in row and row["box"]:
         left,top,right,bottom=row["box"]
@@ -296,14 +347,6 @@ def draw_hud(frame, row, source_kind, *, recording=False, overlay_only=False):
         value="—" if duration is None else f"{duration:.2f}초"
         suffix=" · 정지 화면" if row.get("freeze") else ""
         hud_text(draw,text_x,size[1]-44,[("차선 접촉  ",HUD_GREEN),(value+suffix,HUD_WHITE)],15)
-    if "brand" in info:
-        hud_text(draw,18,96,[("브랜드 · 모델  ",HUD_GREEN),((info.get("brand") or "-")+" / "+(info.get("model_name") or "-"),HUD_WHITE)],14)
-    counts = row["event_counts"]
-    visible = [(label, count) for label, count in counts.items() if count]
-    for index, (label, count) in enumerate(visible):
-        heading = [("TOTAL", HUD_GREEN), ("  |  ", HUD_WHITE)] if index == 0 else []
-        hud_text(draw, size[0]-18, 49 + index*22,
-                 heading + [(f"{label}: ", EVENT_COLORS.get(label, HUD_BLUE)), (f"{count}회", HUD_RED)], 17, align="right")
     # 브라우저의 재생 버튼·타임라인과 겹치지 않도록 하단에서 조금 띄웁니다.
     if notice in LANE_MESSAGES or notice=="search":
         draw_lane_notice(draw,size,notice,text_x+1)
@@ -340,7 +383,7 @@ def draw_event_float(image, event, time_s, *, stack=0):
         return False
     anchor = event["hud_anchor"]
     label = event.get("display_label", event["label"])
-    text = "+" + label + ("1" if label == "차선침범" else " 1")
+    text = "+" + label + ("1" if label in ("차선침범", "정지선위반") else " 1")
     face = font(20)
     width = math.ceil(face.getlength(text)) + 6
     fade = round(255 * min(1, EVENT_FLOAT_SECONDS - elapsed))
@@ -432,6 +475,7 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
     stop_passages = []
     analyzed = 0
     source_times = []
+    hud_changes = []
     try:
         with (capture(path, camera) as cap, (output/"frames.jsonl").open("x", encoding="utf-8") as log,
               ExitStack() as media):
@@ -551,14 +595,25 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                 if stop_monitor:
                     row["stop_line"] = stop_row
                 statuses[status] += 1
-                hud = draw_hud(frame, row, source_kind)
+                hud = draw_hud(frame, row, source_kind, top_panels=not web)
+                if web:
+                    # 웹은 CSS 패널을 영상 시각에 맞춰 표시합니다. 독립 MP4에는 같은 값을 직접 합성합니다.
+                    fields = dict(vehicle_info=row["vehicle_info"], verdict=row.get("verdict"), prediction=row.get("prediction"))
+                    if not hud_changes or fields != hud_changes[-1]["fields"]:
+                        hud_changes.append(dict(frame=number, fields=fields))
+                    web_hud = hud.copy()
+                    draw_top_panels(hud, row)
                 if number == start:
                     shape = (hud.height, hud.width)
                     enqueue = media.enter_context(encode_hud(output, shape, fps, web))
                 # 한 프레임에 그린 글자를 두 파일에 함께 저장해 재생·탐색 시 동작을 맞춥니다.
                 draw_event_floats(hud, events, seconds)
                 mp4_frame = cv2.cvtColor(np.asarray(hud), cv2.COLOR_RGB2BGR)
-                enqueue(mp4_frame, mp4_frame if web else None)
+                replay_frame = None
+                if web:
+                    draw_event_floats(web_hud, events, seconds)
+                    replay_frame = cv2.cvtColor(np.asarray(web_hud), cv2.COLOR_RGB2BGR)
+                enqueue(mp4_frame, replay_frame)
                 log.write(json.dumps(row, ensure_ascii=False)+"\n")
                 analyzed += 1
                 if analyzed == 1 or analyzed % 12 == 0 or number == end:
@@ -584,6 +639,8 @@ def analyze(data, output, progress=lambda frame, total: None, *, web=False, stag
                                                                  and info.windows_ocr.available),
                  vehicle_info=info.snapshot(), ocr_frames=info.ocr_frames, event_counts=dict(event_counts),
                  lane_rule_version=crossing_module.LANE_RULE_VERSION, event_total=len(events), events=events)
+    if web:
+        saved["hud_changes"] = hud_changes
     if any(abs(t-(start+i-1)/fps) > .001 for i,t in enumerate(source_times)):
         saved["source_times"] = source_times
     if stop_monitor:
@@ -674,6 +731,10 @@ class Handler(media_handler):
             self.send_error(403)
             return
         route = urlsplit(self.path).path
+        if route == "/api/hud-style":
+            self.reply(dict(panel_rgb=HUD_PANEL_RGBA[:3], opacity=0.5, padding=HUD_PANEL_PADDING,
+                            event_colors=EVENT_COLORS, default_event_color=HUD_BLUE), head=head_only)
+            return
         if route == "/api/demos":
             self.reply([{"id": key, "title": data["demo_title"]}
                         for key, (_, data) in self.server.demos.items()], head=head_only)

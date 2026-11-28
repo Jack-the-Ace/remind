@@ -42,6 +42,26 @@ function refreshControls() {
   $("vehicle-state").textContent = state.selected ? "타깃 지정됨" : "선택 대기";
 }
 
+let hudStyle;
+function setCorners(info, verdict, prediction) {
+  $("hud-color").textContent = info.color || "-";
+  $("hud-type").textContent = info.vehicle_type || "-";
+  $("preview-plate").textContent = info.plate || "차량번호: -";
+  $("hud-brand").hidden = !("brand" in info || info.model_name);
+  $("hud-brand").textContent = `브랜드 · 모델  ${info.brand || "-"} / ${info.model_name || "-"}`;
+  $("hud-verdict").textContent = `판정: ${verdict || "-"}`;
+  $("hud-prediction").textContent = `예측: ${prediction || "-"}`;
+}
+function previewPanels(visible) {
+  $("preview-left").hidden = $("preview-right").hidden = !visible;
+  const plate = state.selected && $("plate").value.trim();
+  if (visible) setCorners({ plate });
+  $("hud-event-lines").hidden = true;
+}
+$("plate").addEventListener("input", () => {
+  if (!stage.hidden && state.image) previewPanels(true);
+});
+
 function drawSelection() {
   if (!state.image || !state.frame) return;
   const {width, height, boxes} = state.frame;
@@ -50,6 +70,7 @@ function drawSelection() {
   const sy = stage.height / height;
   $("preview-time").textContent = clock(state.frame.at);
   $("preview-rec").hidden = false;
+  previewPanels(true);
   for (const box of state.selected ? [state.selected] : boxes) {
     const [x, y, a, b] = box;
     ctx.lineWidth = state.selected ? 2 : 1.5;
@@ -83,6 +104,7 @@ function drawSelection() {
 }
 
 function clearRun() {
+  $("hud-fullscreen").hidden = true;
   video.pause();
   video.removeAttribute("src");
   video.load();
@@ -102,6 +124,7 @@ async function loadFrame(at) {
   const generation = ++state.generation;
   state.frame = state.image = state.selected = null;
   $("preview-rec").hidden = true;
+  previewPanels(false);
   state.line = [];
   state.stopLine = [];
   state.boundaryMode = false;
@@ -216,7 +239,7 @@ function resultInfo(info, result) {
 function showResult(job, result, cached = false) {
   const path = (cached ? "/demo-media/" : "/media/") + job;
   const start = (result.selection_frame-1)/result.fps;
-  state.job = { id:job, result, start };
+  state.job = { id:job, result, start, domHud: !cached && !!result.hud_changes?.length };
   const currentJob = state.job;
   $("results").hidden = false;
   $("totals").hidden = true;
@@ -242,7 +265,11 @@ function showResult(job, result, cached = false) {
   resultInfo(result.vehicle_info, result);
   stage.hidden = true;
   $("preview-rec").hidden = true;
+  previewPanels(false);
   video.hidden = false;
+  $("hud-fullscreen").hidden = !currentJob.domHud;
+  video.controlsList?.toggle("nofullscreen", currentJob.domHud);
+  video.disablePictureInPicture = currentJob.domHud;
   video.src = path + (cached ? "/hud.mp4" : "/replay.webm");
   if (video.requestVideoFrameCallback) {
     const onFrame = (_, metadata) => {
@@ -284,11 +311,41 @@ function updatePlayback(mediaTime, decodedFrame = false) {
   $("total-count").textContent = String(count);
   $("totals").hidden = count === 0;
   $("event-types").hidden = count === 0;
-  if (!$("event-types").hidden) {
-    $("event-types").textContent = [...counts].map(([label, total]) => `${label}: ${total}회`).join(" · ");
+  // 같은 사건 목록에서 웹 패널과 결과 목록을 만듭니다. 재생·탐색 때 같은 프레임을 기준으로 합니다.
+  if (state.job.domHud) {
+    const change = state.job.result.hud_changes.findLast(item => item.frame <= shownFrame);
+    if (change !== state.job.lastFields) {
+      const fields = change?.fields ?? {};
+      setCorners(fields.vehicle_info ?? {}, fields.verdict, fields.prediction);
+      state.job.lastFields = change;
+    }
+    $("preview-left").hidden = $("preview-right").hidden = false;
   }
-
+  // 같은 타깃의 사건은 시간순입니다. 같은 개수를 재생하는 동안에는 줄을 다시 만들지 않습니다.
+  if (state.job.lastEventCount === count) return;
+  state.job.lastEventCount = count;
+  const lines = [...counts].map(([label, total]) => {
+    const line = document.createElement("div");
+    line.textContent = `${label}: ${total}회`;
+    line.style.color = hudStyle.event_colors[label] ?? hudStyle.default_event_color;
+    return line;
+  });
+  $("event-types").replaceChildren(...lines);
+  if (state.job.domHud) {
+    const copies = lines.map(line => line.cloneNode(true));
+    if (copies.length) {
+      const title = document.createElement("strong");
+      title.textContent = "TOTAL  |  ";
+      copies[0].prepend(title);
+    }
+    $("hud-event-lines").replaceChildren(...copies);
+    $("hud-event-lines").hidden = !copies.length;
+  }
 }
+$("hud-fullscreen").onclick = () => video.closest(".stage").requestFullscreen();
+video.onloadedmetadata = () => {
+  $("video-surface").style.setProperty("--video-ratio", String(video.videoWidth/video.videoHeight));
+};
 video.onseeked = () => updatePlayback(video.currentTime);
 video.ontimeupdate = () => {
   if (!video.requestVideoFrameCallback || video.paused) updatePlayback(video.currentTime);
@@ -377,7 +434,10 @@ $("fast-demo").onchange = async () => {
   }
 };
 
-Promise.all([api("/api/videos"), api("/api/demos")]).then(([files, demos]) => {
+Promise.all([api("/api/videos"), api("/api/demos"), api("/api/hud-style")]).then(([files, demos, style]) => {
+  hudStyle = style;
+  document.documentElement.style.setProperty("--hud-background", `rgba(${style.panel_rgb.join(",")},${style.opacity})`);
+  document.documentElement.style.setProperty("--hud-padding", `${style.padding}px`);
   $("source").add(new Option("분석할 원본 선택", ""));
   for (const name of files) $("source").add(new Option(name, name));
   for (const demo of demos) $("fast-demo").add(new Option(demo.title, demo.id));

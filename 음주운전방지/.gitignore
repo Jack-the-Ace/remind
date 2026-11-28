@@ -29,3 +29,4 @@ __pycache__/
 /videos/**/*.mov
 /videos/**/*.mkv
 /output/mvp_far_recheck/
+/output/mvp_plate_hud_*/

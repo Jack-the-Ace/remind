@@ -13,7 +13,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
 
 from preview_lane_track_197 import (
     DEFAULT_VIDEO, ROOT, draw_overlay, load_lane_model, predict_lane, read_track_replay, verify_video,
@@ -656,12 +656,14 @@ def analyze_contact_rows(rows, fps):
 
 def draw_hud(canvas, font, number, fps, count, track_id, status):
     detail = f"ID {track_id}   F{number:04d}  {(number-1)/fps:.2f}초   {status}"
-    width = min(canvas.shape[1] - 8, max(560, math.ceil(font.getlength(detail)) + 24))
-    panel = Image.new("RGB", (width, 68), (18, 24, 28))
-    draw = ImageDraw.Draw(panel)
-    draw.text((12, 4), f"경계 관찰  {count}건", font=font, fill=(218, 255, 228))
-    draw.text((12, 34), detail, font=font, fill=(245, 224, 140))
-    canvas[8:76, 8:8 + width] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
+    from importlib import import_module
+    hud = import_module("041_redbox_mvp")
+    # 진단 영상도 공통 패널의 글자 경계와 알파 합성을 사용합니다.
+    region = canvas[:min(100,canvas.shape[0])]
+    panel = Image.fromarray(cv2.cvtColor(region, cv2.COLOR_BGR2RGB))
+    hud.hud_panel(panel, 16, 13, [(0, [(f"경계 관찰  {count}건", hud.HUD_GREEN)], font.size),
+                                  (30, [(detail, hud.HUD_WHITE)], font.size)])
+    region[:] = cv2.cvtColor(np.asarray(panel), cv2.COLOR_RGB2BGR)
 
 
 def save_original_clips(video, output, events, fps, shape, count, *, open_video=cv2.VideoCapture):
@@ -862,10 +864,9 @@ def render(args):
                 draw_hud(canvas, font, number, fps, len(events), target_id if target_id is not None else "—", status)
                 if actions:
                     panel = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
-                    draw = ImageDraw.Draw(panel)
-                    for i,(label,total) in enumerate(action_counts.items()):
-                        hud_module.hud_text(draw,width-18,18+i*30,[(label+" ",hud_module.EVENT_COLORS[label]),
-                                            (str(total)+"회",hud_module.HUD_WHITE)],22,align="right")
+                    rows = [(i*30, hud_module.count_parts(label, total), 22)
+                            for i,(label,total) in enumerate(action_counts.items())]
+                    hud_module.hud_panel(panel,width-18,18,rows,align="right")
                     hud_module.draw_event_floats(panel,actions,seconds)
                     canvas = cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGB2BGR)
                 writer.write(canvas)
